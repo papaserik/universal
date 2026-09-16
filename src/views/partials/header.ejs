@@ -1,13 +1,13 @@
+
 <header class="site-header"><div class="container header-inner">
   <a href="/" class="logo"><%= settings.siteName %></a>
-
-  <form class="header-search" method="get" action="/search" autocomplete="off">
-    <input type="text" name="q" id="search-input" placeholder="Поиск товаров…"
-           value="<%= (req.query && req.query.q) || '' %>">
-    <div class="search-suggest" id="search-suggest" hidden></div>
-    <button type="submit" aria-label="Найти">🔍</button>
-  </form>
-
+  <div class="header-search" data-search>
+    <form method="get" action="/search" autocomplete="off">
+      <input type="text" name="q" class="js-search-input" placeholder="Поиск товаров…" value="<%= (req.query && req.query.q) || '' %>" data-suggest-url="/api/search/suggest">
+      <button type="submit" aria-label="Найти">🔍</button>
+      <div class="search-suggest" data-suggest-box hidden></div>
+    </form>
+  </div>
   <nav class="nav">
     <a href="/catalog">Каталог</a>
     <a href="/blog">Блог</a>
