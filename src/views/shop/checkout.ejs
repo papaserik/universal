@@ -1,37 +1,101 @@
 <h1>Оформление заказа</h1>
-<form method="post" action="/checkout" class="checkout-form">
-  <label>Имя <input type="text" name="name" required></label>
-  <label>Email <input type="email" name="email" required></label>
-  <label>Телефон <input type="tel" name="phone" required></label>
-  <label>Адрес <input type="text" name="address"></label>
 
+<form method="post" action="/checkout" class="checkout-form" id="checkout-form">
   <fieldset>
-    <legend>Доставка</legend>
-    <% deliveries.forEach((d, idx) => { %>
-      <label>
-        <input type="radio" name="delivery" value="<%= d.code %>" <%= idx === 0 ? 'checked' : '' %>>
-        <%= d.title %>
-      </label>
-    <% }) %>
+    <legend>Контактные данные</legend>
+    <label>Имя * <input type="text" name="name" required value="<%= user ? (user.name || '') : '' %>"></label>
+    <label>Email * <input type="email" name="email" required value="<%= user ? user.email : '' %>"></label>
+    <label>Телефон * <input type="tel" name="phone" required></label>
+    <label>Адрес доставки <input type="text" name="address"></label>
   </fieldset>
 
   <fieldset>
-    <legend>Оплата</legend>
-    <% payments.forEach((p, idx) => { %>
-      <label>
-        <input type="radio" name="payment" value="<%= p.code %>" <%= idx === 0 ? 'checked' : '' %>>
-        <%= p.title %>
-      </label>
-    <% }) %>
+    <legend>Способ доставки</legend>
+    <div class="choice-list">
+      <% deliveries.forEach((d, idx) => { %>
+        <label class="choice-item">
+          <input type="radio" name="delivery" value="<%= d.code %>"
+                 data-price="<%= d.type === 'free' ? 0 : d.price %>"
+                 data-type="<%= d.type %>"
+                 data-price-per-kg="<%= d.pricePerKg || 0 %>"
+                 data-free-from="<%= d.freeFrom || '' %>"
+                 <%= d.code === selectedDelivery ? 'checked' : '' %>>
+          <span class="choice-icon"><%= d.icon || '🚚' %></span>
+          <span class="choice-body">
+            <span class="choice-name"><%= d.name %></span>
+            <% if (d.description) { %><span class="choice-desc"><%= d.description %></span><% } %>
+            <% if (d.freeFrom) { %><span class="choice-hint">бесплатно от <%= d.freeFrom %> ₽</span><% } %>
+          </span>
+        </label>
+      <% }) %>
+      <% if (!deliveries.length) { %><p style="color:#991b1b">Способы доставки не настроены</p><% } %>
+    </div>
   </fieldset>
 
-  <label>Комментарий <textarea name="comment" rows="3"></textarea></label>
+  <fieldset>
+    <legend>Способ оплаты</legend>
+    <div class="choice-list">
+      <% payments.forEach(p => { %>
+        <label class="choice-item">
+          <input type="radio" name="payment" value="<%= p.code %>"
+                 <%= p.code === selectedPayment ? 'checked' : '' %>>
+          <span class="choice-icon"><%= p.icon || '💳' %></span>
+          <span class="choice-body">
+            <span class="choice-name"><%= p.name %></span>
+            <% if (p.description) { %><span class="choice-desc"><%= p.description %></span><% } %>
+          </span>
+        </label>
+      <% }) %>
+      <% if (!payments.length) { %><p style="color:#991b1b">Способы оплаты не настроены</p><% } %>
+    </div>
+  </fieldset>
+
+  <label>Комментарий к заказу <textarea name="comment" rows="3"></textarea></label>
 
   <div class="totals">
-    Товары: <%= subtotal %> ₽<br>
-    Доставка: <%= deliveryFee %> ₽<br>
-    <strong>Итого: <%= total %> ₽</strong>
+    <div>Товары: <strong><%= subtotal %> ₽</strong></div>
+    <div>Вес: <strong><%= weight.toFixed(2) %> кг</strong></div>
+    <div>Доставка: <strong id="delivery-fee"><%= deliveryFee %> ₽</strong>
+      <span id="delivery-note" style="color:#6b7280;font-size:13px"><%= deliveryNote ? '(' + deliveryNote + ')' : '' %></span>
+    </div>
+    <div class="totals-final">Итого: <strong id="total"><%= total %> ₽</strong></div>
   </div>
 
-  <button type="submit" class="btn">Оформить заказ</button>
+  <button type="submit" class="btn btn-lg">Оформить заказ</button>
 </form>
+
+<script>
+(function () {
+  const SUBTOTAL = <%= subtotal %>;
+  const WEIGHT = <%= weight %>;
+
+  function calcFee(radio) {
+    const type = radio.dataset.type;
+    const price = Number(radio.dataset.price) || 0;
+    const pricePerKg = Number(radio.dataset.pricePerKg) || 0;
+    const freeFrom = radio.dataset.freeFrom ? Number(radio.dataset.freeFrom) : null;
+
+    if (freeFrom && SUBTOTAL >= freeFrom) {
+      return { cost: 0, note: 'бесплатно от ' + freeFrom + ' ₽' };
+    }
+    if (type === 'free') return { cost: 0, note: '' };
+    if (type === 'flat') return { cost: price, note: '' };
+    if (type === 'weight') return { cost: Math.round(WEIGHT * pricePerKg), note: 'за ' + WEIGHT.toFixed(2) + ' кг' };
+    if (type === 'manager') return { cost: 0, note: 'уточнит менеджер' };
+    return { cost: 0, note: '' };
+  }
+
+  function updateTotals() {
+    const radio = document.querySelector('input[name="delivery"]:checked');
+    if (!radio) return;
+    const r = calcFee(radio);
+    document.getElementById('delivery-fee').textContent = r.cost + ' ₽';
+    document.getElementById('delivery-note').textContent = r.note ? '(' + r.note + ')' : '';
+    document.getElementById('total').textContent = (SUBTOTAL + r.cost) + ' ₽';
+  }
+
+  document.querySelectorAll('input[name="delivery"]').forEach(r => {
+    r.addEventListener('change', updateTotals);
+  });
+})();
+</script>

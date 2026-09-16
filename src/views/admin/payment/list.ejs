@@ -1,0 +1,29 @@
+<div class="admin-header">
+  <h1>Способы оплаты</h1>
+  <a href="/admin/payment/new" class="btn">+ Добавить способ</a>
+</div>
+<p class="admin-hint">Активные способы показываются покупателю при оформлении заказа.</p>
+<table class="admin-table">
+  <thead><tr><th style="width:40px"></th><th style="width:50px">Сорт.</th><th>Название</th><th>Тип</th><th>Код</th><th>Статус</th><th></th></tr></thead>
+  <tbody>
+  <% methods.forEach(m => { %>
+    <tr>
+      <td style="font-size:20px"><%= m.icon || '—' %></td>
+      <td><%= m.sort %></td>
+      <td><%= m.name %><% if (m.description) { %><br><small style="color:#6b7280"><%= m.description %></small><% } %></td>
+      <td><span class="badge"><%= m.type %></span></td>
+      <td><code><%= m.code %></code></td>
+      <td>
+        <form method="post" action="/admin/payment/<%= m.id %>/toggle" style="display:inline">
+          <button class="btn btn-sm <%= m.active ? '' : 'btn-muted' %>"><%= m.active ? '✓ Активен' : '✗ Отключён' %></button>
+        </form>
+      </td>
+      <td class="row-actions">
+        <a href="/admin/payment/<%= m.id %>" class="btn btn-sm">Изменить</a>
+        <form method="post" action="/admin/payment/<%= m.id %>/delete" onsubmit="return confirm('Удалить?')"><button class="btn btn-sm btn-danger">×</button></form>
+      </td>
+    </tr>
+  <% }) %>
+  <% if (!methods.length) { %><tr><td colspan="7">Способов оплаты нет</td></tr><% } %>
+  </tbody>
+</table>

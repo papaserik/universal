@@ -5,19 +5,21 @@ const path = require('path');
 
 const UPLOAD_DIR = path.join(__dirname, '..', '..', '..', 'data', 'uploads');
 
+async function getMarketplaces() {
+  const s = await prisma.setting.findUnique({ where: { key: 'marketplaces' } });
+  try { return JSON.parse(s?.value || '[]'); } catch (e) { return []; }
+}
+
 exports.list = async (req, res) => {
   const q = (req.query.q || '').trim();
   const page = Math.max(1, Number(req.query.page) || 1);
   const perPage = 20;
-  const where = q ? { OR: [
-    { name: { contains: q } },
-    { sku: { contains: q } }
-  ] } : {};
+  const where = q ? { OR: [{ name: { contains: q } }, { sku: { contains: q } }] } : {};
 
   const [products, total] = await Promise.all([
     prisma.product.findMany({
       where, include: { category: true },
-      orderBy: { createdAt: 'desc' },
+      orderBy: [{ sort: 'asc' }, { createdAt: 'desc' }],
       skip: (page - 1) * perPage, take: perPage
     }),
     prisma.product.count({ where })
@@ -40,16 +42,27 @@ exports.form = async (req, res) => {
     include: { values: true }, orderBy: { name: 'asc' }
   });
 
-  // Соберём файлы из /data/uploads для галереи
   let library = [];
   try {
     library = fs.readdirSync(UPLOAD_DIR)
       .filter(f => /\.(png|jpe?g|webp|gif|svg)$/i.test(f))
       .map(f => '/uploads/' + f);
-  } catch (e) { /* ok */ }
+  } catch (e) {}
+
+  const marketplaces = await getMarketplaces();
+
+  // Собираем список привязанных маркетплейсов
+  let currentMps = [];
+  if (product) {
+    try { currentMps = JSON.parse(product.marketplaceLinks || '[]'); } catch (e) { currentMps = []; }
+    if (!currentMps.length && product.marketplace && product.marketplaceUrl) {
+      currentMps = [{ slug: product.marketplace, url: product.marketplaceUrl }];
+    }
+  }
 
   res.render('admin/products/form', {
-    product, categories, options, library,
+    product, categories, options, library, marketplaces,
+    currentMps,
     error: null,
     selectedOptions: product ? product.options.map(o => o.valueId) : []
   });
@@ -58,8 +71,17 @@ exports.form = async (req, res) => {
 exports.save = async (req, res) => {
   const {
     name, slug, sku, price, oldPrice, stock, weight, description,
-    categoryId, seoTitle, seoDesc, seoKeywords, published, sort, images, optionValues
+    categoryId, seoTitle, seoDesc, seoKeywords, published, sort, images,
+    optionValues, marketplaceLinks
   } = req.body;
+
+  // Парсим массив маркетплейсов
+  let mpArr = [];
+  try { mpArr = JSON.parse(marketplaceLinks || '[]'); } catch (e) { mpArr = []; }
+  mpArr = mpArr.filter(x => x && x.slug && x.url);
+
+  // Первый маркетплейс пишем в legacy-поля для совместимости
+  const firstMp = mpArr[0] || { slug: null, url: null };
 
   if (!name || !price) return res.redirect('/admin/products/new?error=1');
 
@@ -76,11 +98,12 @@ exports.save = async (req, res) => {
     seoTitle: seoTitle || name,
     seoDesc: seoDesc || '',
     seoKeywords: seoKeywords || '',
+    marketplace: firstMp.slug,
+    marketplaceUrl: firstMp.url,
+    marketplaceLinks: JSON.stringify(mpArr),
     published: published === 'on' || published === 'true',
     sort: Number(sort) || 0,
-    images: JSON.stringify(
-      (images || '').split('\n').map(s => s.trim()).filter(Boolean)
-    )
+    images: JSON.stringify((images || '').split('\n').map(s => s.trim()).filter(Boolean))
   };
 
   let productId;
@@ -96,11 +119,9 @@ exports.save = async (req, res) => {
   const valueIds = [].concat(optionValues || []).map(Number).filter(Boolean);
   for (const valueId of valueIds) {
     const v = await prisma.optionValue.findUnique({ where: { id: valueId } });
-    if (v) {
-      await prisma.productOption.create({
-        data: { productId, optionId: v.optionId, valueId: v.id }
-      });
-    }
+    if (v) await prisma.productOption.create({
+      data: { productId, optionId: v.optionId, valueId: v.id }
+    });
   }
 
   res.redirect('/admin/products/' + productId + '?saved=1');
@@ -113,20 +134,9 @@ exports.remove = async (req, res) => {
 
 exports.uploadImages = async (req, res) => {
   if (!req.files || !req.files.length) return res.json({ ok: false });
-  const urls = req.files.map(f => '/uploads/' + f.filename);
-  res.json({ ok: true, urls });
+  res.json({ ok: true, urls: req.files.map(f => '/uploads/' + f.filename) });
 };
 
-// Удалить файл из библиотеки (только для ADMIN)
-exports.deleteFile = async (req, res) => {
-  const name = path.basename(req.body.name || '');
-  if (!name) return res.json({ ok: false });
-  const full = path.join(UPLOAD_DIR, name);
-  if (fs.existsSync(full)) fs.unlinkSync(full);
-  res.json({ ok: true });
-};
-
-// API-список файлов (для галереи)
 exports.listFiles = async (req, res) => {
   let files = [];
   try {

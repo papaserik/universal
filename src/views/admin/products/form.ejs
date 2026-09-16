@@ -83,6 +83,17 @@
     </fieldset>
   <% } %>
 
+
+  <fieldset class="full" id="mp-fieldset">
+    <legend>Маркетплейсы</legend>
+    <p style="color:#6b7280;font-size:13px;margin:0 0 10px">
+      Отметьте один или несколько маркетплейсов, где продаётся товар. На сайте под кнопкой «В корзину» появятся кнопки перехода.
+    </p>
+    <div id="mp-rows"></div>
+    <button type="button" class="btn btn-sm" id="mp-add" style="margin-top:8px">+ Добавить маркетплейс</button>
+    <input type="hidden" name="marketplaceLinks" id="mp-json-input">
+  </fieldset>
+
   <fieldset class="full">
     <legend>SEO</legend>
     <label>SEO Title <input type="text" name="seoTitle" value="<%= product && product.seoTitle ? product.seoTitle : '' %>"></label>
@@ -94,6 +105,65 @@
     <button type="submit" class="btn">Сохранить</button>
     <% if (product) { %><a href="/product/<%= product.slug %>" target="_blank" class="btn btn-sm">↗ Открыть на сайте</a><% } %>
   </div>
+
+<script>
+(function () {
+  const MP_LIST = <%- JSON.stringify(marketplaces) %>;
+  const CURRENT = <%- JSON.stringify(currentMps) %>;
+
+  const wrap = document.getElementById('mp-rows');
+  const addBtn = document.getElementById('mp-add');
+  const hidden = document.getElementById('mp-json-input');
+  const form = document.getElementById('product-form');
+
+  function esc(str) {
+    return String(str || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  function rowHtml(slug, url) {
+    const opts = MP_LIST.map(m =>
+      '<option value="' + esc(m.slug) + '"' + (m.slug === slug ? ' selected' : '') + '>' + esc(m.name) + '</option>'
+    ).join('');
+    return ''
+      + '<div class="mp-row">'
+      +   '<select class="mp-slug">'
+      +     '<option value="">— выберите —</option>'
+      +     opts
+      +   '</select>'
+      +   '<input type="url" class="mp-url" placeholder="https://..." value="' + esc(url) + '">'
+      +   '<button type="button" class="mp-remove" title="Удалить">×</button>'
+      + '</div>';
+  }
+
+  function render() {
+    if (!CURRENT.length) {
+      wrap.innerHTML = '<p style="color:#9ca3af;font-size:13px">Маркетплейсы не добавлены</p>';
+      return;
+    }
+    wrap.innerHTML = CURRENT.map(r => rowHtml(r.slug, r.url)).join('');
+    wrap.querySelectorAll('.mp-row').forEach((row, i) => {
+      row.querySelector('.mp-slug').addEventListener('change', e => { CURRENT[i].slug = e.target.value; });
+      row.querySelector('.mp-url').addEventListener('input',  e => { CURRENT[i].url  = e.target.value; });
+      row.querySelector('.mp-remove').addEventListener('click', () => { CURRENT.splice(i, 1); render(); });
+    });
+  }
+
+  addBtn.addEventListener('click', () => {
+    CURRENT.push({ slug: MP_LIST[0] ? MP_LIST[0].slug : '', url: '' });
+    render();
+  });
+
+  if (form) {
+    form.addEventListener('submit', () => {
+      const clean = CURRENT.filter(x => x.slug && x.url);
+      hidden.value = JSON.stringify(clean);
+    });
+  }
+
+  render();
+})();
+</script>
+
 </form>
 
 <script>

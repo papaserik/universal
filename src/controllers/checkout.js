@@ -3,27 +3,72 @@ const cart = require('../services/cart');
 const delivery = require('../services/delivery');
 const payment = require('../services/payment');
 
+async function enrichItems(items) {
+  // Подтягиваем актуальный вес из БД для каждого товара
+  const ids = items.map(i => i.productId);
+  const products = await prisma.product.findMany({
+    where: { id: { in: ids } },
+    select: { id: true, weight: true }
+  });
+  const wMap = Object.fromEntries(products.map(p => [p.id, p.weight || 0.5]));
+  return items.map(i => ({ ...i, weight: wMap[i.productId] || 0.5 }));
+}
+
+function cartWeight(items) {
+  return items.reduce((s, i) => s + (i.weight || 0.5) * i.qty, 0);
+}
+
 exports.form = async (req, res) => {
-  const items = cart.getCart(req);
-  if (!items.length) return res.redirect('/cart');
-  const deliveries = await delivery.list();
-  const payments = await payment.list();
+  const raw = cart.getCart(req);
+  if (!raw.length) return res.redirect('/cart');
+
+  const items = await enrichItems(raw);
   const subtotal = cart.cartTotal(items);
-  const d = await delivery.calculate((deliveries[0] && deliveries[0].code) || 'flat', items);
-  const deliveryFee = subtotal >= (d.freeFrom || Infinity) ? 0 : d.cost;
+  const weight = cartWeight(items);
+
+  const [deliveries, payments] = await Promise.all([
+    delivery.listActive(),
+    payment.listActive()
+  ]);
+
+  // Первый активный способ доставки — по умолчанию
+  const selected = deliveries[0] || null;
+  const dResult = delivery.calc(selected, subtotal, weight);
+
   res.render('shop/checkout', {
-    items, subtotal, deliveryFee, total: subtotal + deliveryFee, deliveries, payments
+    items,
+    subtotal,
+    weight,
+    deliveries,
+    payments,
+    selectedDelivery: selected ? selected.code : null,
+    selectedPayment: payments[0] ? payments[0].code : null,
+    deliveryFee: dResult.cost,
+    deliveryNote: dResult.note,
+    total: subtotal + dResult.cost
   });
 };
 
 exports.submit = async (req, res) => {
-  const items = cart.getCart(req);
-  if (!items.length) return res.redirect('/cart');
+  const raw = cart.getCart(req);
+  if (!raw.length) return res.redirect('/cart');
+
+  const items = await enrichItems(raw);
   const subtotal = cart.cartTotal(items);
-  const d = await delivery.calculate(req.body.delivery || 'flat', items);
-  const deliveryFee = subtotal >= (d.freeFrom || Infinity) ? 0 : d.cost;
-  const total = subtotal + deliveryFee;
+  const weight = cartWeight(items);
+
+  const deliveryCode = req.body.delivery || '';
+  const paymentCode = req.body.payment || '';
+
+  const [deliveryMethod, paymentMethod] = await Promise.all([
+    deliveryCode ? prisma.deliveryMethod.findUnique({ where: { code: deliveryCode } }) : null,
+    paymentCode ? prisma.paymentMethod.findUnique({ where: { code: paymentCode } }) : null
+  ]);
+
+  const dResult = delivery.calc(deliveryMethod, subtotal, weight);
+  const total = subtotal + dResult.cost;
   const number = 'ORD-' + Date.now().toString(36).toUpperCase();
+
   const order = await prisma.order.create({
     data: {
       number,
@@ -33,21 +78,17 @@ exports.submit = async (req, res) => {
       name: req.body.name,
       address: req.body.address || '',
       comment: req.body.comment || '',
-      payment: req.body.payment || 'cod',
-      delivery: req.body.delivery || 'flat',
-      subtotal, deliveryFee, total, ip: req.ip,
+      payment: paymentMethod ? paymentMethod.code : 'manual',
+      delivery: deliveryMethod ? deliveryMethod.code : 'manager',
+      subtotal, deliveryFee: dResult.cost, total, ip: req.ip,
       items: { create: items.map(i => ({ productId: i.productId, name: i.name, price: i.price, qty: i.qty })) }
     },
     include: { items: true }
   });
-  const pay = await payment.createPayment(order, order.payment);
-  try {
-    const mailer = require('../services/orderMailer');
-    await mailer.notifyAdmin(order);
-    await mailer.notifyClient(order);
-  } catch (e) { console.error('mail error', e); }
+
+  const pay = await payment.createPayment(order, paymentMethod);
   req.session.cart = [];
-  res.redirect(pay.redirect);
+  req.session.save(() => res.redirect(pay.redirect));
 };
 
 exports.success = async (req, res) => {

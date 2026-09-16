@@ -1,0 +1,30 @@
+<div class="admin-header">
+  <h1><%= method ? 'Изменить способ оплаты' : 'Новый способ оплаты' %></h1>
+  <a href="/admin/payment" class="btn btn-sm">← К списку</a>
+</div>
+<% if (error) { %><div class="admin-alert" style="background:#fee2e2;color:#991b1b"><%= error %></div><% } %>
+<form method="post" action="<%= method ? '/admin/payment/' + method.id : '/admin/payment' %>" class="admin-form">
+  <div class="form-row">
+    <label>Название * <input type="text" name="name" value="<%= method ? method.name : '' %>" required></label>
+    <label>Код (латиница) * <input type="text" name="code" value="<%= method ? method.code : '' %>" required></label>
+  </div>
+  <label>Описание <input type="text" name="description" value="<%= method && method.description ? method.description : '' %>"></label>
+  <div class="form-row">
+    <label>Тип
+      <select name="type">
+        <option value="cod" <%= method && method.type==='cod'?'selected':'' %>>При получении</option>
+        <option value="stripe" <%= method && method.type==='stripe'?'selected':'' %>>Stripe</option>
+        <option value="yookassa" <%= method && method.type==='yookassa'?'selected':'' %>>ЮKassa</option>
+        <option value="manual" <%= method && method.type==='manual'?'selected':'' %>>Ручной</option>
+        <option value="other" <%= method && method.type==='other'?'selected':'' %>>Другое</option>
+      </select>
+    </label>
+    <label>Иконка <input type="text" name="icon" maxlength="4" value="<%= method && method.icon ? method.icon : '' %>" placeholder="💳"></label>
+  </div>
+  <label>Config (JSON) <textarea name="config" rows="3" style="font-family:monospace"><%= method ? method.config : '{}' %></textarea></label>
+  <div class="form-row">
+    <label>Сортировка <input type="number" name="sort" value="<%= method ? method.sort : 0 %>"></label>
+    <label class="checkbox-label" style="align-self:flex-end"><input type="checkbox" name="active" <%= !method || method.active ? 'checked' : '' %>> Активен</label>
+  </div>
+  <div class="form-actions"><button class="btn">Сохранить</button></div>
+</form>

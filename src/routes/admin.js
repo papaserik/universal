@@ -19,6 +19,8 @@ const blog       = require('../controllers/admin/blog');
 const pages      = require('../controllers/admin/pages');
 const settings   = require('../controllers/admin/settings');
 const importer   = require('../controllers/admin/import');
+const delivery   = require('../controllers/admin/delivery');
+const payment    = require('../controllers/admin/payment');
 const ordersExport = require('../controllers/admin/ordersExport');
 
 router.get('/', dashboard.index);
@@ -76,5 +78,21 @@ router.post('/settings', settings.save);
 
 router.get('/import', importer.form);
 router.post('/import', importUpload.single('file'), importer.run);
+
+router.get('/delivery', delivery.list);
+router.get('/delivery/new', delivery.form);
+router.get('/delivery/:id', delivery.form);
+router.post('/delivery', delivery.save);
+router.post('/delivery/:id', delivery.save);
+router.post('/delivery/:id/toggle', delivery.toggle);
+router.post('/delivery/:id/delete', delivery.remove);
+
+router.get('/payment', payment.list);
+router.get('/payment/new', payment.form);
+router.get('/payment/:id', payment.form);
+router.post('/payment', payment.save);
+router.post('/payment/:id', payment.save);
+router.post('/payment/:id/toggle', payment.toggle);
+router.post('/payment/:id/delete', payment.remove);
 
 module.exports = router;

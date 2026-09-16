@@ -122,3 +122,323 @@ main.container{padding:24px 16px;min-height:60vh}
 .contacts-info{background:#fff;padding:20px;border-radius:8px;border:1px solid #eee;font-size:15px;line-height:1.8}
 .contacts-info p{margin:6px 0}
 @media(max-width:720px){.contacts-layout{grid-template-columns:1fr}}
+
+/* Качелька количества */
+.qty-wrap{display:inline-flex;align-items:center;border:1px solid #d4d4d8;border-radius:6px;overflow:hidden;background:#fff}
+.qty-wrap button{background:#f4f4f5;border:0;width:32px;height:36px;font-size:16px;cursor:pointer;color:#52525b;transition:background .15s}
+.qty-wrap button:hover{background:#e4e4e7}
+.qty-wrap input{width:52px;border:0;text-align:center;font:inherit;font-size:15px;padding:6px 0;outline:0;-moz-appearance:textfield}
+.qty-wrap input::-webkit-outer-spin-button,
+.qty-wrap input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.qty-wrap-sm button{width:26px;height:30px;font-size:14px}
+.qty-wrap-sm input{width:40px;font-size:13px}
+.add-form{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.add-form-sm{gap:4px}
+.no-stock{font-size:12px;color:#dc2626;padding:6px 0;display:inline-block}
+
+/* Галерея */
+.product-gallery{display:flex;flex-direction:column;gap:10px}
+.gallery-main{position:relative;aspect-ratio:1;background:#f5f5f5;border-radius:8px;overflow:hidden;cursor:zoom-in}
+.gallery-main img{width:100%;height:100%;object-fit:contain;display:block}
+.gallery-prev,.gallery-next{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.5);color:#fff;border:0;width:40px;height:40px;border-radius:50%;font-size:22px;cursor:pointer;line-height:1;padding:0}
+.gallery-prev{left:8px}
+.gallery-next{right:8px}
+.gallery-prev:hover,.gallery-next:hover{background:rgba(0,0,0,.7)}
+.gallery-counter{position:absolute;bottom:8px;right:12px;background:rgba(0,0,0,.55);color:#fff;font-size:12px;padding:2px 8px;border-radius:10px}
+.thumbs{display:flex;gap:8px;flex-wrap:wrap}
+.thumbs img{width:70px;height:70px;object-fit:cover;border-radius:6px;cursor:pointer;border:2px solid transparent;transition:border-color .15s}
+.thumbs img:hover{border-color:#cbd5e1}
+.thumbs img.active{border-color:#1976d2}
+
+/* Модалка изображения */
+.image-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:200;align-items:center;justify-content:center;padding:20px}
+.image-modal.open{display:flex}
+.image-modal img{max-width:100%;max-height:90vh;object-fit:contain;border-radius:6px}
+.modal-close{position:absolute;top:16px;right:20px;background:transparent;border:0;color:#fff;font-size:34px;cursor:pointer;line-height:1;padding:0}
+
+/* Suggest поиска */
+.header-search{position:relative}
+.search-suggest{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:1px solid #e5e7eb;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.1);max-height:360px;overflow-y:auto;z-index:30}
+.search-suggest a{display:block;padding:8px 14px;text-decoration:none;color:#111;font-size:14px;border-bottom:1px solid #f4f4f5}
+.search-suggest a:last-child{border-bottom:0}
+.search-suggest a:hover{background:#f8fafc}
+.search-suggest .ss-price{float:right;color:#71717a;font-size:13px}
+.theme-compact .search-suggest{top:calc(100% + 2px)}
+
+@media(max-width:720px){
+  .qty-wrap input{width:44px}
+  .gallery-prev,.gallery-next{width:34px;height:34px;font-size:18px}
+}
+
+/* Кнопка маркетплейса */
+.btn-marketplace {
+  display:inline-flex; align-items:center; gap:8px;
+  background:#fff; color:#111; border:2px solid #111;
+  margin-top:8px; font-weight:600;
+}
+.btn-marketplace:hover { background:#f4f4f5; }
+.btn-marketplace-primary {
+  background:#111; color:#fff; border-color:#111;
+}
+.btn-marketplace-primary:hover { background:#333; }
+.theme-compact .btn-marketplace { border-radius:4px; }
+
+/* ============ Кнопки в карточке товара — аккуратные ============ */
+.add-form-lg {
+  display: flex;
+  gap: 10px;
+  align-items: stretch;
+  margin: 20px 0 12px;
+  flex-wrap: wrap;
+}
+.add-form-lg .qty-wrap { height: 48px; }
+.add-form-lg .qty-wrap button { width: 40px; height: 46px; font-size: 18px; }
+.add-form-lg .qty-wrap input { width: 64px; font-size: 16px; }
+
+.add-form-lg .btn {
+  height: 48px;
+  padding: 0 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 8px;
+  background: #0f172a;
+  color: #fff;
+  border: 0;
+  cursor: pointer;
+  transition: background .15s, transform .05s;
+}
+.add-form-lg .btn:hover { background: #1e293b; }
+.add-form-lg .btn:active { transform: translateY(1px); }
+
+/* Кнопка маркетплейса */
+.btn-marketplace {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  height: 48px;
+  padding: 0 24px;
+  margin: 4px 0 12px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  border: 1px solid #e4e4e7;
+  background: #fff;
+  color: #18181b;
+  transition: border-color .15s, background .15s, box-shadow .15s;
+}
+.btn-marketplace:hover {
+  border-color: #a1a1aa;
+  background: #fafafa;
+  box-shadow: 0 2px 8px rgba(0,0,0,.06);
+}
+
+/* Брендовая синяя для Ozon — переопределяем */
+.btn-marketplace-primary {
+  background: #005bff;
+  color: #fff;
+  border-color: #005bff;
+}
+.btn-marketplace-primary:hover {
+  background: #0047cc;
+  border-color: #0047cc;
+  box-shadow: 0 4px 14px rgba(0,91,255,.3);
+}
+
+/* Мобильные */
+@media (max-width: 720px) {
+  .add-form-lg { gap: 8px; }
+  .add-form-lg .btn { width: 100%; padding: 0 20px; }
+  .add-form-lg .qty-wrap { flex: 0 0 auto; }
+  .btn-marketplace { width: 100%; }
+}
+
+/* Компактная кнопка «Купить на маркетплейсе» в карточках списка */
+.btn-mp {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: #005bff;
+  color: #fff;
+  border: 0;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background .15s;
+  white-space: nowrap;
+}
+.btn-mp:hover { background: #0047cc; color: #fff; }
+
+/* ============ Карточка товара: единый стиль и прижатые кнопки ============ */
+.product-card {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+.product-card .card-actions {
+  margin-top: auto;
+  padding-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.product-card .add-form { margin: 0; }
+
+/* ============ Единые кнопки в карточках ============ */
+.btn-card {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 42px;
+  padding: 8px 14px;
+  border: 0;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.2;
+  text-decoration: none;
+  text-align: center;
+  cursor: pointer;
+  transition: background .15s, box-shadow .15s, transform .05s;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.btn-card:active { transform: translateY(1px); }
+
+.btn-card-primary { background: #0f172a; color: #fff; }
+.btn-card-primary:hover { background: #1e293b; color: #fff; }
+
+/* Цвета маркетплейсов */
+.mp-ozon     { background: #005bff; color: #fff; }
+.mp-ozon:hover { background: #0047cc; color: #fff; }
+
+.mp-wb       { background: #cb11ab; color: #fff; }
+.mp-wb:hover { background: #a50e8a; color: #fff; }
+
+.mp-default  { background: #fff; color: #18181b; border: 1px solid #d4d4d8; }
+.mp-default:hover { background: #fafafa; color: #18181b; border-color: #a1a1aa; }
+
+/* Большая кнопка в карточке товара */
+.btn-card-lg {
+  min-height: 48px;
+  padding: 0 24px;
+  font-size: 15px;
+  width: auto;
+  align-self: flex-start;
+  margin-top: 4px;
+}
+
+/* Мобильные */
+@media (max-width: 720px) {
+  .btn-card-lg { width: 100%; align-self: stretch; }
+}
+
+.product-card{display:flex;flex-direction:column;min-height:100%}
+.product-card .card-actions{margin-top:auto;padding-top:10px;display:flex;flex-direction:column;gap:6px}
+.product-card .add-form{margin:0}
+
+.btn-card{display:inline-flex;align-items:center;justify-content:center;width:100%;min-height:42px;padding:8px 14px;border:0;border-radius:6px;font-size:14px;font-weight:600;line-height:1.2;text-decoration:none;text-align:center;cursor:pointer;transition:background .15s,box-shadow .15s,transform .05s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.btn-card:active{transform:translateY(1px)}
+.btn-card-primary{background:#0f172a;color:#fff}
+.btn-card-primary:hover{background:#1e293b;color:#fff}
+
+.mp-ozon{background:#005bff;color:#fff}
+.mp-ozon:hover{background:#0047cc;color:#fff}
+.mp-wb{background:#cb11ab;color:#fff}
+.mp-wb:hover{background:#a50e8a;color:#fff}
+.mp-default{background:#fff;color:#18181b;border:1px solid #d4d4d8}
+.mp-default:hover{background:#fafafa;color:#18181b;border-color:#a1a1aa}
+
+.btn-card-lg{min-height:48px;padding:0 24px;font-size:15px;width:auto;align-self:flex-start;margin-top:4px}
+
+@media(max-width:720px){.btn-card-lg{width:100%;align-self:stretch}}
+
+/* ============ Бейдж скидки на изображении (правый нижний угол) ============ */
+.product-image {
+  position: relative;
+}
+.badge-discount {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  background: #d32f2f;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  padding: 5px 9px;
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(211, 47, 47, .35);
+  pointer-events: none;
+  z-index: 2;
+}
+.badge-discount-lg {
+  font-size: 14px;
+  padding: 7px 12px;
+  right: 12px;
+  bottom: 12px;
+  border-radius: 8px;
+  box-shadow: 0 3px 10px rgba(211, 47, 47, .4);
+}
+/* .gallery-main в карточке товара — тоже position: relative */
+.gallery-main { position: relative; }
+
+/* Карта на контактах */
+.contacts-map{margin-top:40px}
+.map-embed{position:relative;width:100%;aspect-ratio:16/9;min-height:320px;background:#eef0f3;border-radius:8px;overflow:hidden}
+.map-embed iframe,.map-embed > div{width:100%!important;height:100%!important;border:0;display:block}
+@media(max-width:720px){.map-embed{aspect-ratio:4/3;min-height:260px}}
+
+/* Копирайт студии — мелкий и еле заметный */
+.site-copyright {
+  margin: 10px 0 0;
+  font-size: 11px;
+  color: rgba(255,255,255,.35);
+  letter-spacing: .2px;
+}
+.site-copyright a {
+  color: rgba(255,255,255,.45);
+  text-decoration: none;
+  transition: color .15s;
+}
+.site-copyright a:hover {
+  color: rgba(255,255,255,.75);
+}
+
+/* Для темы compact — внутри строки */
+.site-copyright-inline {
+  color: rgba(255,255,255,.3);
+  font-size: 11px;
+}
+.site-copyright-inline a {
+  color: rgba(255,255,255,.4);
+  text-decoration: none;
+}
+.site-copyright-inline a:hover {
+  color: rgba(255,255,255,.7);
+}
+
+/* Красивый выбор доставки и оплаты */
+.choice-list{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.choice-item{display:flex!important;flex-direction:row!important;align-items:flex-start!important;gap:12px;padding:12px 14px;border:2px solid #e5e7eb;border-radius:10px;cursor:pointer;transition:all .15s;background:#fff}
+.choice-item:hover{border-color:#cbd5e1;background:#fafafa}
+.choice-item:has(input:checked){border-color:#0f172a;background:#f8fafc;box-shadow:0 2px 8px rgba(15,23,42,.08)}
+.choice-item input[type="radio"]{margin-top:4px;accent-color:#0f172a;width:18px;height:18px;flex:0 0 auto}
+.choice-icon{font-size:22px;line-height:1;flex:0 0 auto;margin-top:2px}
+.choice-body{display:flex;flex-direction:column;gap:2px;flex:1}
+.choice-name{font-weight:600;font-size:15px;color:#111}
+.choice-desc{font-size:13px;color:#6b7280}
+.choice-hint{font-size:12px;color:#16a34a;font-weight:500;margin-top:2px}
+
+.totals{display:flex;flex-direction:column;gap:6px}
+.totals-final{margin-top:8px;padding-top:10px;border-top:1px solid #e5e7eb;font-size:17px}
+.btn-lg{padding:14px 32px;font-size:16px;min-height:52px}

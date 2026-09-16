@@ -1,5 +1,14 @@
 const { prisma } = require('../config/db');
 
+async function getMarketplaceBySlug(slug) {
+  if (!slug) return null;
+  const s = await prisma.setting.findUnique({ where: { key: 'marketplaces' } });
+  try {
+    const list = JSON.parse(s?.value || '[]');
+    return list.find(m => m.slug === slug) || { name: slug, slug };
+  } catch (e) { return { name: slug, slug }; }
+}
+
 exports.home = async (req, res) => {
   const [products, posts] = await Promise.all([
     prisma.product.findMany({ where: { published: true }, orderBy: { createdAt: 'desc' }, take: 8 }),
@@ -67,7 +76,8 @@ exports.product = async (req, res) => {
   const related = await prisma.product.findMany({
     where: { categoryId: p.categoryId, id: { not: p.id }, published: true }, take: 4
   });
-  res.render('shop/product', { p, related });
+  const marketplace = p.marketplace ? await getMarketplaceBySlug(p.marketplace) : null;
+  res.render('shop/product', { p, related, marketplace });
 };
 
 exports.sitemap = async (req, res) => {

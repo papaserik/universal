@@ -8,13 +8,13 @@ datasource db {
 }
 
 model User {
-  id        Int        @id @default(autoincrement())
-  email     String     @unique
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
   password  String
   name      String?
-  role      String     @default("USER")   // USER | MANAGER | ADMIN
-  active    Boolean    @default(true)
-  createdAt DateTime   @default(now())
+  role      String   @default("USER")
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
   orders    Order[]
   posts     BlogPost[]
 }
@@ -34,26 +34,29 @@ model Category {
 }
 
 model Product {
-  id           Int             @id @default(autoincrement())
-  slug         String          @unique
-  sku          String?         @unique
-  name         String
-  description  String?
-  price        Float
-  oldPrice     Float?
-  stock        Int             @default(0)
-  weight       Float           @default(0.5)
-  images       String          @default("[]")
-  categoryId   Int?
-  category     Category?       @relation(fields: [categoryId], references: [id], onDelete: SetNull)
-  options      ProductOption[]
-  seoTitle     String?
-  seoDesc      String?
-  seoKeywords  String?
-  published    Boolean         @default(true)
-  sort         Int             @default(0)
-  createdAt    DateTime        @default(now())
-  updatedAt    DateTime        @updatedAt
+  id              Int             @id @default(autoincrement())
+  slug            String          @unique
+  sku             String?         @unique
+  name            String
+  description     String?
+  price           Float
+  oldPrice        Float?
+  stock           Int             @default(0)
+  weight          Float           @default(0.5)
+  images          String          @default("[]")
+  categoryId      Int?
+  category        Category?       @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  options         ProductOption[]
+  seoTitle        String?
+  seoDesc         String?
+  seoKeywords     String?
+  marketplace     String?
+  marketplaceUrl  String?
+  marketplaceLinks String  @default("[]")
+  published       Boolean         @default(true)
+  sort            Int             @default(0)
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
 
   @@index([categoryId, published])
   @@index([price])
@@ -102,7 +105,7 @@ model Order {
   subtotal    Float
   deliveryFee Float       @default(0)
   total       Float
-  status      String      @default("NEW")   // NEW | PAID | SHIPPED | DONE | CANCELLED
+  status      String      @default("NEW")
   payment     String      @default("cod")
   delivery    String      @default("flat")
   comment     String?
@@ -165,4 +168,32 @@ model MenuItem {
   position String @default("main")
   sort     Int    @default(0)
   parentId Int?
+}
+
+model DeliveryMethod {
+  id          Int      @id @default(autoincrement())
+  code        String   @unique
+  name        String
+  description String?
+  type        String   @default("flat")
+  price       Float    @default(0)
+  freeFrom    Float?
+  pricePerKg  Float?
+  icon        String?
+  active      Boolean  @default(true)
+  sort        Int      @default(0)
+  createdAt   DateTime @default(now())
+}
+
+model PaymentMethod {
+  id          Int      @id @default(autoincrement())
+  code        String   @unique
+  name        String
+  description String?
+  type        String   @default("cod")
+  config      String   @default("{}")
+  icon        String?
+  active      Boolean  @default(true)
+  sort        Int      @default(0)
+  createdAt   DateTime @default(now())
 }

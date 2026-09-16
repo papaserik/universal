@@ -2,68 +2,85 @@
   <h1>Настройки</h1>
 </div>
 
-<form method="post" action="/admin/settings" class="admin-form" style="max-width:760px">
-  <fieldset>
-    <legend>Общие</legend>
-    <label>Название сайта <input type="text" name="site_name" value="<%= values.site_name || '' %>"></label>
-    <label>Телефон <input type="text" name="phone" value="<%= values.phone || '' %>"></label>
-    <label>Email <input type="text" name="email" value="<%= values.email || '' %>"></label>
-    <label>Адрес <input type="text" name="address" value="<%= values.address || '' %>"></label>
-    <label>Email для уведомлений о заказах
-      <input type="text" name="order_notify_email" value="<%= values.order_notify_email || '' %>" placeholder="пусто — использовать общий Email">
-    </label>
-  </fieldset>
+<div class="settings-layout">
+  <aside class="settings-nav">
+    <% sections.forEach((s, i) => { %>
+      <a href="#<%= s.id %>" class="<%= i === 0 ? 'active' : '' %>" data-target="<%= s.id %>">
+        <span class="settings-nav-icon"><%= s.icon %></span>
+        <span><%= s.title %></span>
+      </a>
+    <% }) %>
+  </aside>
 
-  <fieldset>
-    <legend>Оформление</legend>
-    <label>Активная тема
-      <select name="active_theme">
-        <% themes.forEach(t => { %>
-          <option value="<%= t %>" <%= values.active_theme === t ? 'selected' : '' %>><%= t %></option>
-        <% }) %>
-      </select>
-    </label>
-  </fieldset>
+  <div class="settings-content">
+    <form method="post" action="/admin/settings">
+      <% sections.forEach(s => { %>
+        <section class="settings-section" id="<%= s.id %>">
+          <header class="settings-section-header">
+            <h2><span class="settings-section-icon"><%= s.icon %></span><%= s.title %></h2>
+            <p class="settings-section-desc"><%= s.desc %></p>
+          </header>
 
-  <fieldset>
-    <legend>Доставка</legend>
-    <label>Фиксированная стоимость доставки, ₽ <input type="text" name="delivery_flat_cost" value="<%= values.delivery_flat_cost || '' %>"></label>
-    <label>Бесплатная доставка от, ₽ <input type="text" name="delivery_free_from" value="<%= values.delivery_free_from || '' %>"></label>
-    <label>Цена за кг, ₽ <input type="text" name="delivery_per_kg" value="<%= values.delivery_per_kg || '' %>"></label>
-  </fieldset>
+          <% s.fields.forEach(f => { %>
+            <div class="settings-field">
+              <% if (f.type === 'textarea') { %>
+                <label><%= f.label %></label>
+                <textarea name="<%= f.key %>" rows="5"><%= values[f.key] || '' %></textarea>
 
-  <fieldset>
-    <legend>Почта (SMTP)</legend>
-    <label>SMTP-хост <input type="text" name="smtp_host" value="<%= values.smtp_host || '' %>" placeholder="smtp.yandex.ru"></label>
-    <label>SMTP-порт <input type="text" name="smtp_port" value="<%= values.smtp_port || '587' %>"></label>
-    <label>SMTP-логин <input type="text" name="smtp_user" value="<%= values.smtp_user || '' %>"></label>
-    <label>SMTP-пароль <input type="password" name="smtp_pass" value="<%= values.smtp_pass || '' %>"></label>
-    <label>Адрес отправителя <input type="text" name="smtp_from" value="<%= values.smtp_from || '' %>" placeholder="Магазин &lt;shop@example.com&gt;"></label>
-    <label class="checkbox-label"><input type="checkbox" name="smtp_secure" value="1" <%= values.smtp_secure === '1' ? 'checked' : '' %>> SSL (true для порта 465)</label>
-  </fieldset>
+              <% } else if (f.type === 'theme') { %>
+                <label><%= f.label %></label>
+                <select name="<%= f.key %>">
+                  <% themes.forEach(t => { %>
+                    <option value="<%= t %>" <%= values[f.key] === t ? 'selected' : '' %>><%= t %></option>
+                  <% }) %>
+                </select>
 
-  <fieldset>
-    <legend>Оплата — Stripe</legend>
-    <label>Stripe Secret Key <input type="password" name="stripe_secret" value="<%= values.stripe_secret || '' %>"></label>
-  </fieldset>
+              <% } else if (f.type === 'password') { %>
+                <label><%= f.label %></label>
+                <input type="password" name="<%= f.key %>" value="<%= values[f.key] || '' %>">
 
-  <fieldset>
-    <legend>Оплата — ЮKassa</legend>
-    <label>Shop ID <input type="text" name="yookassa_shop_id" value="<%= values.yookassa_shop_id || '' %>"></label>
-    <label>Secret Key <input type="password" name="yookassa_secret" value="<%= values.yookassa_secret || '' %>"></label>
-  </fieldset>
+              <% } else if (f.type === 'checkbox') { %>
+                <label class="settings-checkbox">
+                  <input type="checkbox" name="<%= f.key %>" value="1" <%= values[f.key] === '1' ? 'checked' : '' %>>
+                  <span><%= f.label %></span>
+                </label>
 
-  <fieldset>
-    <legend>Аналитика и счётчики</legend>
-    <label>Google Analytics ID (G-XXXX) <input type="text" name="ga_id" value="<%= values.ga_id || '' %>"></label>
-    <label>Яндекс.Метрика ID <input type="text" name="metrika_id" value="<%= values.metrika_id || '' %>"></label>
-  </fieldset>
+              <% } else { %>
+                <label><%= f.label %></label>
+                <input type="text" name="<%= f.key %>" value="<%= values[f.key] || '' %>" placeholder="<%= f.placeholder || '' %>">
+              <% } %>
+            </div>
+          <% }) %>
+        </section>
+      <% }) %>
 
-  <fieldset>
-    <legend>Произвольный код на всех страницах</legend>
-    <label>HTML в &lt;head&gt; <textarea name="custom_head" rows="4"><%= values.custom_head || '' %></textarea></label>
-    <label>HTML перед &lt;/body&gt; <textarea name="custom_body" rows="4"><%= values.custom_body || '' %></textarea></label>
-  </fieldset>
+      <div class="settings-sticky-save">
+        <button type="submit" class="btn">💾 Сохранить все настройки</button>
+      </div>
+    </form>
+  </div>
+</div>
 
-  <div class="form-actions"><button class="btn">Сохранить всё</button></div>
-</form>
+<script>
+(function () {
+  const navLinks = document.querySelectorAll('.settings-nav a');
+  const sections = document.querySelectorAll('.settings-section');
+
+  navLinks.forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      const target = document.getElementById(link.dataset.target);
+      if (target) {
+        window.scrollTo({ top: target.offsetTop - 80, behavior: 'smooth' });
+      }
+    });
+  });
+
+  window.addEventListener('scroll', () => {
+    const scrollY = window.scrollY + 120;
+    let active = null;
+    sections.forEach(s => { if (s.offsetTop <= scrollY) active = s.id; });
+    navLinks.forEach(l => l.classList.toggle('active', l.dataset.target === active));
+  });
+})();
+</script>

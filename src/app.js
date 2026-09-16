@@ -55,6 +55,13 @@ app.use(async (req, res, next) => {
     customHead: await getSetting('custom_head'),
     customBody: await getSetting('custom_body')
   };
+
+  // Карта маркетплейсов: { ozon: 'Ozon', wildberries: 'Wildberries' }
+  res.locals.marketplaces = {};
+  try {
+    const mpList = JSON.parse(await getSetting('marketplaces', '[]'));
+    for (const m of mpList) res.locals.marketplaces[m.slug] = m.name;
+  } catch (e) { }
   res.locals.meta = {
     title: res.locals.settings.siteName,
     description: '',

@@ -23,7 +23,6 @@
         <textarea name="message" rows="6" required></textarea>
       </label>
 
-      <!-- honeypot -->
       <input type="text" name="website" style="position:absolute;left:-9999px" tabindex="-1" autocomplete="off">
 
       <label class="checkbox-label" style="flex-direction:row!important;align-items:center;gap:8px">
@@ -35,3 +34,10 @@
     </form>
   </div>
 </div>
+
+<% if (mapHtml) { %>
+  <section class="contacts-map">
+    <h2>Как нас найти</h2>
+    <div class="map-embed"><%- mapHtml %></div>
+  </section>
+<% } %>

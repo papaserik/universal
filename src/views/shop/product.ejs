@@ -1,44 +1,52 @@
 <% const imgs = JSON.parse(p.images || '[]'); %>
+<%
+  let mpList = [];
+  try { mpList = JSON.parse(p.marketplaceLinks || '[]'); } catch (e) { mpList = []; }
+  if (!mpList.length && p.marketplace && p.marketplaceUrl) {
+    mpList = [{ slug: p.marketplace, url: p.marketplaceUrl }];
+  }
+%>
 <article class="product-page">
   <div class="product-layout">
-    <div class="product-gallery">
+    <div class="product-gallery" data-gallery='<%= JSON.stringify(imgs) %>'>
       <% if (imgs.length) { %>
-        <div class="main-image" id="main-image">
-          <img src="<%= imgs[0] %>" alt="<%= p.name %>">
+        <div class="gallery-main">
+          <img src="<%= imgs[0] %>" alt="<%= p.name %>" title="Нажмите для увеличения">
+          <% if (p.oldPrice && p.oldPrice > p.price) { %>
+            <span class="badge-discount badge-discount-lg">-<%= Math.round((1 - p.price / p.oldPrice) * 100) %>%</span>
+          <% } %>
+          <% if (imgs.length > 1) { %>
+            <button type="button" class="gallery-prev" aria-label="Назад">‹</button>
+            <button type="button" class="gallery-next" aria-label="Вперёд">›</button>
+            <span class="gallery-counter">1 / <%= imgs.length %></span>
+          <% } %>
         </div>
         <% if (imgs.length > 1) { %>
           <div class="thumbs">
             <% imgs.forEach((url, i) => { %>
-              <img src="<%= url %>" alt="<%= p.name %> <%= i + 1 %>"
-                   data-src="<%= url %>" class="<%= i === 0 ? 'active' : '' %>">
+              <img src="<%= url %>" class="<%= i === 0 ? 'active' : '' %>" alt="">
             <% }) %>
           </div>
         <% } %>
       <% } else { %>
-        <div class="main-image no-image">Нет фото</div>
+        <div class="gallery-main no-image">Нет фото</div>
       <% } %>
     </div>
 
     <div class="product-info">
       <h1><%= p.name %></h1>
-
       <div class="price-row price-row-lg">
         <% if (p.oldPrice && p.oldPrice > p.price) { %>
           <s class="old"><%= p.oldPrice %> ₽</s>
           <span class="new"><%= p.price %> ₽</span>
-          <span class="discount">-<%= Math.round((1 - p.price / p.oldPrice) * 100) %>%</span>
-        <% } else { %>
+          <% } else { %>
           <span class="price"><%= p.price %> ₽</span>
         <% } %>
       </div>
 
-      <div class="stock-info">
-        <% if (p.stock > 0) { %>
-          <span class="in-stock">✓ В наличии (<%= p.stock %> шт.)</span>
-        <% } else { %>
-          <span class="out-stock">Нет в наличии</span>
-        <% } %>
-      </div>
+      <% if (p.stock > 0) { %>
+        <div class="stock-info"><span class="in-stock">✓ В наличии (<%= p.stock %> шт.)</span></div>
+      <% } %>
 
       <% if (p.options && p.options.length) { %>
         <div class="product-options">
@@ -52,12 +60,27 @@
         </div>
       <% } %>
 
-      <form class="add-form add-form-lg" data-product="<%= p.id %>">
-        <input type="number" name="qty" value="1" min="1" class="qty" <%= p.stock === 0 ? 'disabled' : '' %>>
-        <button type="submit" class="btn" <%= p.stock === 0 ? 'disabled' : '' %>>
-          <%= p.stock === 0 ? 'Нет в наличии' : 'Добавить в корзину' %>
-        </button>
-      </form>
+      <% if (p.stock > 0) { %>
+        <form class="add-form add-form-lg" data-product="<%= p.id %>">
+          <div class="qty-wrap">
+            <button type="button" class="qty-dec" aria-label="Меньше">−</button>
+            <input type="number" name="qty" value="1" min="1" max="<%= p.stock %>">
+            <button type="button" class="qty-inc" aria-label="Больше">+</button>
+          </div>
+          <button type="submit" class="btn">Добавить в корзину</button>
+        </form>
+      <% } %>
+
+      <% mpList.forEach(mp => {
+           const mpName = marketplaces[mp.slug] || mp.slug;
+           const mpSlug = (mp.slug || '').toLowerCase();
+           const mpColor = mpSlug === 'ozon' ? 'mp-ozon' : mpSlug === 'wildberries' ? 'mp-wb' : 'mp-default';
+      %>
+        <a class="btn-card btn-card-lg <%= mpColor %>" style="margin-top:6px"
+           href="<%= mp.url %>" target="_blank" rel="noopener nofollow">
+          Купить на <%= mpName %>
+        </a>
+      <% }) %>
 
       <% if (p.description) { %>
         <div class="description">
@@ -72,17 +95,32 @@
     <section>
       <h2>Похожие товары</h2>
       <div class="products-grid">
-        <% related.forEach(r => { const rImgs = JSON.parse(r.images || '[]'); %>
+        <% related.forEach(r => {
+             const rImgs = JSON.parse(r.images || '[]');
+             %>
           <article class="product-card">
             <a href="/product/<%= r.slug %>" class="product-image">
-              <% if (rImgs.length) { %>
-                <img src="<%= rImgs[0] %>" alt="<%= r.name %>" loading="lazy">
-              <% } else { %>
-                <div class="no-image">Нет фото</div>
+              <% if (rImgs.length) { %><img src="<%= rImgs[0] %>" alt="<%= r.name %>" loading="lazy">
+              <% } else { %><div class="no-image">Нет фото</div><% } %>
+              <% if (r.oldPrice && r.oldPrice > r.price) { %>
+                <span class="badge-discount">-<%= Math.round((1 - r.price / r.oldPrice) * 100) %>%</span>
               <% } %>
             </a>
             <a href="/product/<%= r.slug %>"><h3><%= r.name %></h3></a>
             <span class="price"><%= r.price %> ₽</span>
+            <% if (r.stock === 0) {
+                 let rMps = [];
+                 try { rMps = JSON.parse(r.marketplaceLinks || '[]'); } catch (e) {}
+                 if (!rMps.length && r.marketplace && r.marketplaceUrl) rMps = [{ slug: r.marketplace, url: r.marketplaceUrl }];
+                 const firstMp = rMps[0];
+                 if (firstMp) {
+                   const rMpSlug = (firstMp.slug || '').toLowerCase();
+                   const rMpColor = rMpSlug === 'ozon' ? 'mp-ozon' : rMpSlug === 'wildberries' ? 'mp-wb' : 'mp-default';
+            %>
+              <a class="btn-card <%= rMpColor %>" href="<%= firstMp.url %>" target="_blank" rel="noopener nofollow">
+                Купить на <%= marketplaces[firstMp.slug] || firstMp.slug %>
+              </a>
+            <% } } %>
           </article>
         <% }) %>
       </div>
@@ -90,16 +128,7 @@
   <% } %>
 </article>
 
-<script>
-(function(){
-  const main = document.querySelector('#main-image img');
-  if (!main) return;
-  document.querySelectorAll('.thumbs img').forEach(t => {
-    t.addEventListener('click', () => {
-      main.src = t.dataset.src;
-      document.querySelectorAll('.thumbs img').forEach(x => x.classList.remove('active'));
-      t.classList.add('active');
-    });
-  });
-})();
-</script>
+<div class="image-modal" id="image-modal">
+  <button type="button" class="modal-close" aria-label="Закрыть">×</button>
+  <img src="" alt="">
+</div>
