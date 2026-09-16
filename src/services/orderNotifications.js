@@ -7,19 +7,41 @@ async function sendOrderCreatedEmail(order) {
   try {
     const vars = await buildVars(order);
     const rendered = await renderTemplate('order_created', vars);
-    if (!rendered) {
-      console.log('[order] Шаблон order_created не найден или отключён');
-      return;
+    if (rendered) {
+      const result = await mail.send({
+        to: order.email,
+        subject: rendered.subject,
+        html: rendered.html
+      });
+      if (result.ok) console.log('[order] Спасибо-письмо → ' + order.email);
+      else console.log('[order] Письмо не отправлено: ' + (result.reason || 'unknown'));
     }
-    const result = await mail.send({
-      to: order.email,
-      subject: rendered.subject,
-      html: rendered.html
-    });
-    if (result.ok) console.log('[order] Спасибо-письмо → ' + order.email);
-    else console.log('[order] Письмо не отправлено: ' + (result.reason || 'unknown'));
   } catch (e) {
     console.error('[order] Ошибка письма:', e.message);
+  }
+
+  // Письмо получателю подарка — если это подарок и есть email
+  if (order.isGift && order.recipientName) {
+    try {
+      const vars = await buildVars(order);
+      const rendered = await renderTemplate('gift_recipient', vars);
+      if (!rendered) {
+        console.log('[gift] Шаблон gift_recipient не найден');
+        return;
+      }
+      // У получателя может не быть email — тогда пробуем по email покупателя
+      // (за неимением отдельного email получателя). Позже можно добавить поле.
+      const targetEmail = order.recipientEmail || order.email;
+      const result = await mail.send({
+        to: targetEmail,
+        subject: rendered.subject,
+        html: rendered.html
+      });
+      if (result.ok) console.log('[gift] Письмо получателю → ' + targetEmail);
+      else console.log('[gift] Письмо не отправлено: ' + (result.reason || 'unknown'));
+    } catch (e) {
+      console.error('[gift] Ошибка письма получателю:', e.message);
+    }
   }
 }
 

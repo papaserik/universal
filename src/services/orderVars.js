@@ -54,7 +54,24 @@ async function buildVars(order) {
       payment_name: paymentName,
       delivery_name: deliveryName,
       date: order.createdAt ? order.createdAt.toLocaleString('ru-RU') : new Date().toLocaleString('ru-RU'),
-      comment: order.comment || ''
+      comment: order.comment || '',
+      // ─── Подарок ───
+      is_gift: order.isGift ? '1' : '',
+      recipient_name: order.recipientName || '',
+      recipient_phone: order.recipientPhone || '',
+      recipient_address: order.recipientAddress || '',
+      gift_message: order.giftMessage || '',
+      buyer_name: order.name,
+      buyer_email: order.email,
+      gift_message_block: order.giftMessage
+        ? '<div style="margin:24px 0;padding:20px;background:#fffbeb;border-left:4px solid #d97706;border-radius:8px">' +
+          '<p style="margin:0 0 8px;font-size:13px;color:#92400e;text-transform:uppercase;letter-spacing:.5px">Поздравление</p>' +
+          '<p style="margin:0;font-size:15px;line-height:1.6;color:#78350f;font-style:italic">«' + order.giftMessage.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '»</p>' +
+          '</div>'
+        : '',
+      items_list: (order.items || []).map(function (i) {
+        return '<li>' + (i.name || '') + ' — ' + i.qty + ' шт.</li>';
+      }).join('')
     }
   };
 }

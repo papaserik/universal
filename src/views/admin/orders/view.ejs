@@ -45,6 +45,38 @@
       </form>
     </section>
 
+    <% if (order.isGift) { %>
+    <section class="order-block order-gift-block">
+      <header class="order-block-head">
+        <h2>🎁 Заказ-подарок</h2>
+        <small>Получатель</small>
+      </header>
+      <div class="order-gift-info">
+        <div class="order-meta-row">
+          <span>Имя получателя</span>
+          <strong><%= order.recipientName || '—' %></strong>
+        </div>
+        <div class="order-meta-row">
+          <span>Телефон получателя</span>
+          <strong><%= order.recipientPhone || '—' %></strong>
+        </div>
+        <div class="order-meta-row">
+          <span>Адрес доставки</span>
+          <strong><%= order.recipientAddress || '—' %></strong>
+        </div>
+        <% if (order.giftMessage) { %>
+          <div class="order-gift-message">
+            <span class="order-gift-message-label">Поздравление</span>
+            <p>«<%= order.giftMessage %>»</p>
+          </div>
+        <% } %>
+      </div>
+      <p class="order-gift-hint">
+        Доставка идёт по адресу получателя. Письма: чек — покупателю (<%= order.email %>), поздравление — получателю.
+      </p>
+    </section>
+    <% } %>
+
     <!-- Состав заказа -->
     <section class="order-block">
       <header class="order-block-head">

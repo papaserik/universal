@@ -54,6 +54,47 @@
       })();
       </script>
 
+      <section class="checkout-block checkout-gift-block">
+        <label class="checkout-gift-toggle">
+          <span class="checkout-gift-icon">🎁</span>
+          <span class="checkout-gift-toggle-body">
+            <span class="checkout-gift-toggle-title">Оформить как подарок</span>
+            <span class="checkout-gift-toggle-desc">Отправим заказ другому человеку — с открыткой от вас</span>
+          </span>
+          <span class="checkout-gift-switch">
+            <input type="checkbox" id="is-gift" name="isGift">
+            <span class="checkout-gift-switch-track"></span>
+          </span>
+        </label>
+
+        <div class="checkout-gift-fields" id="gift-fields" hidden>
+          <div class="checkout-gift-grid">
+            <label>
+              <span>Имя получателя <em>*</em></span>
+              <input type="text" name="recipientName" placeholder="Марии Ивановой">
+            </label>
+            <label>
+              <span>Телефон получателя</span>
+              <input type="tel" name="recipientPhone" placeholder="+7 (900) 000-00-00">
+            </label>
+          </div>
+
+          <label class="checkout-gift-full">
+            <span>Адрес доставки подарка <em>*</em></span>
+            <input type="text" name="recipientAddress" placeholder="Город, улица, дом, квартира">
+          </label>
+
+          <label class="checkout-gift-full">
+            <span>Поздравление <em class="muted">(необязательно)</em></span>
+            <textarea name="giftMessage" rows="3" maxlength="500" placeholder="С днём рождения! Желаю…"></textarea>
+          </label>
+
+          <p class="checkout-gift-hint">
+            💡 Письмо с чеком придёт вам. Получатель увидит вложенное поздравление — без цены.
+          </p>
+        </div>
+      </section>
+
       <section class="checkout-block">
         <h2>2. Способ доставки</h2>
         <% if (!deliveries.length) { %>
@@ -239,5 +280,37 @@
       updateTotals();
     });
   }
+})();
+</script>
+
+
+<script>
+(function () {
+  var chk = document.getElementById('is-gift');
+  var wrap = document.getElementById('gift-fields');
+  if (!chk || !wrap) return;
+
+  function sync() {
+    wrap.hidden = !chk.checked;
+    // При включённом подарке скрываем поле «Адрес доставки» в контактах — он становится необязательным
+    var addr = document.getElementById('field-address');
+    if (addr) {
+      addr.closest('label').style.opacity = chk.checked ? '0.4' : '1';
+      var note = addr.closest('label').querySelector('.checkout-address-note');
+      if (chk.checked && !note) {
+        var p = document.createElement('small');
+        p.className = 'checkout-address-note';
+        p.style.color = '#6b7280';
+        p.style.fontSize = '12px';
+        p.textContent = 'Игнорируется — используется адрес получателя ниже';
+        addr.closest('label').appendChild(p);
+      } else if (!chk.checked && note) {
+        note.remove();
+      }
+    }
+  }
+
+  chk.addEventListener('change', sync);
+  sync();
 })();
 </script>

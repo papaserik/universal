@@ -17,7 +17,7 @@
   <tbody>
     <% orders.forEach(o => { %>
       <tr>
-        <td><%= o.number %></td>
+        <td><%= o.number %><% if (o.isGift) { %> <span class="gift-badge" title="Заказ в подарок">🎁</span><% } %></td>
         <td><%= o.createdAt.toLocaleString('ru-RU') %></td>
         <td><%= o.name %><br><small><%= o.email %></small></td>
         <td><%= o.items.length %></td>

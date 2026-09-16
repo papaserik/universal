@@ -72,6 +72,8 @@ var STATUS_CANCELLED_BODY = wrapper(
   '<p>Если это произошло по ошибке или вы хотите оформить новый заказ — свяжитесь с нами: {{site_email}}.</p>'
 );
 
+var giftPreset = require('./gift');
+
 module.exports = {
   templates: [
     {
@@ -81,7 +83,7 @@ module.exports = {
       subject: 'Спасибо за заказ {{order.number}} — {{site_name}}',
       body: ORDER_CREATED_BODY
     }
-  ],
+  ].concat(giftPreset.templates),
   statuses: [
     {
       code: 'NEW', name: 'Новый', color: '#3b82f6', icon: '🆕', sort: 10,

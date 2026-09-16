@@ -1,4 +1,5 @@
 const router = require('express').Router();
+const backupAdmin = require('../controllers/admin/backup');
 const { requireAuth } = require('../middleware/auth');
 const roles = require('../middleware/roles');
 const { imageUpload, importUpload } = require('../services/upload');
@@ -222,5 +223,10 @@ router.get('/reviews', reviews.list);
 router.post('/reviews/:id/approve', reviewsCtrl.approve);
 router.post('/reviews/:id/reject', reviewsCtrl.reject);
 router.post('/reviews/:id/delete', reviewsCtrl.remove);
+
+router.get('/backup', backupAdmin.index);
+router.get('/backup/download', backupAdmin.download);
+router.get('/backup/import', backupAdmin.importView);
+router.post('/backup/import', require('../services/upload').importUpload.single('file'), backupAdmin.importRun);
 
 module.exports = router;

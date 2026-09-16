@@ -118,6 +118,16 @@ exports.submit = async (req, res) => {
   const total = Math.max(0, subtotal + dResult.cost - pointsDiscount);
   const number = 'ORD-' + Date.now().toString(36).toUpperCase();
 
+  // ─── Подарок ───
+  const isGift = req.body.isGift === 'on' || req.body.isGift === 'true' || req.body.isGift === '1';
+  const recipientName    = isGift ? (req.body.recipientName || '').trim() : '';
+  const recipientPhone   = isGift ? (req.body.recipientPhone || '').trim() : '';
+  const recipientAddress = isGift ? (req.body.recipientAddress || '').trim() : '';
+  const giftMessage      = isGift ? (req.body.giftMessage || '').trim() : '';
+
+  // Адрес заказа: если подарок — берём адрес получателя
+  const shippingAddress = isGift ? recipientAddress : (req.body.address || '');
+
   const order = await prisma.order.create({
     data: {
       number,
@@ -125,7 +135,7 @@ exports.submit = async (req, res) => {
       email: req.body.email,
       phone: req.body.phone,
       name: req.body.name,
-      address: req.body.address || '',
+      address: shippingAddress,
       comment: req.body.comment || '',
       payment: paymentMethod ? paymentMethod.code : 'manual',
       delivery: deliveryMethod ? deliveryMethod.code : 'manager',
@@ -135,6 +145,11 @@ exports.submit = async (req, res) => {
       pointsDiscount,
       total,
       ip: req.ip,
+      isGift,
+      recipientName:    recipientName    || null,
+      recipientPhone:   recipientPhone   || null,
+      recipientAddress: recipientAddress || null,
+      giftMessage:      giftMessage      || null,
       items: { create: items.map(i => ({ productId: i.productId, name: i.name, price: i.price, qty: i.qty })) }
     },
     include: { items: true }

@@ -119,6 +119,11 @@ model Order {
   pointsUsed  Int         @default(0)
   pointsEarned Int        @default(0)
   pointsDiscount Float    @default(0)
+  isGift          Boolean  @default(false)
+  recipientName   String?
+  recipientPhone  String?
+  recipientAddress String?
+  giftMessage     String?
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
 

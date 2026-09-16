@@ -1840,3 +1840,255 @@ main.container{padding:24px 16px;min-height:60vh}
 @media (max-width: 700px) {
   .review-form-row { grid-template-columns: 1fr; }
 }
+
+/* Блок «Заказ в подарок» */
+.checkout-gift-block {
+  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+  border: 1px solid #fcd34d;
+}
+.checkout-gift-toggle {
+  display: flex !important;
+  align-items: center;
+  gap: 14px;
+  cursor: pointer;
+  padding: 6px 0;
+  flex-direction: row !important;
+}
+.checkout-gift-toggle input[type="checkbox"] {
+  width: 22px;
+  height: 22px;
+  accent-color: #d97706;
+  margin: 0;
+  flex-shrink: 0;
+}
+.checkout-gift-toggle-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.checkout-gift-toggle-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #78350f;
+}
+.checkout-gift-toggle-desc {
+  font-size: 13px;
+  color: #92400e;
+  line-height: 1.4;
+}
+.checkout-gift-fields {
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px dashed #fcd34d;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.checkout-gift-fields label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  color: #78350f;
+  font-weight: 500;
+}
+.checkout-gift-fields input,
+.checkout-gift-fields textarea {
+  padding: 11px 14px;
+  border: 1px solid #fcd34d;
+  border-radius: 8px;
+  font: inherit;
+  font-size: 15px;
+  background: #fff;
+  color: #111;
+  transition: border-color .15s, box-shadow .15s;
+}
+.checkout-gift-fields input:focus,
+.checkout-gift-fields textarea:focus {
+  outline: 0;
+  border-color: #d97706;
+  box-shadow: 0 0 0 3px rgba(217,119,6,.12);
+}
+.checkout-gift-fields textarea { resize: vertical; min-height: 70px; }
+.checkout-fields-full { grid-column: 1 / -1; }
+.checkout-gift-hint {
+  margin: 0;
+  font-size: 12.5px;
+  color: #92400e;
+  line-height: 1.5;
+  padding: 10px 14px;
+  background: rgba(255,255,255,.6);
+  border-radius: 8px;
+}
+
+/* ============ Блок «Подарок» — аккуратный ============ */
+.checkout-gift-block {
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  padding: 20px 24px;
+}
+
+/* Верхняя плашка с переключателем */
+.checkout-gift-toggle {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 16px !important;
+  cursor: pointer;
+  padding: 0 !important;
+  margin: 0 !important;
+  font-weight: 400 !important;
+}
+
+.checkout-gift-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #fef3c7, #fde68a);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  flex: 0 0 auto;
+  border: 1px solid #fcd34d;
+}
+
+.checkout-gift-toggle-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+.checkout-gift-toggle-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #78350f;
+  line-height: 1.3;
+}
+.checkout-gift-toggle-desc {
+  font-size: 13px;
+  color: #a16207;
+  line-height: 1.4;
+}
+
+/* Переключатель справа */
+.checkout-gift-switch {
+  position: relative;
+  width: 44px;
+  height: 26px;
+  flex: 0 0 auto;
+}
+.checkout-gift-switch input[type="checkbox"] {
+  position: absolute !important;
+  opacity: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  cursor: pointer;
+  z-index: 2;
+}
+.checkout-gift-switch-track {
+  position: absolute;
+  inset: 0;
+  background: #e5e7eb;
+  border-radius: 13px;
+  transition: background .2s;
+  pointer-events: none;
+}
+.checkout-gift-switch-track::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0,0,0,.15);
+  transition: transform .2s;
+}
+.checkout-gift-switch input:checked + .checkout-gift-switch-track {
+  background: #d97706;
+}
+.checkout-gift-switch input:checked + .checkout-gift-switch-track::after {
+  transform: translateX(18px);
+}
+
+/* Поля подарка */
+.checkout-gift-fields {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px dashed #fcd34d;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.checkout-gift-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.checkout-gift-fields label {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+  font-size: 13px !important;
+  color: #78350f !important;
+  font-weight: 500 !important;
+}
+.checkout-gift-fields label > span {
+  display: block;
+}
+.checkout-gift-fields label em {
+  color: #dc2626;
+  font-style: normal;
+  font-weight: 600;
+}
+.checkout-gift-fields label em.muted {
+  color: #a16207;
+  font-weight: 400;
+}
+.checkout-gift-fields input[type="text"],
+.checkout-gift-fields input[type="tel"],
+.checkout-gift-fields textarea {
+  padding: 11px 14px;
+  border: 1px solid #fcd34d;
+  border-radius: 8px;
+  font: inherit;
+  font-size: 14.5px;
+  background: #fff;
+  color: #111;
+  width: 100%;
+  box-sizing: border-box;
+  transition: border-color .15s, box-shadow .15s;
+}
+.checkout-gift-fields input:focus,
+.checkout-gift-fields textarea:focus {
+  outline: 0;
+  border-color: #d97706;
+  box-shadow: 0 0 0 3px rgba(217,119,6,.12);
+}
+.checkout-gift-fields textarea {
+  resize: vertical;
+  min-height: 70px;
+  font-family: inherit;
+}
+.checkout-gift-full {
+  grid-column: 1 / -1;
+}
+.checkout-gift-hint {
+  margin: 0;
+  font-size: 12.5px;
+  color: #92400e;
+  line-height: 1.5;
+  padding: 10px 14px;
+  background: rgba(255,255,255,.6);
+  border-radius: 8px;
+  border: 1px solid rgba(252,211,77,.5);
+}
+
+@media (max-width: 700px) {
+  .checkout-gift-grid { grid-template-columns: 1fr; }
+  .checkout-gift-icon { width: 38px; height: 38px; font-size: 18px; }
+}
