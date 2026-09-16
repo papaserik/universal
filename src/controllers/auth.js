@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt');
 const { prisma } = require('../config/db');
+const loyalty = require('../services/loyalty');
 const authCode = require('../services/authCode');
 const { getSetting } = require('../services/settings');
 
@@ -21,7 +22,7 @@ exports.login = async (req, res) => {
   }
   const ok = await bcrypt.compare(password, user.password);
   if (!ok) return res.render('auth/login', { error: 'Неверные данные', step: 'password' });
-  req.session.user = { id: user.id, email: user.email, name: user.name, role: user.role };
+  req.session.user = { id: user.id, email: user.email, name: user.name, role: user.role, avatar: user.avatar || null };
   res.redirect(user.role === 'USER' ? '/' : '/admin');
 };
 
@@ -32,7 +33,16 @@ exports.register = async (req, res) => {
   if (exists) return res.render('auth/register', { error: 'Email уже занят' });
   const hash = await bcrypt.hash(password, 10);
   const user = await prisma.user.create({ data: { email, password: hash, name, role: 'USER' } });
-  req.session.user = { id: user.id, email: user.email, name: user.name, role: user.role };
+
+  // Приветственные баллы
+  try {
+    const ls = await loyalty.settings();
+    if (ls.enabled && ls.forSignup > 0) {
+      await loyalty.addPoints(user.id, ls.forSignup, 'signup', 'Бонус за регистрацию');
+    }
+  } catch (e) { console.error('signup points:', e); }
+
+  req.session.user = { id: user.id, email: user.email, name: user.name, role: user.role, avatar: user.avatar || null };
   res.redirect('/');
 };
 
@@ -69,6 +79,6 @@ exports.codeVerify = async (req, res) => {
 
   delete req.session.pendingEmail;
   const user = result.user;
-  req.session.user = { id: user.id, email: user.email, name: user.name, role: user.role };
+  req.session.user = { id: user.id, email: user.email, name: user.name, role: user.role, avatar: user.avatar || null };
   res.redirect(user.role === 'USER' ? '/' : '/admin');
 };

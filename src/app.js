@@ -43,7 +43,17 @@ app.use(async (req, res, next) => {
 app.use(async (req, res, next) => {
   res.locals.req = req;
   res.locals.user = req.session.user || null;
+  res.locals.userAvatar = req.session.avatar || null;
   res.locals.cartCount = (req.session.cart || []).reduce((s, i) => s + i.qty, 0);
+
+  // Баллы и уровень пользователя
+  res.locals.userLoyalty = null;
+  if (req.session.user) {
+    try {
+      const loyalty = require('./services/loyalty');
+      res.locals.userLoyalty = await loyalty.currentLevel(req.session.user.id);
+    } catch (e) { /* ignore */ }
+  }
   res.locals.cookieAccepted = req.cookies && req.cookies.cookie_ok === '1';
   res.locals.settings = {
     siteName:   await getSetting('site_name', 'My Shop'),

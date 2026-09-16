@@ -42,6 +42,18 @@ router.get('/subscribe', require('../controllers/subscribe').form);
 router.post('/subscribe', require('../controllers/subscribe').submit);
 router.get('/unsubscribe', require('../controllers/subscribe').unsubscribe);
 
+const account = require('../controllers/account');
+const { imageUpload } = require('../services/upload');
+
+router.get('/account', account.requireAuth, account.dashboard);
+router.get('/account/orders', account.requireAuth, account.orders);
+router.get('/account/orders/:number', account.requireAuth, account.order);
+router.get('/account/loyalty', account.requireAuth, account.loyalty);
+router.get('/account/profile', account.requireAuth, account.profile);
+router.post('/account/profile', account.requireAuth, account.saveProfile);
+router.post('/account/avatar', account.requireAuth, imageUpload.single('avatar'), account.uploadAvatar);
+router.post('/account/avatar/remove', account.requireAuth, account.removeAvatar);
+
 router.get('/sitemap.xml', shopCtrl.sitemap);
 router.get('/robots.txt', shopCtrl.robots);
 

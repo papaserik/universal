@@ -1,0 +1,150 @@
+<div class="cabinet">
+  <div class="cabinet-header">
+    <div>
+      <h1>Личный кабинет</h1>
+      <div class="cabinet-welcome">
+        <% if (profile.avatar) { %>
+          <img src="<%= profile.avatar %>" alt="" class="cabinet-avatar">
+        <% } else { %>
+          <span class="cabinet-avatar cabinet-avatar-initial"><%= (user.name || user.email).charAt(0).toUpperCase() %></span>
+        <% } %>
+        <p class="cabinet-subtitle">Добро пожаловать, <strong><%= user.name || user.email %></strong></p>
+      </div>
+    </div>
+  </div>
+
+  <% if (loyaltyInfo && loyaltyInfo.current) { %>
+    <div class="cabinet-level-card" style="--level-color: <%= loyaltyInfo.current.color %>">
+      <div class="cabinet-level-left">
+        <div class="cabinet-level-icon"><%= loyaltyInfo.current.icon || '⭐' %></div>
+        <div>
+          <div class="cabinet-level-name"><%= loyaltyInfo.current.name %> уровень</div>
+          <div class="cabinet-level-desc">
+            Скидка <%= loyaltyInfo.current.discountPercent %>% · Кэшбэк <%= loyaltyInfo.current.cashbackPercent %>%
+          </div>
+        </div>
+      </div>
+      <div class="cabinet-level-right">
+        <div class="cabinet-level-points">
+          <strong><%= loyaltyInfo.balance %></strong>
+          <span>баллов</span>
+        </div>
+      </div>
+    </div>
+
+    <% if (loyaltyInfo.next) { %>
+      <div class="cabinet-progress">
+        <div class="cabinet-progress-info">
+          <span>До уровня <strong><%= loyaltyInfo.next.name %></strong> осталось:</span>
+          <strong><%= loyaltyInfo.next.minPoints - loyaltyInfo.balance %> баллов</strong>
+        </div>
+        <div class="cabinet-progress-bar">
+          <div class="cabinet-progress-fill" style="width:<%= Math.min(100, Math.round(loyaltyInfo.balance / loyaltyInfo.next.minPoints * 100)) %>%"></div>
+        </div>
+      </div>
+    <% } else { %>
+      <div class="cabinet-progress cabinet-progress-max">
+        🎉 Вы достигли максимального уровня!
+      </div>
+    <% } %>
+  <% } %>
+
+  <div class="cabinet-stats">
+    <div class="cabinet-stat">
+      <div class="cabinet-stat-num"><%= totalOrders %></div>
+      <div class="cabinet-stat-label">заказов</div>
+    </div>
+    <div class="cabinet-stat">
+      <div class="cabinet-stat-num"><%= Math.round(totalSpent).toLocaleString('ru-RU') %> ₽</div>
+      <div class="cabinet-stat-label">потрачено</div>
+    </div>
+    <div class="cabinet-stat">
+      <div class="cabinet-stat-num"><%= loyaltyInfo ? loyaltyInfo.balance : 0 %></div>
+      <div class="cabinet-stat-label">баллов</div>
+    </div>
+  </div>
+
+  <div class="cabinet-tabs">
+    <a href="/account" class="cabinet-tab active">Обзор</a>
+    <a href="/account/orders" class="cabinet-tab">Мои заказы</a>
+    <a href="/account/loyalty" class="cabinet-tab">Баллы</a>
+    <a href="/account/profile" class="cabinet-tab">Профиль и адрес</a>
+  </div>
+
+  <div class="cabinet-grid">
+    <section class="cabinet-block">
+      <header class="cabinet-block-head">
+        <h2>Последние заказы</h2>
+        <a href="/account/orders" class="cabinet-link">Все заказы →</a>
+      </header>
+      <% if (!orders.length) { %>
+        <p class="cabinet-empty">Пока нет заказов. <a href="/catalog">Перейти в каталог</a></p>
+      <% } else { %>
+        <ul class="cabinet-orders">
+          <% orders.forEach(o => {
+               const st = statusMap[o.status] || { name: o.status, color: '#6b7280', icon: '' };
+          %>
+            <li class="cabinet-order">
+              <a href="/account/orders/<%= o.number %>" class="cabinet-order-link">
+                <div>
+                  <div class="cabinet-order-number"><%= o.number %></div>
+                  <div class="cabinet-order-date"><%= o.createdAt.toLocaleDateString('ru-RU') %></div>
+                </div>
+                <span class="status-pill" style="background:<%= st.color %>1a;color:<%= st.color %>">
+                  <%= st.icon || '' %> <%= st.name %>
+                </span>
+                <div class="cabinet-order-total"><%= o.total.toLocaleString('ru-RU') %> ₽</div>
+              </a>
+            </li>
+          <% }) %>
+        </ul>
+      <% } %>
+    </section>
+
+    <section class="cabinet-block">
+      <header class="cabinet-block-head">
+        <h2>Новости и статьи</h2>
+        <a href="/blog" class="cabinet-link">Все статьи →</a>
+      </header>
+      <% if (!blogPosts.length) { %>
+        <p class="cabinet-empty">Пока нет статей.</p>
+      <% } else { %>
+        <ul class="cabinet-news">
+          <% blogPosts.forEach(p => { %>
+            <li>
+              <a href="/blog/<%= p.slug %>" class="cabinet-news-link">
+                <div class="cabinet-news-title"><%= p.title %></div>
+                <% if (p.excerpt) { %><div class="cabinet-news-excerpt"><%= p.excerpt.slice(0, 100) %></div><% } %>
+                <div class="cabinet-news-meta">
+                  <%= p.createdAt.toLocaleDateString('ru-RU') %>
+                  <% if (p.blogCategory) { %> · <%= p.blogCategory.name %><% } %>
+                </div>
+              </a>
+            </li>
+          <% }) %>
+        </ul>
+      <% } %>
+    </section>
+  </div>
+
+  <% if (savedAddress && (savedAddress.address || savedAddress.city)) { %>
+    <section class="cabinet-block cabinet-address">
+      <header class="cabinet-block-head">
+        <h2>Сохранённый адрес доставки</h2>
+        <a href="/account/profile" class="cabinet-link">Изменить →</a>
+      </header>
+      <p>
+        <% if (profile.savedName) { %><strong><%= profile.savedName %></strong><br><% } %>
+        <% if (savedAddress.postalCode) { %><%= savedAddress.postalCode %>, <% } %>
+        <%= savedAddress.city %><% if (savedAddress.city && savedAddress.address) { %>, <% } %><%= savedAddress.address %>
+        <% if (profile.savedPhone) { %><br>Тел: <%= profile.savedPhone %><% } %>
+      </p>
+      <p class="cabinet-hint">Этот адрес будет автоматически подставлен при оформлении заказа</p>
+    </section>
+  <% } else { %>
+    <section class="cabinet-block cabinet-address-empty">
+      <p>📍 Сохраните адрес доставки — заказы будут оформляться в 2 клика</p>
+      <a href="/account/profile" class="btn btn-sm">Заполнить адрес</a>
+    </section>
+  <% } %>
+</div>

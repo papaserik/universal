@@ -2,9 +2,9 @@ const { prisma } = require('../config/db');
 const cart = require('../services/cart');
 const delivery = require('../services/delivery');
 const payment = require('../services/payment');
+const loyalty = require('../services/loyalty');
 
 async function enrichItems(items) {
-  // Подтягиваем актуальный вес из БД для каждого товара
   const ids = items.map(i => i.productId);
   const products = await prisma.product.findMany({
     where: { id: { in: ids } },
@@ -18,6 +18,23 @@ function cartWeight(items) {
   return items.reduce((s, i) => s + (i.weight || 0.5) * i.qty, 0);
 }
 
+// Рассчитывает баланс баллов для текущего пользователя
+async function getLoyaltyInfo(req) {
+  const user = req.session.user;
+  if (!user) return { enabled: false, balance: 0, current: null, next: null, maxPay: 0, pointValue: 1 };
+  const s = await loyalty.settings();
+  if (!s.enabled) return { enabled: false, balance: 0, current: null, next: null, maxPay: 0, pointValue: 1 };
+  const info = await loyalty.currentLevel(user.id);
+  return {
+    enabled: true,
+    balance: info.balance,
+    current: info.current,
+    next: info.next,
+    pointValue: s.pointValue,
+    maxPayPercent: s.maxPayPercent
+  };
+}
+
 exports.form = async (req, res) => {
   const raw = cart.getCart(req);
   if (!raw.length) return res.redirect('/cart');
@@ -26,26 +43,29 @@ exports.form = async (req, res) => {
   const subtotal = cart.cartTotal(items);
   const weight = cartWeight(items);
 
-  const [deliveries, payments] = await Promise.all([
+  const [deliveries, payments, loyaltyInfo] = await Promise.all([
     delivery.listActive(),
-    payment.listActive()
+    payment.listActive(),
+    getLoyaltyInfo(req)
   ]);
 
-  // Первый активный способ доставки — по умолчанию
   const selected = deliveries[0] || null;
   const dResult = delivery.calc(selected, subtotal, weight);
 
+  // Максимум, сколько можно списать баллами
+  const maxPointsByPercent = Math.floor((subtotal * loyaltyInfo.maxPayPercent / 100) / (loyaltyInfo.pointValue || 1));
+  const maxPointsUsable = Math.min(loyaltyInfo.balance, maxPointsByPercent);
+
   res.render('shop/checkout', {
-    items,
-    subtotal,
-    weight,
-    deliveries,
-    payments,
+    items, subtotal, weight,
+    deliveries, payments,
     selectedDelivery: selected ? selected.code : null,
     selectedPayment: payments[0] ? payments[0].code : null,
     deliveryFee: dResult.cost,
     deliveryNote: dResult.note,
-    total: subtotal + dResult.cost
+    total: subtotal + dResult.cost,
+    loyalty: loyaltyInfo,
+    maxPointsUsable
   });
 };
 
@@ -65,26 +85,31 @@ exports.submit = async (req, res) => {
     paymentCode ? prisma.paymentMethod.findUnique({ where: { code: paymentCode } }) : null
   ]);
 
-  // Обновим корзину в БД — сохраним контакты и последний статус
-  try {
-    await prisma.cart.updateMany({
-      where: { sessionId: req.sessionID, status: 'active' },
-      data: {
-        email: req.body.email || null,
-        name: req.body.name || null,
-        phone: req.body.phone || null
-      }
-    });
-  } catch (e) { /* ignore */ }
-
   const dResult = delivery.calc(deliveryMethod, subtotal, weight);
-  const total = subtotal + dResult.cost;
+
+  // ─── Баллы ───
+  let pointsUsed = 0;
+  let pointsDiscount = 0;
+  const user = req.session.user;
+  let loyaltyInfo = { enabled: false };
+  if (user) loyaltyInfo = await getLoyaltyInfo(req);
+
+  const requestedPoints = Math.max(0, Math.floor(Number(req.body.usePoints) || 0));
+  if (loyaltyInfo.enabled && requestedPoints > 0 && loyaltyInfo.balance > 0) {
+    const pointValue = loyaltyInfo.pointValue || 1;
+    const maxByPercent = Math.floor((subtotal * loyaltyInfo.maxPayPercent / 100) / pointValue);
+    const usable = Math.min(requestedPoints, loyaltyInfo.balance, maxByPercent);
+    pointsUsed = usable;
+    pointsDiscount = usable * pointValue;
+  }
+
+  const total = Math.max(0, subtotal + dResult.cost - pointsDiscount);
   const number = 'ORD-' + Date.now().toString(36).toUpperCase();
 
   const order = await prisma.order.create({
     data: {
       number,
-      userId: req.session.user ? req.session.user.id : null,
+      userId: user ? user.id : null,
       email: req.body.email,
       phone: req.body.phone,
       name: req.body.name,
@@ -92,12 +117,40 @@ exports.submit = async (req, res) => {
       comment: req.body.comment || '',
       payment: paymentMethod ? paymentMethod.code : 'manual',
       delivery: deliveryMethod ? deliveryMethod.code : 'manager',
-      subtotal, deliveryFee: dResult.cost, total, ip: req.ip,
+      subtotal,
+      deliveryFee: dResult.cost,
+      pointsUsed,
+      pointsDiscount,
+      total,
+      ip: req.ip,
       items: { create: items.map(i => ({ productId: i.productId, name: i.name, price: i.price, qty: i.qty })) }
     },
     include: { items: true }
   });
 
+  // Списание баллов
+  if (pointsUsed > 0 && user) {
+    await loyalty.spendPoints(user.id, pointsUsed, 'Оплата заказа ' + number, order.id);
+  }
+
+  // Начисление кэшбэка (по сумме после скидки доставки, без учёта баллов)
+  if (user) {
+    try { await loyalty.awardForOrder(order, user.id); } catch (e) { console.error('loyalty award:', e); }
+  }
+
+  // Уведомления
+  try {
+    const mailer = require('../services/orderMailer');
+    await mailer.notifyAdmin(order);
+    if (mailer.notifyChannels) await mailer.notifyChannels(order);
+  } catch (e) { console.error('mail error', e); }
+
+  try {
+    const orderNotifications = require('../services/orderNotifications');
+    await orderNotifications.sendOrderCreatedEmail(order);
+  } catch (e) { console.error('order email error', e); }
+
+  // Помечаем корзину как оформленную
   await cart.markConverted(req);
 
   const pay = await payment.createPayment(order, paymentMethod);
@@ -111,7 +164,6 @@ exports.success = async (req, res) => {
     include: { items: true }
   });
 
-  // Рекомендации: случайные товары, которых нет в заказе
   let recommendations = [];
   try {
     const orderedIds = order ? order.items.map(i => i.productId).filter(Boolean) : [];
@@ -121,16 +173,20 @@ exports.success = async (req, res) => {
         stock: { gt: 0 },
         id: orderedIds.length ? { notIn: orderedIds } : undefined
       },
-      include: { category: true },
       take: 4,
       orderBy: { createdAt: 'desc' }
     });
-  } catch (e) { /* ignore */ }
+  } catch (e) { }
 
-  // Промокод — из настроек (если есть)
   const { getSetting } = require('../services/settings');
   const couponCode = await getSetting('coupon_welcome', '');
   const couponPercent = await getSetting('coupon_welcome_percent', '');
 
-  res.render('shop/success', { order, recommendations, couponCode, couponPercent });
+  // Информация о лояльности для этой страницы
+  let loyaltyAfter = null;
+  if (order && req.session.user) {
+    loyaltyAfter = await loyalty.currentLevel(req.session.user.id);
+  }
+
+  res.render('shop/success', { order, recommendations, couponCode, couponPercent, loyaltyAfter });
 };

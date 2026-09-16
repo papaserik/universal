@@ -1,6 +1,7 @@
 const { prisma } = require('../config/db');
 const mail = require('../services/mail');
 const { getSetting } = require('../services/settings');
+const loyalty = require('../services/loyalty');
 
 // ─── Подписка ───
 exports.form = async (req, res) => {
@@ -39,6 +40,23 @@ exports.submit = async (req, res) => {
         source: 'site'
       }
     });
+
+    // Баллы за подписку — если пользователь авторизован и email совпадает
+    try {
+      const user = await prisma.user.findUnique({ where: { email } });
+      if (user) {
+        const ls = await loyalty.settings();
+        if (ls.enabled && ls.forSubscribe > 0) {
+          // Не начислять повторно
+          const already = await prisma.loyaltyTransaction.findFirst({
+            where: { userId: user.id, type: 'subscribe' }
+          });
+          if (!already) {
+            await loyalty.addPoints(user.id, ls.forSubscribe, 'subscribe', 'Бонус за подписку на новости');
+          }
+        }
+      }
+    } catch (e) { console.error('subscribe points:', e); }
 
     // Приветственное письмо
     const siteName = await getSetting('site_name', 'Магазин');

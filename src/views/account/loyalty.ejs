@@ -1,0 +1,84 @@
+<div class="cabinet">
+  <h1>Мои баллы</h1>
+
+  <div class="cabinet-tabs">
+    <a href="/account" class="cabinet-tab">Обзор</a>
+    <a href="/account/orders" class="cabinet-tab">Заказы</a>
+    <a href="/account/loyalty" class="cabinet-tab active">Баллы</a>
+    <a href="/account/profile" class="cabinet-tab">Профиль</a>
+  </div>
+
+  <% if (info && info.current) { %>
+    <div class="cabinet-level-card" style="--level-color: <%= info.current.color %>">
+      <div class="cabinet-level-left">
+        <div class="cabinet-level-icon"><%= info.current.icon || '⭐' %></div>
+        <div>
+          <div class="cabinet-level-name"><%= info.current.name %></div>
+          <div class="cabinet-level-desc">
+            Скидка <%= info.current.discountPercent %>% · Кэшбэк <%= info.current.cashbackPercent %>%
+          </div>
+        </div>
+      </div>
+      <div class="cabinet-level-points">
+        <strong><%= info.balance %></strong>
+        <span>баллов</span>
+      </div>
+    </div>
+
+    <% if (info.next) { %>
+      <div class="cabinet-progress">
+        <div class="cabinet-progress-info">
+          <span>До уровня <strong><%= info.next.name %></strong> осталось <strong><%= info.next.minPoints - info.balance %> баллов</strong></span>
+          <span><%= info.balance %> / <%= info.next.minPoints %></span>
+        </div>
+        <div class="cabinet-progress-bar">
+          <div class="cabinet-progress-fill" style="width:<%= Math.min(100, Math.round(info.balance / info.next.minPoints * 100)) %>%"></div>
+        </div>
+      </div>
+    <% } %>
+  <% } %>
+
+  <div class="cabinet-block" style="margin-top:20px">
+    <h2>Все уровни</h2>
+    <div class="levels-list">
+      <% (info.levels || []).slice().sort((a,b) => a.minPoints - b.minPoints).forEach(l => {
+           const reached = info.balance >= l.minPoints;
+      %>
+        <div class="level-item <%= reached ? 'reached' : '' %>" style="--level-color: <%= l.color %>">
+          <div class="level-item-icon"><%= l.icon || '⭐' %></div>
+          <div class="level-item-body">
+            <div class="level-item-name"><%= l.name %></div>
+            <div class="level-item-req">от <%= l.minPoints %> баллов</div>
+          </div>
+          <div class="level-item-bonus">
+            <div>−<%= l.discountPercent %>%</div>
+            <div>+<%= l.cashbackPercent %>%</div>
+          </div>
+          <% if (reached) { %><div class="level-item-check">✓</div><% } %>
+        </div>
+      <% }) %>
+    </div>
+  </div>
+
+  <div class="cabinet-block" style="margin-top:20px">
+    <h2>История баллов</h2>
+    <% if (!transactions.length) { %>
+      <p class="cabinet-empty">Пока нет операций. Совершите заказ, подпишитесь на новости или оставьте отзыв.</p>
+    <% } else { %>
+      <table class="cabinet-table">
+        <thead><tr><th>Дата</th><th>Причина</th><th>Баллы</th></tr></thead>
+        <tbody>
+          <% transactions.forEach(t => { %>
+            <tr>
+              <td><%= t.createdAt.toLocaleString('ru-RU') %></td>
+              <td><%= t.reason %></td>
+              <td class="cabinet-points-cell <%= t.points > 0 ? 'plus' : 'minus' %>">
+                <%= t.points > 0 ? '+' : '' %><%= t.points %>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    <% } %>
+  </div>
+</div>

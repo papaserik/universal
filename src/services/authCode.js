@@ -1,6 +1,7 @@
 const { prisma } = require('../config/db');
 const mail = require('./mail');
 const { getSetting } = require('./settings');
+const loyalty = require('./loyalty');
 
 function generateCode() {
   return String(Math.floor(100000 + Math.random() * 900000));
@@ -81,6 +82,7 @@ async function verify(email, code) {
 
   // Найти или создать пользователя
   let user = await prisma.user.findUnique({ where: { email } });
+  let isNewUser = false;
   if (!user) {
     user = await prisma.user.create({
       data: {
@@ -91,10 +93,19 @@ async function verify(email, code) {
         active: true
       }
     });
+    isNewUser = true;
+
+    // Приветственные баллы за регистрацию
+    try {
+      const ls = await loyalty.settings();
+      if (ls.enabled && ls.forSignup > 0) {
+        await loyalty.addPoints(user.id, ls.forSignup, 'signup', 'Бонус за первую регистрацию');
+      }
+    } catch (e) { console.error('signup points:', e); }
   }
   if (!user.active) return { ok: false, reason: 'Аккаунт заблокирован' };
 
-  return { ok: true, user };
+  return { ok: true, user, isNewUser };
 }
 
 module.exports = { createAndSend, verify };

@@ -1,0 +1,29 @@
+<div class="admin-header">
+  <h1><%= item ? 'Изменить уровень' : 'Новый уровень' %></h1>
+  <a href="/admin/loyalty/levels" class="btn btn-sm">← К списку</a>
+</div>
+
+<form method="post" action="<%= item ? '/admin/loyalty/levels/' + item.id : '/admin/loyalty/levels' %>" class="admin-form" style="max-width:720px">
+  <div class="form-row">
+    <label>Название * <input type="text" name="name" value="<%= item ? item.name : '' %>" placeholder="Золотой" required></label>
+    <label>Slug <input type="text" name="slug" value="<%= item ? item.slug : '' %>" placeholder="gold"></label>
+  </div>
+
+  <div class="form-row">
+    <label>Иконка (эмодзи) <input type="text" maxlength="4" name="icon" value="<%= item && item.icon ? item.icon : '' %>" placeholder="🥇"></label>
+    <label>Цвет
+      <input type="color" name="color" value="<%= item ? item.color : '#eab308' %>" style="width:80px;height:38px;padding:2px">
+    </label>
+    <label>Сортировка <input type="number" name="sort" value="<%= item ? item.sort : 0 %>"></label>
+  </div>
+
+  <div class="form-row">
+    <label>Порог входа (баллов) * <input type="number" name="minPoints" value="<%= item ? item.minPoints : 0 %>" required></label>
+    <label>Скидка, % <input type="number" step="0.1" name="discountPercent" value="<%= item ? item.discountPercent : 0 %>"></label>
+    <label>Кэшбэк, % <input type="number" step="0.1" name="cashbackPercent" value="<%= item ? item.cashbackPercent : 0 %>"></label>
+  </div>
+
+  <label class="checkbox-label"><input type="checkbox" name="active" <%= !item || item.active ? 'checked' : '' %>> Активен</label>
+
+  <div class="form-actions"><button class="btn">Сохранить</button></div>
+</form>

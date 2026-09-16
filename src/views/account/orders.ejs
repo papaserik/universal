@@ -1,0 +1,42 @@
+<h1>Мои заказы</h1>
+
+<% if (!orders.length) { %>
+  <div class="account-empty">
+    <div class="account-empty-icon">📦</div>
+    <h2>У вас пока нет заказов</h2>
+    <p>Оформите первый заказ — он появится здесь с историей статусов.</p>
+    <a href="/catalog" class="btn">Перейти в каталог</a>
+  </div>
+<% } else { %>
+  <div class="account-list">
+    <% orders.forEach(o => {
+         const st = statusMap[o.status] || { name: o.status, color: '#6b7280', icon: '' };
+    %>
+      <a href="/account/orders/<%= o.number %>" class="account-order">
+        <div class="account-order-header">
+          <div>
+            <div class="account-order-number"><%= o.number %></div>
+            <div class="account-order-date"><%= o.createdAt.toLocaleString('ru-RU') %></div>
+          </div>
+          <span class="status-pill" style="background:<%= st.color %>1a;color:<%= st.color %>">
+            <%= st.icon || '' %> <%= st.name %>
+          </span>
+        </div>
+
+        <ul class="account-order-items">
+          <% o.items.slice(0, 3).forEach(it => { %>
+            <li><%= it.name %> × <%= it.qty %></li>
+          <% }) %>
+          <% if (o.items.length > 3) { %>
+            <li class="account-order-more">и ещё <%= o.items.length - 3 %> позиц<%= o.items.length - 3 === 1 ? 'ия' : 'ии' %></li>
+          <% } %>
+        </ul>
+
+        <div class="account-order-footer">
+          <span>Позиций: <%= o.items.length %></span>
+          <strong><%= o.total.toLocaleString('ru-RU') %> ₽</strong>
+        </div>
+      </a>
+    <% }) %>
+  </div>
+<% } %>

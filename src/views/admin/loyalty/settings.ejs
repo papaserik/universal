@@ -1,0 +1,73 @@
+<div class="admin-header">
+  <h1>⭐ Программа лояльности — настройки</h1>
+  <div style="display:flex;gap:8px">
+    <a href="/admin/loyalty/levels" class="btn btn-sm">Уровни</a>
+    <a href="/admin/loyalty/transactions" class="btn btn-sm">История баллов</a>
+  </div>
+</div>
+
+<p class="admin-hint">
+  Баллы начисляются клиентам за покупки, регистрацию, подписку и отзывы. Клиент может оплатить баллами до указанного процента от суммы заказа.
+</p>
+
+<form method="post" action="/admin/loyalty/settings" class="admin-form" style="max-width:820px">
+  <label class="checkbox-label" style="font-size:15px;padding:10px 14px;background:#eff6ff;border-radius:8px;border:1px solid #dbeafe">
+    <input type="checkbox" name="loyalty_enabled" <%= values.loyalty_enabled === '1' ? 'checked' : '' %>>
+    <strong>Программа лояльности включена</strong>
+  </label>
+
+  <fieldset class="full">
+    <legend>💰 Начисление баллов</legend>
+    <div class="form-row">
+      <label>Кэшбэк за покупки (баллов за 1 ₽)
+        <input type="number" step="0.01" name="loyalty_points_per_rub" value="<%= values.loyalty_points_per_rub || '0.05' %>">
+        <small style="color:#6b7280;font-size:12px">0.05 = 5 баллов за 100 ₽</small>
+      </label>
+      <label>Стоимость 1 балла при оплате, ₽
+        <input type="number" step="0.01" name="loyalty_point_value" value="<%= values.loyalty_point_value || '1' %>">
+      </label>
+    </div>
+
+    <label>Максимум оплаты баллами от суммы заказа, %
+      <input type="number" min="0" max="100" name="loyalty_max_pay_percent" value="<%= values.loyalty_max_pay_percent || '50' %>">
+    </label>
+  </fieldset>
+
+  <fieldset class="full">
+    <legend>🎁 Бонусные баллы</legend>
+    <div class="form-row">
+      <label>За регистрацию
+        <input type="number" name="loyalty_points_for_signup" value="<%= values.loyalty_points_for_signup || '100' %>">
+      </label>
+      <label>За подписку на новости
+        <input type="number" name="loyalty_points_for_subscribe" value="<%= values.loyalty_points_for_subscribe || '50' %>">
+      </label>
+      <label>За отзыв о товаре
+        <input type="number" name="loyalty_points_for_review" value="<%= values.loyalty_points_for_review || '30' %>">
+      </label>
+    </div>
+  </fieldset>
+
+  <fieldset class="full">
+    <legend>📊 Уровни клиентов</legend>
+    <p style="font-size:13.5px;color:#6b7280;margin:0 0 10px">
+      Уровень определяется по сумме накопленных баллов. Уровни дают скидку на заказы и повышенный кэшбэк.
+    </p>
+    <table class="admin-table" style="margin-top:8px">
+      <thead><tr><th>Уровень</th><th>От баллов</th><th>Скидка</th><th>Кэшбэк</th></tr></thead>
+      <tbody>
+        <% levels.forEach(l => { %>
+          <tr>
+            <td><%= l.icon || '' %> <strong><%= l.name %></strong></td>
+            <td><%= l.minPoints %></td>
+            <td><%= l.discountPercent %>%</td>
+            <td><%= l.cashbackPercent %>%</td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+    <p style="margin-top:10px"><a href="/admin/loyalty/levels" class="btn btn-sm">Управлять уровнями →</a></p>
+  </fieldset>
+
+  <div class="form-actions"><button class="btn">💾 Сохранить</button></div>
+</form>

@@ -24,6 +24,19 @@
       <a href="/cart" class="c-cart cart-link">🛒 <span class="js-cart-count"><%= cartCount %></span></a>
       <% if (user) { %>
         <% if (user.role !== 'USER') { %><a href="/admin">Админка</a><% } %>
+        <% if (userLoyalty && userLoyalty.current) { %>
+          <a href="/account/orders" class="loyalty-badge loyalty-badge-sm" title="<%= userLoyalty.current.name %> · <%= userLoyalty.balance %> баллов">
+            <%= userLoyalty.current.icon || '⭐' %> <strong><%= userLoyalty.balance %></strong>
+          </a>
+        <% } %>
+        <a href="/account" class="user-link">
+          <% if (user.avatar) { %>
+            <img src="<%= user.avatar %>" alt="" class="user-avatar">
+          <% } else { %>
+            <span class="user-avatar user-avatar-initial"><%= (user.name || user.email).charAt(0).toUpperCase() %></span>
+          <% } %>
+          Кабинет
+        </a>
         <a href="/logout">Выйти</a>
       <% } else { %>
         <a href="/login">Войти</a>

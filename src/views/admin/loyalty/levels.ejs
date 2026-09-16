@@ -1,0 +1,46 @@
+<div class="admin-header">
+  <h1>🏆 Уровни лояльности</h1>
+  <div style="display:flex;gap:8px">
+    <a href="/admin/loyalty/settings" class="btn btn-sm">← Настройки</a>
+    <a href="/admin/loyalty/levels/new" class="btn">+ Добавить уровень</a>
+  </div>
+</div>
+<p class="admin-hint">
+  Уровень присваивается автоматически по сумме накопленных баллов. Даёт скидку и повышенный кэшбэк.
+</p>
+
+<table class="admin-table">
+  <thead><tr>
+    <th style="width:50px">Иконка</th>
+    <th>Название</th>
+    <th>От баллов</th>
+    <th>Скидка</th>
+    <th>Кэшбэк</th>
+    <th>Сортировка</th>
+    <th>Статус</th>
+    <th></th>
+  </tr></thead>
+  <tbody>
+    <% items.forEach(l => { %>
+      <tr>
+        <td style="font-size:22px"><%= l.icon || '—' %></td>
+        <td>
+          <span style="display:inline-block;padding:3px 10px;border-radius:12px;background:<%= l.color %>1a;color:<%= l.color %>;font-weight:600;font-size:12.5px">
+            <%= l.name %>
+          </span>
+        </td>
+        <td><strong><%= l.minPoints %></strong> б.</td>
+        <td><%= l.discountPercent %>%</td>
+        <td><%= l.cashbackPercent %>%</td>
+        <td><%= l.sort %></td>
+        <td><% if (l.active) { %><span class="badge badge-paid">✓</span><% } else { %><span class="badge">off</span><% } %></td>
+        <td class="row-actions">
+          <a href="/admin/loyalty/levels/<%= l.id %>" class="btn btn-sm">Изменить</a>
+          <form method="post" action="/admin/loyalty/levels/<%= l.id %>/delete" onsubmit="return confirm('Удалить уровень <%= l.name %>?')">
+            <button class="btn btn-sm btn-danger">×</button>
+          </form>
+        </td>
+      </tr>
+    <% }) %>
+  </tbody>
+</table>

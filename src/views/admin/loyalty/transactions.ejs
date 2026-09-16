@@ -1,0 +1,75 @@
+<div class="admin-header">
+  <h1>📜 История баллов</h1>
+  <div style="display:flex;gap:8px">
+    <a href="/admin/loyalty/settings" class="btn btn-sm">Настройки</a>
+    <a href="/admin/loyalty/levels" class="btn btn-sm">Уровни</a>
+  </div>
+</div>
+
+<div class="sales-stats" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr))">
+  <div class="sales-stat">
+    <div class="sales-stat-label">Начислено всего</div>
+    <div class="sales-stat-value" style="color:#16a34a">+<%= totals.plus.toLocaleString('ru-RU') %></div>
+  </div>
+  <div class="sales-stat">
+    <div class="sales-stat-label">Списано всего</div>
+    <div class="sales-stat-value" style="color:#dc2626">−<%= totals.minus.toLocaleString('ru-RU') %></div>
+  </div>
+  <div class="sales-stat">
+    <div class="sales-stat-label">Остаток в системе</div>
+    <div class="sales-stat-value"><%= (totals.plus - totals.minus).toLocaleString('ru-RU') %></div>
+  </div>
+</div>
+
+<section class="sales-block">
+  <h2>Ручное начисление / списание</h2>
+  <form method="post" action="/admin/loyalty/transactions/manual" style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;max-width:700px">
+    <label style="display:flex;flex-direction:column;gap:4px;flex:2;font-size:13px;color:#4b5563;min-width:220px">
+      Email клиента
+      <input type="email" name="email" placeholder="user@example.com" required style="padding:9px 12px;border:1px solid #d1d5db;border-radius:6px;font:inherit;font-size:14px">
+    </label>
+    <label style="display:flex;flex-direction:column;gap:4px;font-size:13px;color:#4b5563;min-width:120px">
+      Баллов (можно отрицательное)
+      <input type="number" name="points" placeholder="100" required style="padding:9px 12px;border:1px solid #d1d5db;border-radius:6px;font:inherit;font-size:14px">
+    </label>
+    <label style="display:flex;flex-direction:column;gap:4px;flex:2;font-size:13px;color:#4b5563;min-width:220px">
+      Причина
+      <input type="text" name="reason" placeholder="Ручное начисление" style="padding:9px 12px;border:1px solid #d1d5db;border-radius:6px;font:inherit;font-size:14px">
+    </label>
+    <button type="submit" class="btn">Добавить</button>
+  </form>
+</section>
+
+<section class="sales-block">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+    <h2 style="margin:0">Все транзакции</h2>
+    <div>
+      <a href="?filter=all" class="btn btn-sm <%= filter === 'all' ? '' : 'btn-muted' %>">Все</a>
+      <a href="?filter=plus" class="btn btn-sm <%= filter === 'plus' ? '' : 'btn-muted' %>">Начисления</a>
+      <a href="?filter=minus" class="btn btn-sm <%= filter === 'minus' ? '' : 'btn-muted' %>">Списания</a>
+    </div>
+  </div>
+
+  <table class="admin-table">
+    <thead><tr><th>Дата</th><th>Клиент</th><th>Баллы</th><th>Тип</th><th>Причина</th></tr></thead>
+    <tbody>
+      <% items.forEach(t => { %>
+        <tr>
+          <td><%= t.createdAt.toLocaleString('ru-RU') %></td>
+          <td>
+            <%= t.user ? (t.user.name || t.user.email) : '—' %>
+            <% if (t.user && t.user.name) { %><br><small style="color:#6b7280"><%= t.user.email %></small><% } %>
+          </td>
+          <td>
+            <strong style="color:<%= t.points > 0 ? '#16a34a' : '#dc2626' %>;font-size:15px">
+              <%= t.points > 0 ? '+' : '' %><%= t.points %>
+            </strong>
+          </td>
+          <td><span class="badge"><%= t.type %></span></td>
+          <td><%= t.reason %></td>
+        </tr>
+      <% }) %>
+      <% if (!items.length) { %><tr><td colspan="5" style="text-align:center;color:#9ca3af;padding:24px">Транзакций пока нет</td></tr><% } %>
+    </tbody>
+  </table>
+</section>

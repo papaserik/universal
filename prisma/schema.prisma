@@ -14,9 +14,14 @@ model User {
   name      String?
   role      String   @default("USER")
   active    Boolean  @default(true)
+  avatar    String?
+  savedAddress String @default("{}")
+  savedPhone   String?
+  savedName    String?
   createdAt DateTime @default(now())
   orders    Order[]
   posts     BlogPost[]
+  loyalty   LoyaltyTransaction[]
 }
 
 model Category {
@@ -47,6 +52,7 @@ model Product {
   categoryId      Int?
   category        Category?       @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   options         ProductOption[]
+  reviews         Review[]
   seoTitle        String?
   seoDesc         String?
   seoKeywords     String?
@@ -110,6 +116,9 @@ model Order {
   delivery    String      @default("flat")
   comment     String?
   ip          String?
+  pointsUsed  Int         @default(0)
+  pointsEarned Int        @default(0)
+  pointsDiscount Float    @default(0)
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
 
@@ -328,4 +337,46 @@ model EmailTemplate {
   active      Boolean  @default(true)
   updatedAt   DateTime @updatedAt
   createdAt   DateTime @default(now())
+}
+
+model LoyaltyTransaction {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  points      Int
+  type        String
+  reason      String
+  description String?
+  orderId     Int?
+  createdAt   DateTime @default(now())
+  @@index([userId, createdAt])
+}
+
+model LoyaltyLevel {
+  id              Int      @id @default(autoincrement())
+  name            String
+  slug            String   @unique
+  minPoints       Int      @default(0)
+  color           String   @default("#a16207")
+  icon            String?
+  discountPercent Float    @default(0)
+  cashbackPercent Float    @default(0)
+  sort            Int      @default(0)
+  active          Boolean  @default(true)
+  createdAt       DateTime @default(now())
+}
+
+model Review {
+  id        Int      @id @default(autoincrement())
+  productId Int
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  userId    Int?
+  orderId   Int?
+  name      String
+  email     String?
+  rating    Int      @default(5)
+  text      String
+  approved  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  @@index([productId, approved])
 }
