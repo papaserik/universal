@@ -2,25 +2,48 @@
   <h1>Категории блога</h1>
   <a href="/admin/blog-categories/new" class="btn">+ Добавить категорию</a>
 </div>
-<p class="admin-hint">Категории группируют посты блога. Можно создавать подкатегории, выбирая родителя.</p>
-<table class="admin-table" data-sortable="blogCategories">
-  <thead><tr><th>ID</th><th>Название</th><th>Slug</th><th>Постов</th><th>Сортировка</th><th></th></tr></thead>
-  <tbody>
-    <% cats.forEach(c => { %>
-      <tr data-id="<%= c.id %>">
-        <td><%= c.id %></td>
-        <td><%= c.name %></td>
-        <td>/blog/category/<%= c.slug %></td>
-        <td><%= c._count.posts %></td>
-        <td><%= c.sort %></td>
-        <td class="row-actions">
-          <a href="/admin/blog-categories/<%= c.id %>" class="btn btn-sm">Изменить</a>
-          <form method="post" action="/admin/blog-categories/<%= c.id %>/delete" onsubmit="return confirm('Удалить категорию?')">
-            <button class="btn btn-sm btn-danger">×</button>
-          </form>
-        </td>
+<p class="admin-hint">Категории группируют посты блога. Можно создавать подкатегории.</p>
+
+<div class="admin-table-wrap">
+  <table class="admin-table" data-sortable="blogCategories">
+    <thead>
+      <tr>
+        <th style="width:36px"></th>
+        <th style="width:60px">ID</th>
+        <th>Название</th>
+        <th>Slug</th>
+        <th style="width:80px;text-align:center">Постов</th>
+        <th style="width:100px;text-align:center">Сортировка</th>
+        <th style="width:180px;text-align:right">Действия</th>
       </tr>
-    <% }) %>
-    <% if (!cats.length) { %><tr><td colspan="6">Категорий нет</td></tr><% } %>
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      <% cats.forEach(c => { %>
+        <tr data-id="<%= c.id %>">
+          <td class="drag-handle-cell"><span class="drag-handle" title="Перетащите">⋮⋮</span></td>
+          <td><%= c.id %></td>
+          <td>
+            <div class="cell-title"><%= c.name %></div>
+            <% if (c.parentId) {
+                 const parent = cats.find(x => x.id === c.parentId);
+            %>
+              <div class="cell-sub">↳ в «<%= parent ? parent.name : '—' %>»</div>
+            <% } %>
+          </td>
+          <td><code class="cell-code">/blog/category/<%= c.slug %></code></td>
+          <td style="text-align:center"><%= c._count.posts %></td>
+          <td style="text-align:center"><%= c.sort %></td>
+          <td class="cell-actions">
+            <a href="/admin/blog-categories/<%= c.id %>" class="btn btn-sm">Изменить</a>
+            <form method="post" action="/admin/blog-categories/<%= c.id %>/delete" onsubmit="return confirm('Удалить категорию?')" class="inline-form">
+              <button class="btn btn-sm btn-danger" title="Удалить">×</button>
+            </form>
+          </td>
+        </tr>
+      <% }) %>
+      <% if (!cats.length) { %>
+        <tr><td colspan="7" style="text-align:center;color:#9ca3af;padding:40px">Нет категорий</td></tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>

@@ -1,5 +1,5 @@
 <div class="admin-header">
-  <h1>💾 Резервная копия базы данных</h1>
+  <h1>💾 Бэкап базы данных</h1>
 </div>
 
 <% if (msg) { %><div class="admin-alert admin-alert-ok"><%= msg %></div><% } %>
@@ -31,7 +31,7 @@
 <section class="sales-block">
   <h2>Экспорт</h2>
   <p style="color:#6b7280;font-size:14px;line-height:1.6;margin-bottom:16px">
-    Нажмите кнопку — браузер скачает JSON-файл со всеми данными. Можно хранить в облаке, отправлять на другой сервер.
+    Скачайте JSON со всеми данными. Можно хранить в облаке, отправлять на другой сервер.
   </p>
   <a href="/admin/backup/download" class="btn" style="font-size:15px;padding:12px 24px">
     ⬇️ Скачать полный дамп БД
@@ -41,7 +41,7 @@
 <section class="sales-block">
   <h2>Импорт</h2>
   <p style="color:#6b7280;font-size:14px;line-height:1.6;margin-bottom:16px">
-    Загрузите ранее скачанный JSON-файл. <strong>Внимание:</strong> в режиме «заменить» все текущие данные будут удалены.
+    Загрузите ранее скачанный JSON. <strong>Внимание:</strong> в режиме «заменить» все текущие данные будут удалены.
   </p>
   <a href="/admin/backup/import" class="btn btn-outline" style="padding:12px 24px">
     ⬆️ Загрузить дамп
@@ -50,15 +50,22 @@
 
 <section class="sales-block">
   <h2>Содержимое БД</h2>
-  <table class="admin-table">
-    <thead><tr><th>Таблица</th><th>Записей</th></tr></thead>
-    <tbody>
-      <% tables.forEach(t => { %>
+  <div class="admin-table-wrap">
+    <table class="admin-table">
+      <thead>
         <tr>
-          <td><code><%= t %></code></td>
-          <td><%= counts[t] || 0 %></td>
+          <th>Таблица</th>
+          <th style="width:140px;text-align:center">Записей</th>
         </tr>
-      <% }) %>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+        <% tables.forEach(t => { %>
+          <tr>
+            <td><code class="cell-code"><%= t %></code></td>
+            <td style="text-align:center"><%= counts[t] || 0 %></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
 </section>

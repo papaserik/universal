@@ -1,21 +1,86 @@
-<h1>Вход</h1>
-<% if (error) { %><p class="error"><%= error %></p><% } %>
+<div class="auth-page">
 
-<div class="auth-tabs">
-  <button class="auth-tab active" data-tab="password">По паролю</button>
-  <a href="/login/code" class="auth-tab">По коду на email</a>
+  <div class="auth-card">
+    <div class="auth-header">
+      <div class="auth-icon">👤</div>
+      <h1>Вход в личный кабинет</h1>
+      <p class="auth-sub">Управляйте заказами, баллами и адресами</p>
+    </div>
+
+    <% if (error) { %>
+      <div class="auth-error"><%= error %></div>
+    <% } %>
+
+    <%# ═══ Способ 1: Код на email (основной) ═══ %>
+    <div class="auth-block auth-block-primary">
+      <div class="auth-block-badge">Рекомендуем</div>
+      <h2 class="auth-block-title">Вход по коду на email</h2>
+      <p class="auth-block-desc">
+        Введите email — мы отправим 6-значный код. Регистрация не нужна, аккаунт создастся автоматически.
+      </p>
+      <a href="/login/code" class="auth-btn-primary">
+        Получить код на email →
+      </a>
+    </div>
+
+    <%# Разделитель %>
+    <div class="auth-divider">
+      <span>или</span>
+    </div>
+
+    <%# ═══ Способ 2: Вход по паролю ═══ %>
+    <details class="auth-block auth-block-secondary">
+      <summary>
+        <span class="auth-block-title">Войти по паролю</span>
+        <span class="auth-block-hint">Если у вас уже есть аккаунт</span>
+      </summary>
+
+      <form method="post" action="/login" class="auth-form">
+        <label>Email
+          <input type="email" name="email" required placeholder="you@example.com">
+        </label>
+        <label>Пароль
+          <input type="password" name="password" required placeholder="••••••••">
+        </label>
+        <button type="submit" class="auth-btn-secondary">Войти</button>
+      </form>
+
+      <p class="auth-hint">
+        <a href="/register">Забыли пароль? Создайте новый аккаунт</a>
+      </p>
+    </details>
+
+  </div>
+
+  <div class="auth-side">
+    <div class="auth-side-item">
+      <div class="auth-side-icon">📦</div>
+      <div>
+        <strong>История заказов</strong>
+        <p>Все ваши покупки в одном месте</p>
+      </div>
+    </div>
+    <div class="auth-side-item">
+      <div class="auth-side-icon">🎁</div>
+      <div>
+        <strong>Баллы за покупки</strong>
+        <p>Кэшбэк баллами до 5% с каждого заказа</p>
+      </div>
+    </div>
+    <div class="auth-side-item">
+      <div class="auth-side-icon">❤️</div>
+      <div>
+        <strong>Избранное</strong>
+        <p>Сохраняйте товары на будущее</p>
+      </div>
+    </div>
+    <div class="auth-side-item">
+      <div class="auth-side-icon">🚚</div>
+      <div>
+        <strong>Сохранённый адрес</strong>
+        <p>Оформляйте заказы в 2 клика</p>
+      </div>
+    </div>
+  </div>
+
 </div>
-
-<form method="post" action="/login" class="auth-form">
-  <label>Email <input type="email" name="email" required></label>
-  <label>Пароль <input type="password" name="password" required></label>
-  <button type="submit" class="btn">Войти</button>
-</form>
-
-<div class="auth-alt">
-  <p>Впервые здесь?</p>
-  <a href="/login/code" class="btn btn-outline">Получить код на email</a>
-  <p class="auth-alt-note">Регистрация не нужна — код сам создаст аккаунт.</p>
-</div>
-
-<p style="margin-top:20px"><a href="/register">Классическая регистрация с паролем</a></p>

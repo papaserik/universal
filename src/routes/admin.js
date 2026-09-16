@@ -4,15 +4,18 @@ const bannersAdmin = require('../controllers/admin/banners');
 const brandsAdmin = require('../controllers/admin/brands');
 const tagsAdmin = require('../controllers/admin/tags');
 const imagesAdmin = require('../controllers/admin/images');
-const { requireAuth } = require('../middleware/auth');
+const { requireAuth, requireAdmin, requireAdminGuest } = require('../middleware/auth');
+const adminAuth = require('../controllers/admin/auth');
 const roles = require('../middleware/roles');
 const { imageUpload, importUpload, processUploaded } = require('../services/upload');
 
-router.use(requireAuth);
-router.use((req, res, next) => {
-  if (req.session.user.role === 'USER') return res.status(403).render('errors/403');
-  next();
-});
+// ─── Публичные роуты админки (до защиты) ───
+router.get('/login', requireAdminGuest, adminAuth.loginForm);
+router.post('/login', requireAdminGuest, adminAuth.login);
+router.get('/logout', adminAuth.logout);
+
+// ─── Защита всех остальных роутов ───
+router.use(requireAdmin);
 
 const dashboard = require('../controllers/admin/dashboard');
 const categories = require('../controllers/admin/categories');

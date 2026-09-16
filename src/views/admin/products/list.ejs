@@ -8,38 +8,79 @@
   <button class="btn btn-sm">Найти</button>
 </form>
 
-<table class="admin-table" data-sortable="products">
-  <thead><tr>
-    <th>ID</th><th>Название</th><th>SKU</th><th>Категория</th>
-    <th>Цена</th><th>Остаток</th><th>Статус</th><th></th>
-  </tr></thead>
-  <tbody>
-    <% products.forEach(p => { %>
-      <tr data-id="<%= p.id %>">
-        <td><%= p.id %></td>
-        <td><%= p.name %><br><small>/product/<%= p.slug %></small></td>
-        <td><%= p.sku || '—' %></td>
-        <td><%= p.category ? p.category.name : '—' %></td>
-        <td>
-          <%= p.price %> ₽
-          <% if (p.oldPrice) { %><br><small><s><%= p.oldPrice %> ₽</s></small><% } %>
-        </td>
-        <td><%= p.stock %></td>
-        <td>
-          <% if (p.published) { %><span class="badge badge-published">Опубликован</span>
-          <% } else { %><span class="badge">Черновик</span><% } %>
-        </td>
-        <td class="row-actions">
-          <a href="/admin/products/<%= p.id %>" class="btn btn-sm">Изменить</a>
-          <form method="post" action="/admin/products/<%= p.id %>/delete" onsubmit="return confirm('Удалить товар?')">
-            <button class="btn btn-sm btn-danger">×</button>
-          </form>
-        </td>
+<div class="admin-table-wrap">
+  <table class="admin-table" data-sortable="products">
+    <thead>
+      <tr>
+        <th style="width:36px"></th>
+        <th style="width:64px">Фото</th>
+        <th style="width:50px">ID</th>
+        <th>Название</th>
+        <th>SKU</th>
+        <th>Категория</th>
+        <th>Цена</th>
+        <th style="width:80px;text-align:center">Остаток</th>
+        <th style="width:120px;text-align:center">Статус</th>
+        <th style="width:180px;text-align:right">Действия</th>
       </tr>
-    <% }) %>
-    <% if (!products.length) { %><tr><td colspan="8">Нет товаров</td></tr><% } %>
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      <% products.forEach(p => {
+           let imgs = [];
+           try { imgs = JSON.parse(p.images || '[]'); } catch (e) {}
+           const thumb = imgs[0] || null;
+           const discount = (p.oldPrice && p.oldPrice > p.price)
+             ? Math.round((1 - p.price / p.oldPrice) * 100) : 0;
+      %>
+        <tr data-id="<%= p.id %>">
+          <td class="drag-handle-cell"><span class="drag-handle" title="Перетащите">⋮⋮</span></td>
+          <td>
+            <a href="/product/<%= p.slug %>" target="_blank" class="row-thumb-link" title="Открыть на сайте">
+              <% if (thumb) { %>
+                <img src="<%= thumb %>" alt="" class="row-thumb">
+              <% } else { %>
+                <div class="row-thumb row-thumb-empty">📷</div>
+              <% } %>
+            </a>
+          </td>
+          <td><%= p.id %></td>
+          <td>
+            <div class="cell-title"><%= p.name %></div>
+            <div class="cell-sub">/product/<%= p.slug %></div>
+          </td>
+          <td><%= p.sku || '—' %></td>
+          <td><%= p.category ? p.category.name : '—' %></td>
+          <td>
+            <div class="cell-price"><%= p.price %> ₽</div>
+            <% if (p.oldPrice) { %>
+              <div class="cell-price-old"><s><%= p.oldPrice %> ₽</s>
+                <% if (discount > 0) { %><span class="cell-price-discount">−<%= discount %>%</span><% } %>
+              </div>
+            <% } %>
+          </td>
+          <td style="text-align:center">
+            <% if (p.stock === 0) { %><span class="stock-badge stock-out">0</span>
+            <% } else if (p.stock < 5) { %><span class="stock-badge stock-low"><%= p.stock %></span>
+            <% } else { %><span class="stock-badge stock-ok"><%= p.stock %></span><% } %>
+          </td>
+          <td style="text-align:center">
+            <% if (p.published) { %><span class="badge badge-published">Опубликован</span>
+            <% } else { %><span class="badge">Черновик</span><% } %>
+          </td>
+          <td class="cell-actions">
+            <a href="/admin/products/<%= p.id %>" class="btn btn-sm">Изменить</a>
+            <form method="post" action="/admin/products/<%= p.id %>/delete" onsubmit="return confirm('Удалить товар?')" class="inline-form">
+              <button class="btn btn-sm btn-danger" title="Удалить">×</button>
+            </form>
+          </td>
+        </tr>
+      <% }) %>
+      <% if (!products.length) { %>
+        <tr><td colspan="10" style="text-align:center;color:#9ca3af;padding:40px">Нет товаров</td></tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>
 
 <% if (pages > 1) { %>
   <div class="pagination">

@@ -1,25 +1,48 @@
 <div class="admin-header">
-  <h1>Страницы</h1>
+  <h1>📄 Страницы</h1>
   <a href="/admin/pages/new" class="btn">+ Новая страница</a>
 </div>
+<p class="admin-hint">
+  Статические страницы сайта: политика конфиденциальности, о нас, доставка, оплата и т.д.
+</p>
 
-<table class="admin-table">
-  <thead><tr><th>ID</th><th>Заголовок</th><th>Slug</th><th>Опубл.</th><th>Дата</th><th></th></tr></thead>
-  <tbody>
-    <% pages.forEach(p => { %>
+<div class="admin-table-wrap">
+  <table class="admin-table">
+    <thead>
       <tr>
-        <td><%= p.id %></td>
-        <td><%= p.title %></td>
-        <td>/page/<%= p.slug %></td>
-        <td><%= p.published ? '✓' : '—' %></td>
-        <td><%= p.createdAt.toLocaleDateString('ru-RU') %></td>
-        <td class="row-actions">
-          <a href="/admin/pages/<%= p.id %>" class="btn btn-sm">Изменить</a>
-          <form method="post" action="/admin/pages/<%= p.id %>/delete" onsubmit="return confirm('Удалить страницу?')">
-            <button class="btn btn-sm btn-danger">×</button>
-          </form>
-        </td>
+        <th style="width:50px">ID</th>
+        <th>Заголовок</th>
+        <th style="width:220px">Slug</th>
+        <th style="width:120px;text-align:center">Опубл.</th>
+        <th style="width:130px">Дата</th>
+        <th style="width:180px;text-align:right">Действия</th>
       </tr>
-    <% }) %>
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      <% pages.forEach(p => { %>
+        <tr>
+          <td><%= p.id %></td>
+          <td>
+            <div class="cell-title"><%= p.title %></div>
+          </td>
+          <td><code class="cell-code">/page/<%= p.slug %></code></td>
+          <td style="text-align:center">
+            <% if (p.published) { %><span class="badge badge-paid">✓ Да</span>
+            <% } else { %><span class="badge">Нет</span><% } %>
+          </td>
+          <td><%= p.createdAt.toLocaleDateString('ru-RU') %></td>
+          <td class="cell-actions">
+            <a href="/page/<%= p.slug %>" target="_blank" class="btn btn-sm btn-muted" title="Открыть на сайте">↗</a>
+            <a href="/admin/pages/<%= p.id %>" class="btn btn-sm">Изменить</a>
+            <form method="post" action="/admin/pages/<%= p.id %>/delete" onsubmit="return confirm('Удалить страницу?')" class="inline-form">
+              <button class="btn btn-sm btn-danger" title="Удалить">×</button>
+            </form>
+          </td>
+        </tr>
+      <% }) %>
+      <% if (!pages.length) { %>
+        <tr><td colspan="6" style="text-align:center;color:#9ca3af;padding:40px">Страниц нет</td></tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>

@@ -2,11 +2,11 @@
   <h1>👥 Подписчики</h1>
   <div style="display:flex;gap:8px">
     <a href="/admin/marketing/subscribers/export" class="btn btn-sm">📥 Экспорт CSV</a>
-    <a href="/admin/marketing/subscribers/new" class="btn">+ Добавить подписчика</a>
+    <a href="/admin/marketing/subscribers/new" class="btn">+ Добавить</a>
   </div>
 </div>
 <p class="admin-hint">
-  Здесь все, кто подписан на рассылку: email-адреса, Telegram-чаты. Подтверждённые и не отписавшиеся получают рассылки.
+  Все, кто подписан на рассылку: email-адреса, Telegram-чаты. Подтверждённые и не отписавшиеся получают рассылки.
 </p>
 
 <div class="sales-stats" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr))">
@@ -28,33 +28,45 @@
   </a>
 </div>
 
-<table class="admin-table">
-  <thead><tr>
-    <th>ID</th><th>Email</th><th>Имя</th><th>Телефон</th><th>Telegram</th>
-    <th>Статус</th><th>Дата</th><th></th>
-  </tr></thead>
-  <tbody>
-    <% items.forEach(s => { %>
+<div class="admin-table-wrap">
+  <table class="admin-table">
+    <thead>
       <tr>
-        <td><%= s.id %></td>
-        <td><%= s.email || '—' %></td>
-        <td><%= s.name || '—' %></td>
-        <td><%= s.phone || '—' %></td>
-        <td><%= s.telegramChatId ? '✓ ' + s.telegramChatId : '—' %></td>
-        <td>
-          <% if (s.unsubscribed) { %><span class="badge badge-cancelled">Отписан</span>
-          <% } else if (s.confirmed) { %><span class="badge badge-paid">✓ Подтверждён</span>
-          <% } else { %><span class="badge badge-shipped">Ожидает</span><% } %>
-        </td>
-        <td><%= s.createdAt.toLocaleDateString('ru-RU') %></td>
-        <td class="row-actions">
-          <a href="/admin/marketing/subscribers/<%= s.id %>" class="btn btn-sm">Изменить</a>
-          <form method="post" action="/admin/marketing/subscribers/<%= s.id %>/delete" onsubmit="return confirm('Удалить подписчика?')">
-            <button class="btn btn-sm btn-danger">×</button>
-          </form>
-        </td>
+        <th style="width:50px">ID</th>
+        <th>Email</th>
+        <th style="width:160px">Имя</th>
+        <th style="width:150px">Телефон</th>
+        <th style="width:160px">Telegram</th>
+        <th style="width:150px;text-align:center">Статус</th>
+        <th style="width:130px">Дата</th>
+        <th style="width:180px;text-align:right">Действия</th>
       </tr>
-    <% }) %>
-    <% if (!items.length) { %><tr><td colspan="8">Подписчиков пока нет</td></tr><% } %>
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      <% items.forEach(s => { %>
+        <tr>
+          <td><%= s.id %></td>
+          <td><div class="cell-title"><%= s.email || '—' %></div></td>
+          <td><%= s.name || '—' %></td>
+          <td><%= s.phone || '—' %></td>
+          <td><%= s.telegramChatId ? '✓ ' + s.telegramChatId : '—' %></td>
+          <td style="text-align:center">
+            <% if (s.unsubscribed) { %><span class="badge badge-cancelled">Отписан</span>
+            <% } else if (s.confirmed) { %><span class="badge badge-paid">✓ Подтверждён</span>
+            <% } else { %><span class="badge badge-shipped">Ожидает</span><% } %>
+          </td>
+          <td><%= s.createdAt.toLocaleDateString('ru-RU') %></td>
+          <td class="cell-actions">
+            <a href="/admin/marketing/subscribers/<%= s.id %>" class="btn btn-sm">Изменить</a>
+            <form method="post" action="/admin/marketing/subscribers/<%= s.id %>/delete" onsubmit="return confirm('Удалить подписчика?')" class="inline-form">
+              <button class="btn btn-sm btn-danger" title="Удалить">×</button>
+            </form>
+          </td>
+        </tr>
+      <% }) %>
+      <% if (!items.length) { %>
+        <tr><td colspan="8" style="text-align:center;color:#9ca3af;padding:40px">Подписчиков нет</td></tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>

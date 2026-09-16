@@ -1,30 +1,32 @@
 <div class="admin-header">
-  <h1><%= cat ? 'Категория' : 'Новая категория' %></h1>
+  <h1><%= cat ? 'Изменить категорию' : 'Новая категория' %></h1>
   <a href="/admin/categories" class="btn btn-sm">← К списку</a>
 </div>
 
-<form method="post" action="<%= cat ? '/admin/categories/' + cat.id : '/admin/categories' %>" class="admin-form" style="max-width:720px">
-  <div class="form-row">
-    <label>Название * <input type="text" name="name" value="<%= cat ? cat.name : '' %>" required></label>
-    <label>Slug <input type="text" name="slug" value="<%= cat ? cat.slug : '' %>" placeholder="автогенерация"></label>
-  </div>
+<% if (error) { %><div class="admin-alert" style="background:#fee2e2;color:#991b1b"><%= error %></div><% } %>
 
-  <fieldset>
-    <legend>Изображение категории</legend>
-    <p style="font-size:13px;color:#6b7280;margin:0 0 10px">Показывается на главной и в плитке категорий.</p>
-    <div class="mp-icon-block">
-      <div class="mp-icon-preview" id="cat-img-preview" style="width:100px;height:100px">
+<form method="post" action="<%= cat ? '/admin/categories/' + cat.id : '/admin/categories' %>" class="admin-form" style="max-width:760px">
+
+  <fieldset class="full">
+    <legend>🖼 Изображение категории</legend>
+    <p style="font-size:13px;color:#6b7280;margin:0 0 12px">
+      Показывается в плитке категорий на главной и в шапке страницы категории.
+      Рекомендуется 400×300 или 1:1.
+    </p>
+
+    <div class="cat-image-uploader">
+      <div class="cat-image-preview" id="cat-img-preview">
         <% if (cat && cat.imageUrl) { %>
           <img src="<%= cat.imageUrl %>" alt="">
         <% } else { %>
-          <span style="font-size:32px;color:#9ca3af">📦</span>
+          <span class="cat-image-empty">📦</span>
         <% } %>
       </div>
-      <div class="mp-icon-actions">
-        <label class="upload-label-inline">📷 Загрузить
-          <input type="file" id="cat-img-input" accept="image/*" hidden>
+      <div class="cat-image-actions">
+        <label class="upload-label-inline">📷 Загрузить изображение
+          <input type="file" id="cat-img-file" accept="image/*" hidden>
         </label>
-        <input type="text" name="imageUrl" id="cat-img-url" value="<%= cat && cat.imageUrl ? cat.imageUrl : '' %>" placeholder="или URL">
+        <input type="text" name="imageUrl" id="cat-img-url" value="<%= cat && cat.imageUrl ? cat.imageUrl : '' %>" placeholder="или вставьте URL">
         <% if (cat && cat.imageUrl) { %>
           <button type="button" class="btn-link" id="cat-img-clear">Удалить</button>
         <% } %>
@@ -32,52 +34,74 @@
     </div>
   </fieldset>
 
-  <div class="form-row">
-    <label>Родитель
-      <select name="parentId">
-        <option value="">— нет —</option>
-        <% categories.forEach(c => { %>
-          <% if (!cat || c.id !== cat.id) { %>
-            <option value="<%= c.id %>" <%= cat && cat.parentId === c.id ? 'selected' : '' %>><%= c.name %></option>
-          <% } %>
-        <% }) %>
-      </select>
-    </label>
-    <label>Сортировка <input type="number" name="sort" value="<%= cat ? cat.sort : 0 %>"></label>
-  </div>
+  <fieldset class="full">
+    <legend>Основные данные</legend>
 
-  <label>SEO Title <input type="text" name="seoTitle" value="<%= cat && cat.seoTitle ? cat.seoTitle : '' %>"></label>
-  <label>SEO Description <input type="text" name="seoDesc" value="<%= cat && cat.seoDesc ? cat.seoDesc : '' %>"></label>
+    <div class="form-row">
+      <label>Название * <input type="text" name="name" value="<%= cat ? cat.name : '' %>" required></label>
+      <label>Slug <input type="text" name="slug" value="<%= cat ? cat.slug : '' %>" placeholder="автогенерация"></label>
+    </div>
+
+    <div class="form-row">
+      <label>Родительская категория
+        <select name="parentId">
+          <option value="">— нет (верхний уровень) —</option>
+          <% categories.forEach(c => { %>
+            <% if (!cat || c.id !== cat.id) { %>
+              <option value="<%= c.id %>" <%= cat && cat.parentId === c.id ? 'selected' : '' %>>
+                <%= c.name %>
+              </option>
+            <% } %>
+          <% }) %>
+        </select>
+      </label>
+      <label>Сортировка <input type="number" name="sort" value="<%= cat ? cat.sort : 0 %>"></label>
+    </div>
+  </fieldset>
+
+  <fieldset class="full">
+    <legend>SEO</legend>
+    <label>SEO Title <input type="text" name="seoTitle" value="<%= cat && cat.seoTitle ? cat.seoTitle : '' %>"></label>
+    <label>SEO Description <input type="text" name="seoDesc" value="<%= cat && cat.seoDesc ? cat.seoDesc : '' %>"></label>
+  </fieldset>
 
   <div class="form-actions"><button class="btn">Сохранить</button></div>
 </form>
 
 <script>
 (function () {
-  var input = document.getElementById('cat-img-input');
+  var input = document.getElementById('cat-img-file');
   var url = document.getElementById('cat-img-url');
   var preview = document.getElementById('cat-img-preview');
   if (!input) return;
+
   input.addEventListener('change', function (e) {
-    var f = e.target.files[0]; if (!f) return;
-    var fd = new FormData(); fd.append('files', f);
+    var f = e.target.files[0];
+    if (!f) return;
+    var fd = new FormData();
+    fd.append('files', f);
     fetch('/admin/products/upload-images', { method: 'POST', body: fd })
       .then(function (r) { return r.json(); })
       .then(function (d) {
         if (d.ok && d.urls && d.urls[0]) {
           url.value = d.urls[0];
           preview.innerHTML = '<img src="' + d.urls[0] + '" alt="">';
+        } else {
+          alert('Ошибка загрузки');
         }
-      });
+      })
+      .catch(function () { alert('Ошибка сети'); });
   });
+
   url.addEventListener('input', function () {
     if (url.value) preview.innerHTML = '<img src="' + url.value + '" alt="">';
-    else preview.innerHTML = '<span style="font-size:32px;color:#9ca3af">📦</span>';
+    else preview.innerHTML = '<span class="cat-image-empty">📦</span>';
   });
+
   var clr = document.getElementById('cat-img-clear');
   if (clr) clr.addEventListener('click', function () {
     url.value = '';
-    preview.innerHTML = '<span style="font-size:32px;color:#9ca3af">📦</span>';
+    preview.innerHTML = '<span class="cat-image-empty">📦</span>';
   });
 })();
 </script>

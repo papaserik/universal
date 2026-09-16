@@ -1,34 +1,103 @@
-<h1>Вход по коду</h1>
+<div class="auth-page">
 
-<% if (error) { %><p class="error"><%= error %></p><% } %>
+  <div class="auth-card">
+    <div class="auth-header">
+      <div class="auth-icon">✉️</div>
+      <h1>Вход по коду</h1>
+      <p class="auth-sub">
+        <% if (step === 'email') { %>
+          Отправим 6-значный код на ваш email
+        <% } else { %>
+          Проверьте почту и введите код из письма
+        <% } %>
+      </p>
+    </div>
 
-<% if (step === 'email') { %>
-  <p class="auth-hint">Введите свой email — мы отправим на него 6-значный код. Если аккаунта ещё нет — он создастся автоматически.</p>
-  <form method="post" action="/login/code" class="auth-form">
-    <label>Email <input type="email" name="email" value="<%= email || '' %>" required autofocus></label>
-    <button type="submit" class="btn">Получить код</button>
-  </form>
-<% } else { %>
-  <p class="auth-hint">
-    Мы отправили 6-значный код на <strong><%= email %></strong>.<br>
-    Он действует 10 минут.
-  </p>
-  <form method="post" action="/login/code/verify" class="auth-form">
-    <input type="hidden" name="email" value="<%= email %>">
-    <label>Код из письма
-      <input type="text" name="code" inputmode="numeric" pattern="[0-9]{6}" maxlength="6"
-             style="font-size:24px;letter-spacing:8px;text-align:center;font-family:monospace"
-             placeholder="••••••" required autofocus>
-    </label>
-    <button type="submit" class="btn">Войти</button>
-  </form>
-  <p style="margin-top:16px;font-size:14px">
-    Не пришло?
-    <form method="post" action="/login/code" style="display:inline">
-      <input type="hidden" name="email" value="<%= email %>">
-      <button type="submit" class="btn-link">Отправить ещё раз</button>
-    </form>
-  </p>
-<% } %>
+    <% if (error) { %>
+      <div class="auth-error"><%= error %></div>
+    <% } %>
 
-<p style="margin-top:24px"><a href="/login">← Вход по паролю</a></p>
+    <% if (step === 'email') { %>
+
+      <form method="post" action="/login/code" class="auth-form">
+        <label>Email
+          <input type="email" name="email" value="<%= email || '' %>" required autofocus
+                 placeholder="you@example.com">
+        </label>
+        <button type="submit" class="auth-btn-primary">Получить код</button>
+      </form>
+
+      <div class="auth-info">
+        <div class="auth-info-icon">💡</div>
+        <div>
+          <strong>Впервые здесь?</strong>
+          <p>Ничего страшного — аккаунт создастся автоматически после ввода кода.</p>
+        </div>
+      </div>
+
+    <% } else { %>
+
+      <div class="auth-email-sent">
+        <div class="auth-email-sent-icon">📧</div>
+        <div>
+          <strong>Код отправлен</strong>
+          <p>Проверьте <strong><%= email %></strong> — в письме 6 цифр.</p>
+        </div>
+      </div>
+
+      <form method="post" action="/login/code/verify" class="auth-form">
+        <input type="hidden" name="email" value="<%= email %>">
+        <label>Код из письма
+          <input type="text" name="code"
+                 inputmode="numeric" pattern="[0-9]{6}" maxlength="6"
+                 class="auth-code-input"
+                 placeholder="000000" required autofocus>
+        </label>
+        <button type="submit" class="auth-btn-primary">Войти в кабинет</button>
+      </form>
+
+      <div class="auth-resend">
+        Не пришли код?
+        <form method="post" action="/login/code" style="display:inline">
+          <input type="hidden" name="email" value="<%= email %>">
+          <button type="submit" class="auth-link-btn">Отправить ещё раз</button>
+        </form>
+      </div>
+
+      <p class="auth-hint" style="text-align:center;margin-top:16px">
+        Не тот email? <a href="/login/code">Изменить</a>
+      </p>
+
+    <% } %>
+
+    <div class="auth-footer-link">
+      <a href="/login">← Другой способ входа</a>
+    </div>
+
+  </div>
+
+  <div class="auth-side">
+    <div class="auth-side-item">
+      <div class="auth-side-icon">⏱️</div>
+      <div>
+        <strong>Код действует 10 минут</strong>
+        <p>Если код истёк — запросите новый</p>
+      </div>
+    </div>
+    <div class="auth-side-item">
+      <div class="auth-side-icon">🔒</div>
+      <div>
+        <strong>Безопасно</strong>
+        <p>Не нужно помнить пароль — только код из письма</p>
+      </div>
+    </div>
+    <div class="auth-side-item">
+      <div class="auth-side-icon">📧</div>
+      <div>
+        <strong>Письмо может попасть в спам</strong>
+        <p>Проверьте папку «Спам», если не видите письмо</p>
+      </div>
+    </div>
+  </div>
+
+</div>

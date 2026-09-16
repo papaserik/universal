@@ -20,6 +20,7 @@ exports.form = async (req, res) => {
 exports.save = async (req, res) => {
   const { name, slug, parentId, sort, seoTitle, seoDesc, imageUrl } = req.body;
   if (!name) return res.render('admin/categories/form', { cat: req.body, categories: [], error: 'Укажите название' });
+
   const data = {
     name,
     slug: slug || slugify(name, { lower: true, strict: true }),
@@ -29,6 +30,7 @@ exports.save = async (req, res) => {
     seoDesc: seoDesc || null,
     imageUrl: imageUrl || null
   };
+
   if (req.params.id) {
     await prisma.category.update({ where: { id: Number(req.params.id) }, data });
   } else {

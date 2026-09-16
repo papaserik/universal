@@ -9,38 +9,50 @@
   Уровень присваивается автоматически по сумме накопленных баллов. Даёт скидку и повышенный кэшбэк.
 </p>
 
-<table class="admin-table">
-  <thead><tr>
-    <th style="width:50px">Иконка</th>
-    <th>Название</th>
-    <th>От баллов</th>
-    <th>Скидка</th>
-    <th>Кэшбэк</th>
-    <th>Сортировка</th>
-    <th>Статус</th>
-    <th></th>
-  </tr></thead>
-  <tbody>
-    <% items.forEach(l => { %>
+<div class="admin-table-wrap">
+  <table class="admin-table" data-sortable="loyaltyLevels">
+    <thead>
       <tr>
-        <td style="font-size:22px"><%= l.icon || '—' %></td>
-        <td>
-          <span style="display:inline-block;padding:3px 10px;border-radius:12px;background:<%= l.color %>1a;color:<%= l.color %>;font-weight:600;font-size:12.5px">
-            <%= l.name %>
-          </span>
-        </td>
-        <td><strong><%= l.minPoints %></strong> б.</td>
-        <td><%= l.discountPercent %>%</td>
-        <td><%= l.cashbackPercent %>%</td>
-        <td><%= l.sort %></td>
-        <td><% if (l.active) { %><span class="badge badge-paid">✓</span><% } else { %><span class="badge">off</span><% } %></td>
-        <td class="row-actions">
-          <a href="/admin/loyalty/levels/<%= l.id %>" class="btn btn-sm">Изменить</a>
-          <form method="post" action="/admin/loyalty/levels/<%= l.id %>/delete" onsubmit="return confirm('Удалить уровень <%= l.name %>?')">
-            <button class="btn btn-sm btn-danger">×</button>
-          </form>
-        </td>
+        <th style="width:36px"></th>
+        <th style="width:60px;text-align:center">Иконка</th>
+        <th>Название</th>
+        <th style="width:130px;text-align:center">От баллов</th>
+        <th style="width:110px;text-align:center">Скидка</th>
+        <th style="width:110px;text-align:center">Кэшбэк</th>
+        <th style="width:100px;text-align:center">Сортировка</th>
+        <th style="width:110px;text-align:center">Статус</th>
+        <th style="width:180px;text-align:right">Действия</th>
       </tr>
-    <% }) %>
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      <% items.forEach(l => { %>
+        <tr data-id="<%= l.id %>">
+          <td class="drag-handle-cell"><span class="drag-handle" title="Перетащите">⋮⋮</span></td>
+          <td style="font-size:22px;text-align:center"><%= l.icon || '—' %></td>
+          <td>
+            <span style="display:inline-block;padding:3px 10px;border-radius:12px;background:<%= l.color %>1a;color:<%= l.color %>;font-weight:600;font-size:12.5px">
+              <%= l.name %>
+            </span>
+          </td>
+          <td style="text-align:center"><strong><%= l.minPoints %></strong> б.</td>
+          <td style="text-align:center"><%= l.discountPercent %>%</td>
+          <td style="text-align:center"><%= l.cashbackPercent %>%</td>
+          <td style="text-align:center"><%= l.sort %></td>
+          <td style="text-align:center">
+            <% if (l.active) { %><span class="badge badge-paid">✓ Активен</span>
+            <% } else { %><span class="badge">Отключён</span><% } %>
+          </td>
+          <td class="cell-actions">
+            <a href="/admin/loyalty/levels/<%= l.id %>" class="btn btn-sm">Изменить</a>
+            <form method="post" action="/admin/loyalty/levels/<%= l.id %>/delete" onsubmit="return confirm('Удалить уровень <%= l.name %>?')" class="inline-form">
+              <button class="btn btn-sm btn-danger" title="Удалить">×</button>
+            </form>
+          </td>
+        </tr>
+      <% }) %>
+      <% if (!items.length) { %>
+        <tr><td colspan="9" style="text-align:center;color:#9ca3af;padding:40px">Уровней нет</td></tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>

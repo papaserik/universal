@@ -2,48 +2,58 @@
   <h1>🏪 Маркетплейсы</h1>
   <a href="/admin/marketplaces/new" class="btn">+ Добавить маркетплейс</a>
 </div>
-<p class="admin-hint">Созданные маркетплейсы появятся в форме товара — можно привязать ссылку на товар на этом маркетплейсе.</p>
+<p class="admin-hint">Созданные маркетплейсы появятся в форме товара — можно привязать ссылку.</p>
 
-<table class="admin-table" data-sortable="marketplaces">
-  <thead><tr>
-    <th style="width:60px">Иконка</th>
-    <th>Название</th>
-    <th>Slug</th>
-    <th>Цвет</th>
-    <th>Сортировка</th>
-    <th>Статус</th>
-    <th></th>
-  </tr></thead>
-  <tbody>
-    <% items.forEach(m => { %>
-      <tr data-id="<%= m.id %>">
-        <td>
-          <% if (m.iconUrl && (m.iconUrl.startsWith('/uploads/') || m.iconUrl.startsWith('http'))) { %>
-            <img src="<%= m.iconUrl %>" alt="" style="width:36px;height:36px;object-fit:contain;border-radius:6px;background:#f3f4f6;padding:3px">
-          <% } else if (m.iconUrl) { %>
-            <span style="font-size:24px"><%= m.iconUrl %></span>
-          <% } else { %>
-            <span style="font-size:20px;color:#9ca3af">—</span>
-          <% } %>
-        </td>
-        <td><strong><%= m.name %></strong></td>
-        <td><code><%= m.slug %></code></td>
-        <td>
-          <span style="display:inline-block;width:20px;height:20px;border-radius:4px;background:<%= m.color %>;vertical-align:middle;margin-right:6px"></span>
-          <code><%= m.color %></code>
-        </td>
-        <td><%= m.sort %></td>
-        <td>
-          <form method="post" action="/admin/marketplaces/<%= m.id %>/toggle" style="display:inline">
-            <button class="btn btn-sm <%= m.active ? '' : 'btn-muted' %>"><%= m.active ? '✓ Активен' : '✗ Отключён' %></button>
-          </form>
-        </td>
-        <td class="row-actions">
-          <a href="/admin/marketplaces/<%= m.id %>" class="btn btn-sm">Изменить</a>
-          <form method="post" action="/admin/marketplaces/<%= m.id %>/delete" onsubmit="return confirm('Удалить маркетплейс?')"><button class="btn btn-sm btn-danger">×</button></form>
-        </td>
+<div class="admin-table-wrap">
+  <table class="admin-table" data-sortable="marketplaces">
+    <thead>
+      <tr>
+        <th style="width:36px"></th>
+        <th style="width:64px">Иконка</th>
+        <th>Название</th>
+        <th>Slug</th>
+        <th style="width:160px">Цвет</th>
+        <th style="width:100px;text-align:center">Сортировка</th>
+        <th style="width:140px;text-align:center">Статус</th>
+        <th style="width:180px;text-align:right">Действия</th>
       </tr>
-    <% }) %>
-    <% if (!items.length) { %><tr><td colspan="7">Маркетплейсов пока нет</td></tr><% } %>
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      <% items.forEach(m => { %>
+        <tr data-id="<%= m.id %>">
+          <td class="drag-handle-cell"><span class="drag-handle" title="Перетащите">⋮⋮</span></td>
+          <td>
+            <% if (m.iconUrl && (m.iconUrl.startsWith('/uploads/') || m.iconUrl.startsWith('http'))) { %>
+              <img src="<%= m.iconUrl %>" alt="" class="row-thumb" style="object-fit:contain;background:#f3f4f6;padding:4px">
+            <% } else if (m.iconUrl) { %>
+              <div class="row-thumb" style="display:flex;align-items:center;justify-content:center;font-size:22px"><%= m.iconUrl %></div>
+            <% } else { %>
+              <div class="row-thumb row-thumb-empty">🏪</div>
+            <% } %>
+          </td>
+          <td><div class="cell-title"><%= m.name %></div></td>
+          <td><code class="cell-code"><%= m.slug %></code></td>
+          <td>
+            <span class="color-chip" style="background:<%= m.color %>"></span>
+            <code class="cell-code"><%= m.color %></code>
+          </td>
+          <td style="text-align:center"><%= m.sort %></td>
+          <td style="text-align:center">
+            <form method="post" action="/admin/marketplaces/<%= m.id %>/toggle" class="inline-form">
+              <button class="btn btn-sm <%= m.active ? '' : 'btn-muted' %>"><%= m.active ? '✓ Активен' : '✗ Отключён' %></button>
+            </form>
+          </td>
+          <td class="cell-actions">
+            <a href="/admin/marketplaces/<%= m.id %>" class="btn btn-sm">Изменить</a>
+            <form method="post" action="/admin/marketplaces/<%= m.id %>/delete" onsubmit="return confirm('Удалить?')" class="inline-form">
+              <button class="btn btn-sm btn-danger" title="Удалить">×</button>
+            </form>
+          </td>
+        </tr>
+      <% }) %>
+      <% if (!items.length) { %>
+        <tr><td colspan="8" style="text-align:center;color:#9ca3af;padding:40px">Маркетплейсов нет</td></tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>

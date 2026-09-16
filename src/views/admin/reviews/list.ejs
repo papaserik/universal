@@ -1,7 +1,6 @@
 <div class="admin-header">
   <h1>💬 Отзывы</h1>
 </div>
-
 <p class="admin-hint">
   Отзывы, отправленные покупателями, требуют модерации. Одобренные показываются на странице товара.
 </p>
@@ -21,51 +20,68 @@
   </a>
 </div>
 
-<% if (!items.length) { %>
-  <p style="text-align:center;color:#9ca3af;padding:40px;background:#fff;border-radius:10px;border:1px solid #e5e7eb">
-    Отзывов нет
-  </p>
-<% } else { %>
-  <div style="display:flex;flex-direction:column;gap:14px">
-    <% items.forEach(r => { %>
-      <div class="review-admin-card <%= r.approved ? 'approved' : 'pending' %>">
-        <div class="review-admin-header">
-          <div>
-            <strong><%= r.name %></strong>
-            <% if (r.userId && r.orderId) { %><span class="review-verified">✓ Купил</span><% } %>
-            <div class="review-admin-meta">
-              <%= r.createdAt.toLocaleString('ru-RU') %>
-              <% if (r.email) { %> · <%= r.email %><% } %>
-            </div>
-          </div>
-          <div style="color:#f59e0b;font-size:18px;letter-spacing:2px">
+<div class="admin-table-wrap">
+  <table class="admin-table">
+    <thead>
+      <tr>
+        <th style="width:60px;text-align:center">Оценка</th>
+        <th style="width:200px">Автор</th>
+        <th>Текст отзыва</th>
+        <th style="width:200px">Товар</th>
+        <th style="width:150px">Дата</th>
+        <th style="width:120px;text-align:center">Статус</th>
+        <th style="width:220px;text-align:right">Действия</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% items.forEach(r => { %>
+        <tr>
+          <td style="text-align:center;color:#f59e0b;font-size:14px;letter-spacing:1px;white-space:nowrap">
             <%= '★'.repeat(r.rating) %><%= '☆'.repeat(5 - r.rating) %>
-          </div>
-        </div>
-
-        <p class="review-admin-text"><%= r.text %></p>
-
-        <% if (r.product) { %>
-          <p class="review-admin-product">
-            Товар: <a href="/product/<%= r.product.slug %>" target="_blank"><%= r.product.name %></a>
-          </p>
-        <% } %>
-
-        <div class="review-admin-actions">
-          <% if (!r.approved) { %>
-            <form method="post" action="/admin/reviews/<%= r.id %>/approve">
-              <button class="btn btn-sm" style="background:#16a34a">✓ Одобрить</button>
+          </td>
+          <td>
+            <div class="cell-title"><%= r.name %></div>
+            <% if (r.email) { %><div class="cell-sub"><%= r.email %></div><% } %>
+            <% if (r.userId && r.orderId) { %><div class="cell-sub" style="color:#16a34a">✓ Покупал(а)</div><% } %>
+          </td>
+          <td>
+            <div class="review-text-cell"><%= r.text %></div>
+          </td>
+          <td>
+            <% if (r.product) { %>
+              <a href="/product/<%= r.product.slug %>" target="_blank" style="color:#1976d2;text-decoration:none;font-size:13.5px">
+                <%= r.product.name %> ↗
+              </a>
+            <% } else { %>
+              <em style="color:#9ca3af">удалён</em>
+            <% } %>
+          </td>
+          <td><%= r.createdAt.toLocaleString('ru-RU') %></td>
+          <td style="text-align:center">
+            <% if (r.approved) { %><span class="badge badge-paid">✓ Одобрен</span>
+            <% } else { %><span class="badge badge-shipped">Ожидает</span><% } %>
+          </td>
+          <td class="cell-actions">
+            <% if (!r.approved) { %>
+              <form method="post" action="/admin/reviews/<%= r.id %>/approve" class="inline-form">
+                <button class="btn btn-sm" style="background:#16a34a" title="Одобрить">✓</button>
+              </form>
+            <% } else { %>
+              <form method="post" action="/admin/reviews/<%= r.id %>/reject" class="inline-form">
+                <button class="btn btn-sm btn-muted" title="Снять с публикации">✗</button>
+              </form>
+            <% } %>
+            <form method="post" action="/admin/reviews/<%= r.id %>/delete" onsubmit="return confirm('Удалить отзыв?')" class="inline-form">
+              <button class="btn btn-sm btn-danger" title="Удалить">×</button>
             </form>
-          <% } else { %>
-            <form method="post" action="/admin/reviews/<%= r.id %>/reject">
-              <button class="btn btn-sm btn-muted">✗ Снять с публикации</button>
-            </form>
-          <% } %>
-          <form method="post" action="/admin/reviews/<%= r.id %>/delete" onsubmit="return confirm('Удалить отзыв?')">
-            <button class="btn btn-sm btn-danger">Удалить</button>
-          </form>
-        </div>
-      </div>
-    <% }) %>
-  </div>
-<% } %>
+          </td>
+        </tr>
+      <% }) %>
+      <% if (!items.length) { %>
+        <tr><td colspan="7" style="text-align:center;color:#9ca3af;padding:40px">
+          <%= filter === 'pending' ? 'На модерации нет отзывов — всё чисто!' : 'Отзывов нет' %>
+        </td></tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>

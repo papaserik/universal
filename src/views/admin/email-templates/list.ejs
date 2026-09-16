@@ -5,31 +5,43 @@
   Шаблоны писем, которые отправляются клиентам и админам. Можно редактировать текст, тему и переменные.
 </p>
 
-<table class="admin-table">
-  <thead><tr>
-    <th>Ключ</th>
-    <th>Название</th>
-    <th>Описание</th>
-    <th>Обновлён</th>
-    <th>Статус</th>
-    <th></th>
-  </tr></thead>
-  <tbody>
-    <% items.forEach(t => { %>
+<div class="admin-table-wrap">
+  <table class="admin-table">
+    <thead>
       <tr>
-        <td><code><%= t.key %></code></td>
-        <td><%= t.name %></td>
-        <td><small style="color:#6b7280"><%= t.description || '—' %></small></td>
-        <td><%= t.updatedAt.toLocaleDateString('ru-RU') %></td>
-        <td>
-          <% if (t.active) { %><span class="badge badge-paid">✓ Активен</span>
-          <% } else { %><span class="badge">Отключён</span><% } %>
-        </td>
-        <td class="row-actions">
-          <a href="/admin/email-templates/<%= t.id %>" class="btn btn-sm">Изменить</a>
-        </td>
+        <th style="width:180px">Ключ</th>
+        <th style="width:200px">Название</th>
+        <th>Описание</th>
+        <th style="width:130px">Обновлён</th>
+        <th style="width:120px;text-align:center">Статус</th>
+        <th style="width:160px;text-align:right">Действия</th>
       </tr>
-    <% }) %>
-    <% if (!items.length) { %><tr><td colspan="6">Шаблонов нет</td></tr><% } %>
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      <% items.forEach(t => { %>
+        <tr>
+          <td><code class="cell-code"><%= t.key %></code></td>
+          <td><div class="cell-title"><%= t.name %></div></td>
+          <td>
+            <% if (t.description) { %>
+              <div class="cell-sub" style="color:#6b7280"><%= t.description %></div>
+            <% } else { %>
+              <em style="color:#9ca3af">—</em>
+            <% } %>
+          </td>
+          <td><%= t.updatedAt.toLocaleDateString('ru-RU') %></td>
+          <td style="text-align:center">
+            <% if (t.active) { %><span class="badge badge-paid">✓ Активен</span>
+            <% } else { %><span class="badge">Отключён</span><% } %>
+          </td>
+          <td class="cell-actions">
+            <a href="/admin/email-templates/<%= t.id %>" class="btn btn-sm">Изменить</a>
+          </td>
+        </tr>
+      <% }) %>
+      <% if (!items.length) { %>
+        <tr><td colspan="6" style="text-align:center;color:#9ca3af;padding:40px">Шаблонов нет</td></tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>

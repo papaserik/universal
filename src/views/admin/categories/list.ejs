@@ -1,32 +1,61 @@
 <div class="admin-header">
   <h1>Категории</h1>
-  <a href="/admin/categories/new" class="btn">+ Добавить</a>
+  <a href="/admin/categories/new" class="btn">+ Добавить категорию</a>
 </div>
+<p class="admin-hint">
+  Изображение показывается в плитке категорий на главной витрине.
+</p>
 
-<table class="admin-table">
-  <thead><tr><th style="width:60px">Иконка</th><th>Название</th><th>Slug</th><th>Товаров</th><th>Сортировка</th><th></th></tr></thead>
-  <tbody>
-    <% categories.forEach(c => { %>
+<div class="admin-table-wrap">
+  <table class="admin-table admin-table-sortable" data-sortable="categories">
+    <thead>
       <tr>
-        <td>
-          <% if (c.imageUrl) { %>
-            <img src="<%= c.imageUrl %>" alt="" style="width:40px;height:40px;object-fit:cover;border-radius:6px">
-          <% } else { %>
-            <span style="font-size:22px;color:#9ca3af">📦</span>
-          <% } %>
-        </td>
-        <td><%= c.name %></td>
-        <td>/catalog/<%= c.slug %></td>
-        <td><%= c._count.products %></td>
-        <td><%= c.sort %></td>
-        <td class="row-actions">
-          <a href="/admin/categories/<%= c.id %>" class="btn btn-sm">Изменить</a>
-          <form method="post" action="/admin/categories/<%= c.id %>/delete" onsubmit="return confirm('Удалить категорию?')">
-            <button class="btn btn-sm btn-danger">×</button>
-          </form>
-        </td>
+        <th style="width:36px"></th>
+        <th style="width:64px">Фото</th>
+        <th style="width:60px">ID</th>
+        <th>Название</th>
+        <th>Slug</th>
+        <th style="width:80px;text-align:center">Товаров</th>
+        <th style="width:100px;text-align:center">Сортировка</th>
+        <th style="width:180px;text-align:right">Действия</th>
       </tr>
-    <% }) %>
-    <% if (!categories.length) { %><tr><td colspan="6">Нет категорий</td></tr><% } %>
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      <% categories.forEach(c => { %>
+        <tr data-id="<%= c.id %>">
+          <td class="drag-handle-cell">
+            <span class="drag-handle" title="Перетащите">⋮⋮</span>
+          </td>
+          <td>
+            <% if (c.imageUrl) { %>
+              <img src="<%= c.imageUrl %>" alt="" class="row-thumb">
+            <% } else { %>
+              <div class="row-thumb row-thumb-empty">📦</div>
+            <% } %>
+          </td>
+          <td><%= c.id %></td>
+          <td>
+            <div class="cell-title"><%= c.name %></div>
+            <% if (c.parentId) {
+                 const parent = categories.find(x => x.id === c.parentId);
+            %>
+              <div class="cell-sub">↳ в «<%= parent ? parent.name : '—' %>»</div>
+            <% } %>
+          </td>
+          <td><code class="cell-code">/catalog/<%= c.slug %></code></td>
+          <td style="text-align:center"><%= c._count.products %></td>
+          <td style="text-align:center"><%= c.sort %></td>
+          <td class="cell-actions">
+            <a href="/admin/categories/<%= c.id %>" class="btn btn-sm">Изменить</a>
+            <form method="post" action="/admin/categories/<%= c.id %>/delete" onsubmit="return confirm('Удалить категорию?')" class="inline-form">
+              <button class="btn btn-sm btn-danger" title="Удалить">×</button>
+            </form>
+          </td>
+        </tr>
+      <% }) %>
+      <% if (!categories.length) { %>
+        <tr><td colspan="8" style="text-align:center;color:#9ca3af;padding:40px">Нет категорий</td></tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>

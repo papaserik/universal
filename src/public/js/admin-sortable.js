@@ -9,28 +9,9 @@
   if (!tbody) return;
 
   var dragEl = null;
-  var savedOrder = null;
 
   function getRows() {
     return Array.from(tbody.querySelectorAll('tr[data-id]'));
-  }
-
-  function makeHandle(row) {
-    var td = document.createElement('td');
-    td.className = 'drag-handle-cell';
-    td.innerHTML = '<span class="drag-handle" title="Перетащите, чтобы изменить порядок">⋮⋮</span>';
-    row.insertBefore(td, row.firstChild);
-
-    var handle = td.querySelector('.drag-handle');
-    handle.addEventListener('mousedown', function () {
-      row.setAttribute('draggable', 'true');
-    });
-    handle.addEventListener('mouseup', function () {
-      row.removeAttribute('draggable');
-    });
-    row.addEventListener('dragend', function () {
-      row.removeAttribute('draggable');
-    });
   }
 
   function saveOrder() {
@@ -42,15 +23,10 @@
     })
       .then(function (r) { return r.json(); })
       .then(function (d) {
-        if (!d.ok) {
-          alert('Ошибка сохранения порядка: ' + (d.error || 'неизвестно'));
-        } else {
-          showSaved();
-        }
+        if (!d.ok) alert('Ошибка: ' + (d.error || 'неизвестно'));
+        else showSaved();
       })
-      .catch(function (e) {
-        alert('Ошибка сети: ' + e.message);
-      });
+      .catch(function (e) { alert('Ошибка сети: ' + e.message); });
   }
 
   function showSaved() {
@@ -67,7 +43,22 @@
     el._timer = setTimeout(function () { el.classList.remove('show'); }, 1500);
   }
 
-  // ─── Настройка drag&drop ───
+  // Находим ручку в каждой строке (уже в HTML) и включаем drag
+  getRows().forEach(function (row) {
+    var handle = row.querySelector('.drag-handle');
+    if (!handle) return;
+
+    handle.addEventListener('mousedown', function () {
+      row.setAttribute('draggable', 'true');
+    });
+    handle.addEventListener('mouseup', function () {
+      row.removeAttribute('draggable');
+    });
+    row.addEventListener('dragend', function () {
+      row.removeAttribute('draggable');
+    });
+  });
+
   tbody.addEventListener('dragstart', function (e) {
     var row = e.target.closest('tr[data-id]');
     if (!row || !row.hasAttribute('draggable')) return;
@@ -94,12 +85,8 @@
         break;
       }
     }
-
-    if (after) {
-      tbody.insertBefore(dragEl, after);
-    } else {
-      tbody.appendChild(dragEl);
-    }
+    if (after) tbody.insertBefore(dragEl, after);
+    else tbody.appendChild(dragEl);
   });
 
   tbody.addEventListener('drop', function (e) {
@@ -117,7 +104,4 @@
       saveOrder();
     }
   });
-
-  // ─── Навешиваем handle на все строки ───
-  getRows().forEach(makeHandle);
 })();

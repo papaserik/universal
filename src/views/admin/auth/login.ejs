@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Вход в админ-панель — <%= settings.siteName %></title>
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/css/admin.css">
+</head>
+<body class="admin-login-body">
+
+<div class="admin-login-wrap">
+  <div class="admin-login-card">
+
+    <div class="admin-login-header">
+      <div class="admin-login-icon">🔒</div>
+      <h1>Вход в админ-панель</h1>
+      <p class="admin-login-sub">Только для администраторов и менеджеров</p>
+    </div>
+
+    <% if (error) { %>
+      <div class="admin-login-error"><%= error %></div>
+    <% } %>
+
+    <form method="post" action="/admin/login" class="admin-login-form">
+      <label>
+        <span>Email</span>
+        <input type="email" name="email" value="<%= email %>" placeholder="admin@shop.local" required autofocus>
+      </label>
+
+      <label>
+        <span>Пароль</span>
+        <input type="password" name="password" placeholder="••••••••" required>
+      </label>
+
+      <button type="submit" class="admin-login-btn">
+        Войти в админку
+      </button>
+    </form>
+
+    <div class="admin-login-footer">
+      <a href="/">← Вернуться на сайт</a>
+    </div>
+
+  </div>
+
+  <p class="admin-login-copyright">
+    Разработано в студии <a href="https://web-tehnik.com" target="_blank" rel="noopener">web-tehnik.com</a>
+  </p>
+</div>
+
+</body>
+</html>

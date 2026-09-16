@@ -1,28 +1,66 @@
 <div class="admin-header">
-  <h1>Пользователи</h1>
-  <a href="/admin/users/new" class="btn">+ Добавить</a>
+  <h1>👥 Пользователи</h1>
+  <a href="/admin/users/new" class="btn">+ Добавить пользователя</a>
 </div>
 
-<table class="admin-table">
-  <thead><tr><th>ID</th><th>Email</th><th>Имя</th><th>Роль</th><th>Заказов</th><th>Активен</th><th></th></tr></thead>
-  <tbody>
-    <% users.forEach(u => { %>
+<div class="admin-table-wrap">
+  <table class="admin-table">
+    <thead>
       <tr>
-        <td><%= u.id %></td>
-        <td><%= u.email %></td>
-        <td><%= u.name || '—' %></td>
-        <td><span class="badge"><%= u.role %></span></td>
-        <td><%= u._count.orders %></td>
-        <td><%= u.active ? '✓' : '✗' %></td>
-        <td class="row-actions">
-          <a href="/admin/users/<%= u.id %>" class="btn btn-sm">Изменить</a>
-          <% if (u.email !== 'admin@shop.local') { %>
-            <form method="post" action="/admin/users/<%= u.id %>/delete" onsubmit="return confirm('Удалить пользователя?')">
-              <button class="btn btn-sm btn-danger">×</button>
-            </form>
-          <% } %>
-        </td>
+        <th style="width:50px">ID</th>
+        <th style="width:60px;text-align:center">Аватар</th>
+        <th>Email</th>
+        <th style="width:200px">Имя</th>
+        <th style="width:120px;text-align:center">Роль</th>
+        <th style="width:100px;text-align:center">Заказов</th>
+        <th style="width:110px;text-align:center">Активен</th>
+        <th style="width:130px">Регистрация</th>
+        <th style="width:180px;text-align:right">Действия</th>
       </tr>
-    <% }) %>
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      <% users.forEach(u => { %>
+        <tr>
+          <td><%= u.id %></td>
+          <td style="text-align:center">
+            <% if (u.avatar) { %>
+              <img src="<%= u.avatar %>" alt="" class="user-avatar-cell">
+            <% } else { %>
+              <div class="user-avatar-cell user-avatar-initial"><%= (u.name || u.email).charAt(0).toUpperCase() %></div>
+            <% } %>
+          </td>
+          <td>
+            <div class="cell-title"><%= u.email %></div>
+          </td>
+          <td><%= u.name || '—' %></td>
+          <td style="text-align:center">
+            <% if (u.role === 'ADMIN') { %>
+              <span class="badge" style="background:#fef3c7;color:#92400e">👑 ADMIN</span>
+            <% } else if (u.role === 'MANAGER') { %>
+              <span class="badge" style="background:#dbeafe;color:#1e40af">MANAGER</span>
+            <% } else { %>
+              <span class="badge">USER</span>
+            <% } %>
+          </td>
+          <td style="text-align:center"><%= u._count.orders %></td>
+          <td style="text-align:center">
+            <% if (u.active) { %><span class="badge badge-paid">✓ Да</span>
+            <% } else { %><span class="badge badge-cancelled">✗ Нет</span><% } %>
+          </td>
+          <td><%= u.createdAt.toLocaleDateString('ru-RU') %></td>
+          <td class="cell-actions">
+            <a href="/admin/users/<%= u.id %>" class="btn btn-sm">Изменить</a>
+            <% if (u.email !== 'admin@shop.local') { %>
+              <form method="post" action="/admin/users/<%= u.id %>/delete" onsubmit="return confirm('Удалить пользователя?')" class="inline-form">
+                <button class="btn btn-sm btn-danger" title="Удалить">×</button>
+              </form>
+            <% } %>
+          </td>
+        </tr>
+      <% }) %>
+      <% if (!users.length) { %>
+        <tr><td colspan="9" style="text-align:center;color:#9ca3af;padding:40px">Пользователей нет</td></tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>

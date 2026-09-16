@@ -44,11 +44,15 @@ app.use(async (req, res, next) => {
 
 app.use(async (req, res, next) => {
   res.locals.req = req;
+  // ─── Юзерская сессия (личный кабинет, витрина) ───
   res.locals.user = req.session.user || null;
   res.locals.userAvatar = req.session.avatar || null;
   res.locals.cartCount = (req.session.cart || []).reduce((s, i) => s + i.qty, 0);
 
-  // Счётчик избранного
+  // ─── Админская сессия (админка) ───
+  res.locals.adminUser = req.session.admin || null;
+
+  // Счётчик избранного — только для юзера
   res.locals.favoritesCount = 0;
   if (req.session.user) {
     try {
@@ -57,7 +61,7 @@ app.use(async (req, res, next) => {
     } catch (e) {}
   }
 
-  // Баллы и уровень пользователя
+  // Баллы и уровень — только для юзера
   res.locals.userLoyalty = null;
   if (req.session.user) {
     try {
@@ -105,9 +109,14 @@ app.use(async (req, res, next) => {
 });
 
 app.use((req, res, next) => {
-  if (req.path.startsWith('/admin')) {
+  if (req.path.startsWith('/admin') && !req.path.startsWith('/admin/login')) {
+    // Все страницы админки, КРОМЕ /admin/login — с сайдбаром
     res.locals.layout = 'admin/layouts/admin';
     res.locals.saved  = req.query.saved === '1';
+  } else if (req.path.startsWith('/admin/login')) {
+    // Страница входа в админку — рендерится БЕЗ layout.
+    // Отключение передаётся в res.render через { layout: false } в контроллере.
+    res.locals.layout = 'admin/layouts/admin'; // дефолтный, контроллер переопределит
   } else if (!res.locals.layout) {
     res.locals.layout = 'layouts/main';
   }
