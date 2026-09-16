@@ -1,0 +1,22 @@
+<div class="admin-header">
+  <h1><%= item && item.id ? 'Изменить подписчика' : 'Новый подписчик' %></h1>
+  <a href="/admin/marketing/subscribers" class="btn btn-sm">← К списку</a>
+</div>
+
+<% if (error) { %><div class="admin-alert" style="background:#fee2e2;color:#991b1b"><%= error %></div><% } %>
+
+<form method="post" action="<%= item && item.id ? '/admin/marketing/subscribers/' + item.id : '/admin/marketing/subscribers' %>" class="admin-form">
+  <label>Email <input type="email" name="email" value="<%= item ? (item.email || '') : '' %>"></label>
+  <div class="form-row">
+    <label>Имя <input type="text" name="name" value="<%= item ? (item.name || '') : '' %>"></label>
+    <label>Телефон <input type="text" name="phone" value="<%= item ? (item.phone || '') : '' %>" placeholder="+79001234567"></label>
+  </div>
+  <label>Telegram Chat ID (если подписан на бота)
+    <input type="text" name="telegramChatId" value="<%= item ? (item.telegramChatId || '') : '' %>" placeholder="123456789">
+  </label>
+  <div class="form-row">
+    <label class="checkbox-label"><input type="checkbox" name="confirmed" <%= !item || item.confirmed ? 'checked' : '' %>> Подтверждён (получает рассылки)</label>
+    <label class="checkbox-label"><input type="checkbox" name="unsubscribed" <%= item && item.unsubscribed ? 'checked' : '' %>> Отписан</label>
+  </div>
+  <div class="form-actions"><button class="btn">Сохранить</button></div>
+</form>

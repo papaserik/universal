@@ -1,0 +1,103 @@
+<div class="admin-header">
+  <h1><%= item && item.id ? 'Рассылка #' + item.id : 'Новая рассылка' %></h1>
+  <a href="/admin/marketing/newsletters" class="btn btn-sm">← К списку</a>
+</div>
+
+<div class="sales-stats" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr));margin-bottom:20px">
+  <div class="sales-stat">
+    <div class="sales-stat-label">Подтверждённых</div>
+    <div class="sales-stat-value"><%= counts.confirmed %></div>
+    <div class="sales-stat-sub">всего подписчиков</div>
+  </div>
+  <div class="sales-stat">
+    <div class="sales-stat-label">С email</div>
+    <div class="sales-stat-value"><%= counts.withEmail %></div>
+    <div class="sales-stat-sub">получат письмо</div>
+  </div>
+  <div class="sales-stat">
+    <div class="sales-stat-label">С Telegram</div>
+    <div class="sales-stat-value"><%= counts.withTg %></div>
+    <div class="sales-stat-sub">получат сообщение</div>
+  </div>
+</div>
+
+<form method="post" action="<%= item && item.id ? '/admin/marketing/newsletters/' + item.id : '/admin/marketing/newsletters' %>" class="admin-form">
+  <label>Тема письма *
+    <input type="text" name="subject" value="<%= item ? item.subject : '' %>" required
+           placeholder="Например: Скидки выходного дня">
+  </label>
+
+  <fieldset class="full">
+    <legend>Каналы отправки</legend>
+    <% let chArr = ['email']; if (item) try { chArr = JSON.parse(item.channels); } catch(e){} %>
+    <label class="checkbox-inline">
+      <input type="checkbox" name="channels" value="email" <%= chArr.includes('email') ? 'checked' : '' %>>
+      ✉ Email (требуется настроенный SMTP)
+    </label>
+    <label class="checkbox-inline">
+      <input type="checkbox" name="channels" value="telegram" <%= chArr.includes('telegram') ? 'checked' : '' %>>
+      📨 Telegram (только для подписчиков с Chat ID)
+    </label>
+  </fieldset>
+
+  <label>Содержимое письма *
+    <textarea name="content" id="content-editor" rows="14" required><%= item ? item.content : '' %></textarea>
+  </label>
+
+  <p style="font-size:13px;color:#6b7280;margin:-8px 0 0">
+    💡 Можно использовать подстановки: <code>{{name}}</code> — имя подписчика, <code>{{email}}</code> — email, <code>{{site}}</code> — название магазина.
+  </p>
+
+  <div class="form-actions" style="display:flex;gap:10px;flex-wrap:wrap">
+    <button type="submit" class="btn">💾 Сохранить черновик</button>
+    <% if (item && item.id) { %>
+      <button type="button" class="btn" id="btn-send" style="background:#16a34a">
+        🚀 Отправить сейчас (<%= counts.confirmed %> получателей)
+      </button>
+    <% } %>
+    <span id="send-result" style="font-size:14px;align-self:center"></span>
+  </div>
+</form>
+
+<script src="https://cdn.jsdelivr.net/npm/tinymce@7.4.1/tinymce.min.js" referrerpolicy="origin"></script>
+<script>
+tinymce.init({
+  selector: '#content-editor',
+  language: 'ru',
+  language_url: 'https://cdn.jsdelivr.net/npm/tinymce-i18n@24.10.22/langs7/ru.js',
+  height: 420, menubar: false,
+  plugins: 'lists link code preview autoresize',
+  toolbar: 'undo redo | h2 h3 | bold italic underline | bullist numlist | link | code preview',
+  branding: false, promotion: false, convert_urls: false
+});
+
+(function(){
+  var btn = document.getElementById('btn-send');
+  var res = document.getElementById('send-result');
+  if (!btn) return;
+  btn.addEventListener('click', function () {
+    if (!confirm('Точно отправить рассылку всем подтверждённым подписчикам?')) return;
+    btn.disabled = true;
+    res.textContent = '⏳ Отправляю...';
+    res.style.color = '#6b7280';
+    fetch('/admin/marketing/newsletters/<%= item && item.id ? item.id : "" %>/send', { method: 'POST' })
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        if (d.ok) {
+          res.textContent = '✓ Отправлено: ' + d.delivered + ' / ' + d.total + ' (ошибок: ' + d.failed + ')';
+          res.style.color = '#16a34a';
+          setTimeout(function(){ location.reload(); }, 1500);
+        } else {
+          res.textContent = '✗ Ошибка: ' + (d.error || 'unknown');
+          res.style.color = '#dc2626';
+          btn.disabled = false;
+        }
+      })
+      .catch(function(e){
+        res.textContent = '✗ ' + e.message;
+        res.style.color = '#dc2626';
+        btn.disabled = false;
+      });
+  });
+})();
+</script>

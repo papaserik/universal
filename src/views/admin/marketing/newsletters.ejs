@@ -1,0 +1,44 @@
+<div class="admin-header">
+  <h1>📨 Рассылки</h1>
+  <a href="/admin/marketing/newsletters/new" class="btn">+ Новая рассылка</a>
+</div>
+<p class="admin-hint">
+  Создайте рассылку один раз, отправьте всем подписчикам сразу. Поддерживается отправка по email и в Telegram.
+</p>
+
+<table class="admin-table">
+  <thead><tr>
+    <th>ID</th><th>Тема</th><th>Каналы</th><th>Статус</th>
+    <th>Отправлено</th><th>Доставлено</th><th>Ошибок</th><th>Дата</th><th></th>
+  </tr></thead>
+  <tbody>
+    <% items.forEach(n => {
+         let ch = []; try { ch = JSON.parse(n.channels); } catch(e){}
+    %>
+      <tr>
+        <td><%= n.id %></td>
+        <td><%= n.subject %></td>
+        <td>
+          <% ch.forEach(c => { %>
+            <span class="badge"><%= c === 'email' ? '✉ Email' : '📨 Telegram' %></span>
+          <% }) %>
+        </td>
+        <td>
+          <% if (n.status === 'sent') { %><span class="badge badge-paid">✓ Отправлено</span>
+          <% } else { %><span class="badge">Черновик</span><% } %>
+        </td>
+        <td><%= n.recipients %></td>
+        <td><%= n.delivered %></td>
+        <td><%= n.failed > 0 ? n.failed : '—' %></td>
+        <td><%= n.sentAt ? n.sentAt.toLocaleString('ru-RU') : n.createdAt.toLocaleDateString('ru-RU') %></td>
+        <td class="row-actions">
+          <a href="/admin/marketing/newsletters/<%= n.id %>" class="btn btn-sm">Открыть</a>
+          <form method="post" action="/admin/marketing/newsletters/<%= n.id %>/delete" onsubmit="return confirm('Удалить рассылку?')">
+            <button class="btn btn-sm btn-danger">×</button>
+          </form>
+        </td>
+      </tr>
+    <% }) %>
+    <% if (!items.length) { %><tr><td colspan="9">Рассылок пока нет</td></tr><% } %>
+  </tbody>
+</table>

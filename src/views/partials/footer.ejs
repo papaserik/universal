@@ -1,11 +1,35 @@
 <footer class="site-footer">
   <div class="container">
-    <p><%= settings.siteName %> · <%= settings.phone %> · <%= settings.email %></p>
-    <p>
-      <a href="/contacts">Контакты</a> ·
-      <a href="/page/privacy-policy">Политика конфиденциальности</a> ·
-      <a href="/page/terms">Пользовательское соглашение</a>
-    </p>
+    <div class="footer-grid">
+      <div>
+        <p><strong><%= settings.siteName %></strong></p>
+        <p><%= settings.phone %> · <%= settings.email %></p>
+        <p><%= settings.address %></p>
+      </div>
+      <div>
+        <p><strong>Покупателям</strong></p>
+        <p>
+          <a href="/catalog">Каталог</a> ·
+          <a href="/blog">Блог</a> ·
+          <a href="/contacts">Контакты</a>
+        </p>
+        <p>
+          <a href="/page/privacy-policy">Конфиденциальность</a> ·
+          <a href="/page/terms">Соглашение</a>
+        </p>
+      </div>
+      <div>
+        <p><strong>Рассылка</strong></p>
+        <p style="font-size:13px;line-height:1.5;color:rgba(255,255,255,.7)">
+          Новинки, скидки и акции — первыми узнавайте о выгоде.
+        </p>
+        <form method="post" action="/subscribe" class="footer-subscribe">
+          <input type="email" name="email" placeholder="Ваш email" required>
+          <button type="submit" aria-label="Подписаться">→</button>
+        </form>
+      </div>
+    </div>
+
     <p class="site-copyright">
       Разработано в студии <a href="https://web-tehnik.com" target="_blank" rel="noopener nofollow">web-tehnik.com</a>
     </p>

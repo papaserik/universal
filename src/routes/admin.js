@@ -24,6 +24,7 @@ const blogCats   = require('../controllers/admin/blogCategories');
 const sales      = require('../controllers/admin/sales');
 const abandoned  = require('../controllers/admin/abandoned');
 const marketplaces = require('../controllers/admin/marketplaces');
+const marketing  = require('../controllers/admin/marketing');
 const payment    = require('../controllers/admin/payment');
 const ordersExport = require('../controllers/admin/ordersExport');
 
@@ -130,5 +131,21 @@ router.post('/marketplaces/:id', marketplaces.save);
 router.post('/marketplaces/:id/toggle', marketplaces.toggle);
 router.post('/marketplaces/:id/delete', marketplaces.remove);
 router.post('/marketplaces/upload-icon', imageUpload.single('files'), marketplaces.uploadIcon);
+
+router.get('/marketing/subscribers', marketing.subscribers);
+router.get('/marketing/subscribers/export', marketing.subscribersExport);
+router.get('/marketing/subscribers/new', marketing.subscriberForm);
+router.get('/marketing/subscribers/:id', marketing.subscriberForm);
+router.post('/marketing/subscribers', marketing.subscriberSave);
+router.post('/marketing/subscribers/:id', marketing.subscriberSave);
+router.post('/marketing/subscribers/:id/delete', marketing.subscriberRemove);
+
+router.get('/marketing/newsletters', marketing.newsletters);
+router.get('/marketing/newsletters/new', marketing.newsletterForm);
+router.get('/marketing/newsletters/:id', marketing.newsletterForm);
+router.post('/marketing/newsletters', marketing.newsletterSave);
+router.post('/marketing/newsletters/:id', marketing.newsletterSave);
+router.post('/marketing/newsletters/:id/delete', marketing.newsletterRemove);
+router.post('/marketing/newsletters/:id/send', marketing.newsletterSend);
 
 module.exports = router;

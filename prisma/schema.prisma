@@ -262,3 +262,41 @@ model LoginCode {
   ip        String?
   @@index([email, code])
 }
+
+model Subscriber {
+  id             Int      @id @default(autoincrement())
+  email          String?  @unique
+  name           String?
+  phone          String?
+  telegramChatId String?
+  source         String   @default("site")
+  confirmed      Boolean  @default(false)
+  unsubscribed   Boolean  @default(false)
+  tags           String   @default("[]")
+  createdAt      DateTime @default(now())
+  @@index([confirmed, unsubscribed])
+}
+
+model Newsletter {
+  id           Int      @id @default(autoincrement())
+  subject      String
+  content      String
+  channels     String   @default("[\"email\"]")
+  status       String   @default("draft")
+  sentAt       DateTime?
+  recipients   Int      @default(0)
+  delivered    Int      @default(0)
+  failed       Int      @default(0)
+  createdAt    DateTime @default(now())
+}
+
+model NewsletterLog {
+  id           Int      @id @default(autoincrement())
+  newsletterId Int
+  subscriberId Int
+  channel      String
+  status       String
+  error        String?
+  sentAt       DateTime @default(now())
+  @@index([newsletterId])
+}

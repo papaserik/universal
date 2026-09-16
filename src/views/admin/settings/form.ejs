@@ -23,6 +23,7 @@
               <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
                 <button type="button" class="btn btn-sm" data-test-channel="telegram">📨 Проверить Telegram</button>
                 <button type="button" class="btn btn-sm" data-test-channel="whatsapp">📨 Проверить WhatsApp</button>
+                <button type="button" class="btn btn-sm" data-test-channel="max">📨 Проверить MAX</button>
                 <span id="test-result" style="font-size:13px;color:#6b7280;align-self:center"></span>
               </div>
 
@@ -135,6 +136,64 @@ Content-Type: application/json
                   <p style="font-size:12.5px;color:#6b7280">
                     Там будут строки <code>[notify] Telegram — отправлено</code> или
                     <code>[notify] WhatsApp — не отправлено: no_config</code>
+                  </p>
+                </div>
+              </details>
+
+              <details class="notif-help">
+                <summary>📖 Как настроить уведомления в MAX</summary>
+                <div class="notif-steps">
+                  <p><strong>MAX</strong> — российский мессенджер с бот-платформой, аналогичной Telegram.</p>
+
+                  <p><strong>Шаг 1. Создайте бота</strong></p>
+                  <ol>
+                    <li>Откройте мессенджер <strong>MAX</strong> → найдите официального бота <strong>@MasterBot</strong></li>
+                    <li>Отправьте команду <code>/create</code></li>
+                    <li>Следуйте инструкциям: задайте имя, username, описание</li>
+                    <li>В ответ придёт <strong>access_token</strong> — длинная строка. Это ваш <em>Bot Token</em></li>
+                  </ol>
+
+                  <p><strong>Шаг 2. Узнайте Chat ID</strong></p>
+                  <ol>
+                    <li>Напишите своему боту любое сообщение (обязательно — иначе бот не сможет вам отправлять)</li>
+                    <li>Откройте в браузере:
+                      <pre style="background:#0f172a;color:#e2e8f0;padding:8px;border-radius:6px;font-size:11.5px">https://botapi.max.ru/updates?access_token=ВАШ_ТОКЕН</pre>
+                    </li>
+                    <li>Найдите в ответе <code>"chat_id": 123456789</code> — это ваш Chat ID</li>
+                    <li>Скопируйте число</li>
+                  </ol>
+
+                  <p><strong>Шаг 3. Заполните поля ниже</strong></p>
+                  <ul>
+                    <li><strong>MAX — включить:</strong> ✓</li>
+                    <li><strong>MAX Bot Token:</strong> access_token, полученный в @MasterBot</li>
+                    <li><strong>MAX Chat ID:</strong> число из шага 2</li>
+                  </ul>
+
+                  <p><strong>Шаг 4. Проверьте</strong></p>
+                  <ol>
+                    <li>Сохраните настройки</li>
+                    <li>Нажмите <strong>📨 Проверить MAX</strong> (если кнопка появится) или сделайте тестовый заказ</li>
+                    <li>Сообщение должно прийти в диалог с ботом в MAX</li>
+                  </ol>
+
+                  <p><strong>Для группового чата</strong></p>
+                  <ul>
+                    <li>Добавьте бота в группу MAX</li>
+                    <li>Chat ID группы — отрицательное число (узнать так же через <code>/updates</code>)</li>
+                  </ul>
+
+                  <p><strong>⚠️ Частые ошибки</strong></p>
+                  <ul>
+                    <li><code>HTTP 401</code> — неверный access_token, пересоздайте бота</li>
+                    <li><code>HTTP 403</code> — бот не может писать в этот чат, напишите ему первым</li>
+                    <li><code>no_config</code> — не заполнены поля или галочка не стоит</li>
+                    <li><code>disabled</code> — не включили «MAX — включить»</li>
+                  </ul>
+
+                  <p style="font-size:12.5px;color:#6b7280">
+                    ⚠️ MAX Bot API пока развивается — если появились новые требования от платформы,
+                    сообщите, обновим интеграцию.
                   </p>
                 </div>
               </details>

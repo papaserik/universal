@@ -286,3 +286,100 @@
   overflow-x: auto !important;
   font-family: ui-monospace, Menlo, monospace !important;
 }
+
+/* Маркетинг */
+.newsletter-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 20px; }
+
+/* Выравнивание кнопок в админке */
+.admin-header .btn,
+.admin-header a.btn,
+.admin-header button.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  white-space: nowrap;
+  line-height: 1;
+  height: 38px;
+  padding: 0 16px;
+  font-size: 14px;
+  font-weight: 500;
+  box-sizing: border-box;
+  vertical-align: middle;
+  text-decoration: none;
+}
+.admin-header .btn.btn-sm {
+  height: 32px;
+  padding: 0 12px;
+  font-size: 13px;
+}
+
+/* Кнопки в row-actions — тоже выравниваем */
+.row-actions .btn,
+.row-actions button.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 30px;
+  padding: 0 12px;
+  gap: 4px;
+  line-height: 1;
+  font-size: 13px;
+  box-sizing: border-box;
+}
+
+/* Прочие .btn внутри форм и списков — на всякий случай */
+form .btn,
+.admin-form .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  line-height: 1;
+  box-sizing: border-box;
+}
+
+/* Общее: любые emoji-иконки в кнопках не растягивают строку */
+.btn > span,
+.btn > emoji,
+.btn svg {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* Единый размер кнопок в admin-header — независимо от btn / btn-sm */
+.admin-header .btn,
+.admin-header .btn.btn-sm,
+.admin-header a.btn,
+.admin-header a.btn.btn-sm,
+.admin-header button.btn,
+.admin-header button.btn.btn-sm {
+  height: 38px !important;
+  min-height: 38px !important;
+  padding: 0 18px !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  line-height: 1 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  box-sizing: border-box !important;
+  white-space: nowrap !important;
+  vertical-align: middle !important;
+}
+
+/* Соседние кнопки в admin-header — одинаковый вертикальный отступ */
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.admin-header > div,
+.admin-header > .btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}

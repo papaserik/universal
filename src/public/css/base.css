@@ -497,3 +497,38 @@ main.container{padding:24px 16px;min-height:60vh}
 .auth-alt p { margin: 0 0 12px; color: #374151; }
 .auth-alt .btn { display: inline-block; }
 .auth-alt-note { font-size: 13px; color: #6b7280; margin-top: 12px !important; }
+
+/* Подписка */
+.subscribe-wrap { max-width: 520px; margin: 20px auto; background: #fff; padding: 28px; border-radius: 12px; border: 1px solid #e5e7eb; }
+.subscribe-desc { color: #6b7280; line-height: 1.6; margin: 0 0 20px; }
+.subscribe-result { text-align: center; padding: 20px; }
+.subscribe-icon {
+  display: inline-flex; width: 56px; height: 56px; border-radius: 50%;
+  background: #16a34a; color: #fff; font-size: 30px;
+  align-items: center; justify-content: center; margin-bottom: 16px;
+}
+.subscribe-result h2 { margin: 0 0 12px; }
+.subscribe-result p { color: #4b5563; margin: 6px 0; }
+
+/* Виджет подписки в футере */
+.footer-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 24px; margin-bottom: 24px;
+}
+.footer-grid p { margin: 6px 0; font-size: 14px; }
+.footer-grid a { color: #9cf; }
+
+.footer-subscribe {
+  display: flex; gap: 4px; margin-top: 8px;
+  background: rgba(255,255,255,.08); border-radius: 6px; padding: 4px;
+}
+.footer-subscribe input {
+  flex: 1; background: transparent; border: 0; outline: 0;
+  color: #fff; padding: 6px 10px; font: inherit; font-size: 13px;
+}
+.footer-subscribe input::placeholder { color: rgba(255,255,255,.4); }
+.footer-subscribe button {
+  background: #3b82f6; border: 0; color: #fff; padding: 6px 12px;
+  border-radius: 4px; cursor: pointer; font-size: 14px;
+}
+.footer-subscribe button:hover { background: #2563eb; }

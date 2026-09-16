@@ -1,0 +1,60 @@
+<div class="admin-header">
+  <h1>👥 Подписчики</h1>
+  <div style="display:flex;gap:8px">
+    <a href="/admin/marketing/subscribers/export" class="btn btn-sm">📥 Экспорт CSV</a>
+    <a href="/admin/marketing/subscribers/new" class="btn">+ Добавить подписчика</a>
+  </div>
+</div>
+<p class="admin-hint">
+  Здесь все, кто подписан на рассылку: email-адреса, Telegram-чаты. Подтверждённые и не отписавшиеся получают рассылки.
+</p>
+
+<div class="sales-stats" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr))">
+  <a href="?filter=all" class="sales-stat" style="text-decoration:none;color:inherit;<%= filter === 'all' ? 'border-color:#0f172a' : '' %>">
+    <div class="sales-stat-label">Всего</div>
+    <div class="sales-stat-value"><%= counts.total %></div>
+  </a>
+  <a href="?filter=confirmed" class="sales-stat" style="text-decoration:none;color:inherit;<%= filter === 'confirmed' ? 'border-color:#16a34a' : '' %>">
+    <div class="sales-stat-label">✓ Подтверждённые</div>
+    <div class="sales-stat-value"><%= counts.confirmed %></div>
+  </a>
+  <a href="?filter=unconfirmed" class="sales-stat" style="text-decoration:none;color:inherit;<%= filter === 'unconfirmed' ? 'border-color:#f59e0b' : '' %>">
+    <div class="sales-stat-label">⏳ Не подтвердили</div>
+    <div class="sales-stat-value"><%= counts.unconfirmed %></div>
+  </a>
+  <a href="?filter=unsubscribed" class="sales-stat" style="text-decoration:none;color:inherit;<%= filter === 'unsubscribed' ? 'border-color:#dc2626' : '' %>">
+    <div class="sales-stat-label">🚫 Отписались</div>
+    <div class="sales-stat-value"><%= counts.unsubscribed %></div>
+  </a>
+</div>
+
+<table class="admin-table">
+  <thead><tr>
+    <th>ID</th><th>Email</th><th>Имя</th><th>Телефон</th><th>Telegram</th>
+    <th>Статус</th><th>Дата</th><th></th>
+  </tr></thead>
+  <tbody>
+    <% items.forEach(s => { %>
+      <tr>
+        <td><%= s.id %></td>
+        <td><%= s.email || '—' %></td>
+        <td><%= s.name || '—' %></td>
+        <td><%= s.phone || '—' %></td>
+        <td><%= s.telegramChatId ? '✓ ' + s.telegramChatId : '—' %></td>
+        <td>
+          <% if (s.unsubscribed) { %><span class="badge badge-cancelled">Отписан</span>
+          <% } else if (s.confirmed) { %><span class="badge badge-paid">✓ Подтверждён</span>
+          <% } else { %><span class="badge badge-shipped">Ожидает</span><% } %>
+        </td>
+        <td><%= s.createdAt.toLocaleDateString('ru-RU') %></td>
+        <td class="row-actions">
+          <a href="/admin/marketing/subscribers/<%= s.id %>" class="btn btn-sm">Изменить</a>
+          <form method="post" action="/admin/marketing/subscribers/<%= s.id %>/delete" onsubmit="return confirm('Удалить подписчика?')">
+            <button class="btn btn-sm btn-danger">×</button>
+          </form>
+        </td>
+      </tr>
+    <% }) %>
+    <% if (!items.length) { %><tr><td colspan="8">Подписчиков пока нет</td></tr><% } %>
+  </tbody>
+</table>

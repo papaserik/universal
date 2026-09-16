@@ -97,14 +97,43 @@ async function sendWhatsApp(order) {
   return { ok: false, reason: 'unknown_provider' };
 }
 
+
+// ─── MAX (мессенджер) ───
+async function sendMax(text) {
+  const enabled = (await getSetting('max_enabled', '0')) === '1';
+  if (!enabled) return { ok: false, reason: 'disabled' };
+
+  const token = await getSetting('max_bot_token', '');
+  const chatId = await getSetting('max_chat_id', '');
+  if (!token || !chatId) return { ok: false, reason: 'no_config' };
+
+  try {
+    // MAX Bot API похож на Telegram Bot API
+    const url = 'https://botapi.max.ru/messages?access_token=' + encodeURIComponent(token) + '&chat_id=' + encodeURIComponent(chatId);
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text, format: 'markdown' })
+    });
+    if (!res.ok) {
+      const errText = await res.text().catch(() => '');
+      return { ok: false, reason: 'HTTP ' + res.status + ' ' + errText.slice(0, 200) };
+    }
+    return { ok: true };
+  } catch (e) {
+    return { ok: false, reason: e.message };
+  }
+}
+
 async function notifyNewOrder(order) {
   const text = orderText(order);
   const results = await Promise.allSettled([
     sendTelegram(text),
-    sendWhatsApp(order)
+    sendWhatsApp(order),
+    sendMax(text)
   ]);
   results.forEach((r, i) => {
-    const name = i === 0 ? 'Telegram' : 'WhatsApp';
+    const name = i === 0 ? 'Telegram' : (i === 1 ? 'WhatsApp' : 'MAX');
     if (r.status === 'fulfilled' && r.value && r.value.ok) {
       console.log('[notify] ' + name + ' — отправлено');
     } else {
@@ -124,7 +153,8 @@ async function sendTest(channel) {
   };
   if (channel === 'telegram') return sendTelegram(orderText(testOrder));
   if (channel === 'whatsapp') return sendWhatsApp(testOrder);
+  if (channel === 'max') return sendMax(orderText(testOrder));
   return { ok: false, reason: 'unknown_channel' };
 }
 
-module.exports = { notifyNewOrder, sendTest, sendTelegram, sendWhatsApp };
+module.exports = { notifyNewOrder, sendTest, sendTelegram, sendWhatsApp, sendMax };

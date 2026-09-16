@@ -17,6 +17,13 @@
           <a href="/page/terms">Соглашение</a>
         </p>
       </div>
+      <div>
+        <strong>Рассылка</strong>
+        <form method="post" action="/subscribe" class="footer-subscribe">
+          <input type="email" name="email" placeholder="Email" required>
+          <button type="submit">→</button>
+        </form>
+      </div>
     </div>
     <p class="c-copy">
       © <%= new Date().getFullYear() %> <%= settings.siteName %> ·

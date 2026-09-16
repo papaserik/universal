@@ -58,6 +58,18 @@
         </div>
       </div>
 
+
+      <div class="admin-group <%= req.path.startsWith('/admin/marketing') ? 'open' : '' %>">
+        <button type="button" class="admin-group-toggle">
+          <span>📣 Маркетинг</span>
+          <span class="admin-group-arrow">▸</span>
+        </button>
+        <div class="admin-group-items">
+          <a href="/admin/marketing/subscribers">Подписчики</a>
+          <a href="/admin/marketing/newsletters">Рассылки</a>
+        </div>
+      </div>
+
       <a href="/admin/users">👥 Пользователи</a>
       <a href="/admin/import">📥 Импорт</a>
       <a href="/admin/marketplaces">🏪 Маркетплейсы</a>

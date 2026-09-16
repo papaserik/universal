@@ -1,0 +1,36 @@
+<h1>Подписка на новости</h1>
+
+<div class="subscribe-wrap">
+  <% if (unsubscribed) { %>
+    <div class="subscribe-result">
+      <div class="subscribe-icon">✓</div>
+      <h2>Вы отписаны</h2>
+      <p>Email <strong><%= email %></strong> больше не получает наши рассылки.</p>
+      <p><a href="/">На главную</a></p>
+    </div>
+  <% } else if (sent) { %>
+    <div class="subscribe-result">
+      <div class="subscribe-icon">✓</div>
+      <h2>Подписка оформлена</h2>
+      <p>Мы будем присылать свежие новости и акции на <strong><%= email %></strong>.</p>
+      <p><a href="/">На главную</a> · <a href="/catalog">В каталог</a></p>
+    </div>
+  <% } else { %>
+    <p class="subscribe-desc">
+      Первыми узнавайте о новинках, акциях и специальных предложениях.
+      Никакого спама — только полезные новости магазина.
+    </p>
+
+    <% if (error) { %><div class="error"><%= error %></div><% } %>
+
+    <form method="post" action="/subscribe" class="auth-form">
+      <label>Email * <input type="email" name="email" value="<%= email %>" required autofocus></label>
+      <label>Имя <input type="text" name="name" placeholder="Как к вам обращаться"></label>
+      <label class="checkbox-label" style="flex-direction:row!important;align-items:center;gap:8px">
+        <input type="checkbox" name="agree" required>
+        <span>Согласен на обработку персональных данных и получение писем</span>
+      </label>
+      <button type="submit" class="btn">Подписаться</button>
+    </form>
+  <% } %>
+</div>

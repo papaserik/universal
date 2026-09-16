@@ -38,6 +38,10 @@ router.get('/logout', auth.logout);
 router.get('/search', require('../controllers/search').search);
 router.get('/contacts', require('../controllers/contacts').form);
 router.post('/contacts', require('../controllers/contacts').submit);
+router.get('/subscribe', require('../controllers/subscribe').form);
+router.post('/subscribe', require('../controllers/subscribe').submit);
+router.get('/unsubscribe', require('../controllers/subscribe').unsubscribe);
+
 router.get('/sitemap.xml', shopCtrl.sitemap);
 router.get('/robots.txt', shopCtrl.robots);
 

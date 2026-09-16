@@ -43,7 +43,10 @@ const SECTIONS = [
       ]},
       { key: 'whatsapp_phone', label: 'WhatsApp номер для уведомлений', placeholder: '+79001234567' },
       { key: 'whatsapp_webhook_url', label: 'Webhook URL', placeholder: 'https://...' },
-      { key: 'whatsapp_callmebot_apikey', label: 'CallMeBot API-key', placeholder: '123456' }
+      { key: 'whatsapp_callmebot_apikey', label: 'CallMeBot API-key', placeholder: '123456' },
+      { key: 'max_enabled', label: 'MAX — включить', type: 'checkbox' },
+      { key: 'max_bot_token', label: 'MAX Bot Token', placeholder: 'access_token бота', hint: 'Получить в @MasterBot в MAX' },
+      { key: 'max_chat_id', label: 'MAX Chat ID', placeholder: '123456789', hint: 'ID чата или вашего диалога с ботом' }
     ]
   },
   {
