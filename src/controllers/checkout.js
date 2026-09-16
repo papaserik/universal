@@ -56,6 +56,16 @@ exports.form = async (req, res) => {
   const maxPointsByPercent = Math.floor((subtotal * loyaltyInfo.maxPayPercent / 100) / (loyaltyInfo.pointValue || 1));
   const maxPointsUsable = Math.min(loyaltyInfo.balance, maxPointsByPercent);
 
+  // Сохранённый адрес и данные клиента
+  let savedAddress = {};
+  let savedProfile = null;
+  if (req.session.user) {
+    savedProfile = await prisma.user.findUnique({ where: { id: req.session.user.id } });
+    if (savedProfile && savedProfile.savedAddress) {
+      try { savedAddress = JSON.parse(savedProfile.savedAddress || '{}'); } catch (e) {}
+    }
+  }
+
   res.render('shop/checkout', {
     items, subtotal, weight,
     deliveries, payments,
@@ -65,7 +75,9 @@ exports.form = async (req, res) => {
     deliveryNote: dResult.note,
     total: subtotal + dResult.cost,
     loyalty: loyaltyInfo,
-    maxPointsUsable
+    maxPointsUsable,
+    savedAddress,
+    savedProfile
   });
 };
 

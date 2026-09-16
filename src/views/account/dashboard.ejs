@@ -1,16 +1,15 @@
 <div class="cabinet">
-  <div class="cabinet-header">
-    <div>
-      <h1>Личный кабинет</h1>
-      <div class="cabinet-welcome">
-        <% if (profile.avatar) { %>
-          <img src="<%= profile.avatar %>" alt="" class="cabinet-avatar">
-        <% } else { %>
-          <span class="cabinet-avatar cabinet-avatar-initial"><%= (user.name || user.email).charAt(0).toUpperCase() %></span>
-        <% } %>
-        <p class="cabinet-subtitle">Добро пожаловать, <strong><%= user.name || user.email %></strong></p>
-      </div>
-    </div>
+  <h1>Личный кабинет</h1>
+
+  <%- include('partials/tabs', { activeTab: 'dashboard' }) %>
+
+  <div class="cabinet-welcome">
+    <% if (profile.avatar) { %>
+      <img src="<%= profile.avatar %>" alt="" class="cabinet-avatar">
+    <% } else { %>
+      <span class="cabinet-avatar cabinet-avatar-initial"><%= (user.name || user.email).charAt(0).toUpperCase() %></span>
+    <% } %>
+    <p class="cabinet-subtitle">Добро пожаловать, <strong><%= user.name || user.email %></strong></p>
   </div>
 
   <% if (loyaltyInfo && loyaltyInfo.current) { %>
@@ -24,11 +23,9 @@
           </div>
         </div>
       </div>
-      <div class="cabinet-level-right">
-        <div class="cabinet-level-points">
-          <strong><%= loyaltyInfo.balance %></strong>
-          <span>баллов</span>
-        </div>
+      <div class="cabinet-level-points">
+        <strong><%= loyaltyInfo.balance %></strong>
+        <span>баллов</span>
       </div>
     </div>
 
@@ -43,32 +40,14 @@
         </div>
       </div>
     <% } else { %>
-      <div class="cabinet-progress cabinet-progress-max">
-        🎉 Вы достигли максимального уровня!
-      </div>
+      <div class="cabinet-progress cabinet-progress-max">🎉 Вы достигли максимального уровня!</div>
     <% } %>
   <% } %>
 
   <div class="cabinet-stats">
-    <div class="cabinet-stat">
-      <div class="cabinet-stat-num"><%= totalOrders %></div>
-      <div class="cabinet-stat-label">заказов</div>
-    </div>
-    <div class="cabinet-stat">
-      <div class="cabinet-stat-num"><%= Math.round(totalSpent).toLocaleString('ru-RU') %> ₽</div>
-      <div class="cabinet-stat-label">потрачено</div>
-    </div>
-    <div class="cabinet-stat">
-      <div class="cabinet-stat-num"><%= loyaltyInfo ? loyaltyInfo.balance : 0 %></div>
-      <div class="cabinet-stat-label">баллов</div>
-    </div>
-  </div>
-
-  <div class="cabinet-tabs">
-    <a href="/account" class="cabinet-tab active">Обзор</a>
-    <a href="/account/orders" class="cabinet-tab">Мои заказы</a>
-    <a href="/account/loyalty" class="cabinet-tab">Баллы</a>
-    <a href="/account/profile" class="cabinet-tab">Профиль и адрес</a>
+    <div class="cabinet-stat"><div class="cabinet-stat-num"><%= totalOrders %></div><div class="cabinet-stat-label">заказов</div></div>
+    <div class="cabinet-stat"><div class="cabinet-stat-num"><%= Math.round(totalSpent).toLocaleString('ru-RU') %> ₽</div><div class="cabinet-stat-label">потрачено</div></div>
+    <div class="cabinet-stat"><div class="cabinet-stat-num"><%= loyaltyInfo ? loyaltyInfo.balance : 0 %></div><div class="cabinet-stat-label">баллов</div></div>
   </div>
 
   <div class="cabinet-grid">
@@ -139,7 +118,6 @@
         <%= savedAddress.city %><% if (savedAddress.city && savedAddress.address) { %>, <% } %><%= savedAddress.address %>
         <% if (profile.savedPhone) { %><br>Тел: <%= profile.savedPhone %><% } %>
       </p>
-      <p class="cabinet-hint">Этот адрес будет автоматически подставлен при оформлении заказа</p>
     </section>
   <% } else { %>
     <section class="cabinet-block cabinet-address-empty">

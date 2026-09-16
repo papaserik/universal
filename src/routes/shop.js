@@ -57,4 +57,6 @@ router.post('/account/avatar/remove', account.requireAuth, account.removeAvatar)
 router.get('/sitemap.xml', shopCtrl.sitemap);
 router.get('/robots.txt', shopCtrl.robots);
 
+
+router.post('/product/:productId/review', require('../controllers/reviews').submit);
 module.exports = router;

@@ -1,12 +1,7 @@
 <div class="cabinet">
   <h1>Мои баллы</h1>
 
-  <div class="cabinet-tabs">
-    <a href="/account" class="cabinet-tab">Обзор</a>
-    <a href="/account/orders" class="cabinet-tab">Заказы</a>
-    <a href="/account/loyalty" class="cabinet-tab active">Баллы</a>
-    <a href="/account/profile" class="cabinet-tab">Профиль</a>
-  </div>
+  <%- include('partials/tabs', { activeTab: 'loyalty' }) %>
 
   <% if (info && info.current) { %>
     <div class="cabinet-level-card" style="--level-color: <%= info.current.color %>">

@@ -1616,3 +1616,227 @@ main.container{padding:24px 16px;min-height:60vh}
 }
 .avatar-actions .upload-label-inline:hover { background: #dbeafe; }
 .avatar-hint { margin: 0; color: #9ca3af; font-size: 12.5px; }
+
+/* Блок оплаты баллами */
+.summary-loyalty {
+  flex-direction: column !important;
+  gap: 10px !important;
+  padding: 12px 0 !important;
+  border-top: 1px dashed #e5e7eb;
+  border-bottom: 1px dashed #e5e7eb;
+}
+.loyalty-toggle {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  cursor: pointer;
+  font-size: 14px !important;
+  color: #111 !important;
+  font-weight: 500 !important;
+  padding: 0 !important;
+}
+.loyalty-toggle input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: #f59e0b;
+  margin: 0;
+}
+.loyalty-balance {
+  color: #6b7280;
+  font-size: 12.5px;
+  font-weight: 400;
+}
+.loyalty-slider {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 12px;
+  background: #fffbeb;
+  border-radius: 8px;
+  border: 1px solid #fef3c7;
+}
+.loyalty-slider input[type="range"] {
+  width: 100%;
+  accent-color: #f59e0b;
+}
+.loyalty-slider-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13.5px;
+  color: #92400e;
+}
+.loyalty-discount { font-weight: 700; color: #16a34a; }
+.loyalty-max-hint {
+  font-size: 12px;
+  color: #a16207;
+}
+
+/* Плашка сохранённого адреса в checkout */
+.checkout-saved-hint {
+  display: flex;
+  gap: 14px;
+  padding: 14px 16px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 10px;
+  margin-bottom: 18px;
+}
+.checkout-saved-icon { font-size: 24px; line-height: 1; flex: 0 0 auto; }
+.checkout-saved-body { flex: 1; min-width: 0; }
+.checkout-saved-body strong { display: block; color: #14532d; font-size: 14px; margin-bottom: 4px; }
+.checkout-saved-body p { margin: 0 0 10px; font-size: 13px; color: #166534; line-height: 1.5; }
+.checkout-saved-body .btn { background: #16a34a; }
+.checkout-saved-body .btn:hover { background: #15803d; }
+.checkout-saved-body .btn:disabled { background: #86efac; cursor: default; }
+
+/* ============ Отзывы ============ */
+.product-reviews {
+  margin-top: 48px;
+  padding-top: 32px;
+  border-top: 1px solid #e5e7eb;
+}
+.product-reviews h2 {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 0 0 20px;
+}
+.reviews-rating {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #f59e0b;
+  font-size: 16px;
+  font-weight: 400;
+}
+.reviews-rating strong { color: #111; font-size: 15px; }
+.reviews-rating small { color: #6b7280; font-weight: 400; }
+
+.reviews-list { list-style: none; padding: 0; margin: 0 0 32px; display: flex; flex-direction: column; gap: 14px; }
+.review-item {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 16px 20px;
+}
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 10px;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.review-author { display: flex; gap: 12px; align-items: center; }
+.review-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+.review-author strong { display: block; font-size: 14.5px; color: #111; }
+.review-verified {
+  display: inline-block;
+  font-size: 11px;
+  color: #16a34a;
+  background: #f0fdf4;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: 6px;
+  font-weight: 600;
+}
+.review-date { font-size: 12px; color: #9ca3af; margin-top: 2px; }
+.review-stars { color: #f59e0b; font-size: 17px; letter-spacing: 2px; }
+.review-text { margin: 0; color: #374151; line-height: 1.6; font-size: 14.5px; }
+
+.reviews-empty {
+  background: #f9fafb;
+  padding: 24px;
+  border-radius: 10px;
+  text-align: center;
+  color: #6b7280;
+  margin: 0 0 32px;
+}
+
+.review-form-wrap {
+  background: #fafbfc;
+  padding: 24px;
+  border-radius: 12px;
+  border: 1px solid #eef0f3;
+}
+.review-form-wrap h3 { margin: 0 0 16px; font-size: 17px; }
+.review-login-hint { color: #6b7280; margin: 0; }
+.review-login-hint a { color: #1976d2; }
+
+.review-form { display: flex; flex-direction: column; gap: 14px; max-width: 640px; }
+.review-form-row { display: grid; grid-template-columns: 1fr auto; gap: 16px; align-items: end; }
+.review-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 13px;
+  color: #4b5563;
+  font-weight: 500;
+}
+.review-form input[type="text"],
+.review-form textarea {
+  padding: 10px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font: inherit;
+  font-size: 14.5px;
+  color: #111;
+  background: #fff;
+}
+.review-form input[type="text"]:focus,
+.review-form textarea:focus {
+  outline: 0;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59,130,246,.12);
+}
+.review-form textarea { resize: vertical; min-height: 90px; }
+.review-form .btn { align-self: flex-start; }
+.review-hint { font-size: 12.5px; color: #9ca3af; margin: 0; }
+
+.review-rating-input { display: flex; flex-direction: row-reverse; gap: 2px; }
+.review-rating-input input { display: none; }
+.review-rating-input label {
+  font-size: 26px;
+  color: #d1d5db;
+  cursor: pointer;
+  transition: color .15s;
+  line-height: 1;
+  padding: 0;
+}
+.review-rating-input input:checked ~ label,
+.review-rating-input label:hover,
+.review-rating-input label:hover ~ label { color: #f59e0b; }
+
+.review-success {
+  background: #f0fdf4;
+  color: #166534;
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 1px solid #bbf7d0;
+  font-size: 14px;
+}
+.review-error {
+  background: #fef2f2;
+  color: #991b1b;
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 1px solid #fecaca;
+  font-size: 14px;
+}
+
+@media (max-width: 700px) {
+  .review-form-row { grid-template-columns: 1fr; }
+}

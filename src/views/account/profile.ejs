@@ -1,16 +1,12 @@
 <div class="cabinet">
   <h1>Профиль и адрес доставки</h1>
 
-  <div class="cabinet-tabs">
-    <a href="/account" class="cabinet-tab">Обзор</a>
-    <a href="/account/orders" class="cabinet-tab">Заказы</a>
-    <a href="/account/loyalty" class="cabinet-tab">Баллы</a>
-    <a href="/account/profile" class="cabinet-tab active">Профиль</a>
-  </div>
+  <%- include('partials/tabs', { activeTab: 'profile' }) %>
 
   <% if (saved) { %><div class="admin-alert admin-alert-ok">✓ Профиль и адрес сохранены</div><% } %>
 
   <form method="post" action="/account/profile" class="cabinet-form">
+
     <section class="cabinet-block">
       <h2>Личные данные</h2>
 
@@ -27,55 +23,45 @@
             <input type="file" id="avatar-input" accept="image/*" hidden>
           </label>
           <% if (profile.avatar) { %>
-            <form method="post" action="/account/avatar/remove" style="display:inline">
-              <button type="submit" class="btn-link" onclick="return confirm('Удалить аватар?')">Удалить</button>
-            </form>
+            <button type="button" id="avatar-remove" class="btn-link">Удалить аватар</button>
           <% } %>
           <p class="avatar-hint">JPG, PNG или SVG. Рекомендуется квадратное изображение.</p>
         </div>
       </div>
 
       <div class="cabinet-form-row">
-        <label>Имя <input type="text" name="name" value="<%= profile.name || '' %>"></label>
-        <label>Email <input type="email" value="<%= profile.email %>" disabled></label>
+        <label>Имя
+          <input type="text" name="name" value="<%= profile.name || '' %>">
+        </label>
+        <label>Email (нельзя изменить)
+          <input type="email" value="<%= profile.email %>" disabled>
+        </label>
       </div>
     </section>
-
-    <script>
-    (function () {
-      var input = document.getElementById('avatar-input');
-      if (!input) return;
-      input.addEventListener('change', function (e) {
-        var file = e.target.files[0];
-        if (!file) return;
-        var fd = new FormData();
-        fd.append('avatar', file);
-        fetch('/account/avatar', { method: 'POST', body: fd })
-          .then(function (r) { return r.json(); })
-          .then(function (d) {
-            if (d.ok) {
-              document.getElementById('avatar-preview').innerHTML = '<img src="' + d.url + '?t=' + Date.now() + '" alt="">';
-            } else {
-              alert('Ошибка загрузки');
-            }
-          })
-          .catch(function () { alert('Ошибка сети'); });
-      });
-    })();
-    </script>
 
     <section class="cabinet-block">
       <h2>Адрес доставки</h2>
       <p class="cabinet-hint">Сохраните адрес — при следующем заказе он подставится автоматически.</p>
+
       <div class="cabinet-form-row">
-        <label>Имя получателя <input type="text" name="savedName" value="<%= profile.savedName || '' %>" placeholder="Иван Иванов"></label>
-        <label>Телефон <input type="tel" name="savedPhone" value="<%= profile.savedPhone || '' %>" placeholder="+7 (900) 000-00-00"></label>
+        <label>Имя получателя
+          <input type="text" name="savedName" value="<%= profile.savedName || '' %>" placeholder="Иван Иванов">
+        </label>
+        <label>Телефон
+          <input type="tel" name="savedPhone" value="<%= profile.savedPhone || '' %>" placeholder="+7 (900) 000-00-00">
+        </label>
       </div>
+
       <div class="cabinet-form-row">
-        <label>Почтовый индекс <input type="text" name="postalCode" value="<%= savedAddress.postalCode || '' %>" placeholder="123456"></label>
-        <label>Город <input type="text" name="city" value="<%= savedAddress.city || '' %>" placeholder="Москва"></label>
+        <label>Почтовый индекс
+          <input type="text" name="postalCode" value="<%= savedAddress.postalCode || '' %>" placeholder="123456">
+        </label>
+        <label>Город
+          <input type="text" name="city" value="<%= savedAddress.city || '' %>" placeholder="Москва">
+        </label>
       </div>
-      <label>Адрес
+
+      <label class="cabinet-form-full">Адрес
         <input type="text" name="address" value="<%= savedAddress.address || '' %>" placeholder="ул. Примерная, д. 1, кв. 5">
       </label>
     </section>
@@ -94,3 +80,40 @@
     <a href="/logout" class="btn btn-outline">Выйти</a>
   </section>
 </div>
+
+<script>
+(function () {
+  // Загрузка аватара
+  var input = document.getElementById('avatar-input');
+  if (input) {
+    input.addEventListener('change', function (e) {
+      var file = e.target.files[0];
+      if (!file) return;
+      var fd = new FormData();
+      fd.append('avatar', file);
+      fetch('/account/avatar', { method: 'POST', body: fd })
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          if (d.ok) {
+            document.getElementById('avatar-preview').innerHTML =
+              '<img src="' + d.url + '?t=' + Date.now() + '" alt="">';
+            setTimeout(function () { location.reload(); }, 500);
+          } else {
+            alert('Ошибка загрузки');
+          }
+        })
+        .catch(function () { alert('Ошибка сети'); });
+    });
+  }
+
+  // Удаление аватара — через fetch, без вложенной формы
+  var rm = document.getElementById('avatar-remove');
+  if (rm) {
+    rm.addEventListener('click', function () {
+      if (!confirm('Удалить аватар?')) return;
+      fetch('/account/avatar/remove', { method: 'POST' })
+        .then(function () { location.reload(); });
+    });
+  }
+})();
+</script>

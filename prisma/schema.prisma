@@ -377,6 +377,7 @@ model Review {
   rating    Int      @default(5)
   text      String
   approved  Boolean  @default(false)
+  pointsAwarded Boolean @default(false)
   createdAt DateTime @default(now())
   @@index([productId, approved])
 }

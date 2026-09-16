@@ -6,13 +6,53 @@
 
       <section class="checkout-block">
         <h2>1. Контактные данные</h2>
+
+        <% if (savedProfile && (savedProfile.savedPhone || savedAddress.address)) { %>
+          <div class="checkout-saved-hint">
+            <div class="checkout-saved-icon">💾</div>
+            <div class="checkout-saved-body">
+              <strong>У вас сохранён адрес доставки</strong>
+              <p>
+                <%= savedProfile.savedName ? savedProfile.savedName : (user.name || user.email) %> ·
+                <% if (savedAddress.postalCode) { %><%= savedAddress.postalCode %>, <% } %>
+                <%= savedAddress.city %><% if (savedAddress.city && savedAddress.address) { %>, <% } %><%= savedAddress.address %>
+                <% if (savedProfile.savedPhone) { %> · <%= savedProfile.savedPhone %><% } %>
+              </p>
+              <button type="button" class="btn btn-sm" id="fill-saved">Подставить в форму</button>
+            </div>
+          </div>
+        <% } %>
+
         <div class="checkout-fields">
-          <label>Имя * <input type="text" name="name" required value="<%= user ? (user.name || '') : '' %>" placeholder="Иван Иванов"></label>
+          <label>Имя * <input type="text" name="name" id="field-name" required value="<%= savedProfile && savedProfile.savedName ? savedProfile.savedName : (user ? (user.name || '') : '') %>" placeholder="Иван Иванов"></label>
           <label>Email * <input type="email" name="email" required value="<%= user ? user.email : '' %>" placeholder="you@example.com"></label>
-          <label>Телефон * <input type="tel" name="phone" required placeholder="+7 (900) 000-00-00"></label>
-          <label>Адрес доставки <input type="text" name="address" placeholder="Город, улица, дом, квартира"></label>
+          <label>Телефон * <input type="tel" name="phone" id="field-phone" required value="<%= savedProfile && savedProfile.savedPhone ? savedProfile.savedPhone : '' %>" placeholder="+7 (900) 000-00-00"></label>
+          <label>Адрес доставки <input type="text" name="address" id="field-address" value="<%= savedAddress.address || '' %>" placeholder="Город, улица, дом, квартира"></label>
         </div>
       </section>
+
+      <script>
+      (function () {
+        var saved = {
+          name: <%= JSON.stringify((savedProfile && savedProfile.savedName) || (user ? (user.name || '') : '')) %>,
+          phone: <%= JSON.stringify((savedProfile && savedProfile.savedPhone) || '') %>,
+          address: <%= JSON.stringify([savedAddress.postalCode, savedAddress.city, savedAddress.address].filter(Boolean).join(', ')) %>
+        };
+        var btn = document.getElementById('fill-saved');
+        if (btn) {
+          btn.addEventListener('click', function () {
+            var f1 = document.getElementById('field-name');
+            var f2 = document.getElementById('field-phone');
+            var f3 = document.getElementById('field-address');
+            if (f1 && saved.name) f1.value = saved.name;
+            if (f2 && saved.phone) f2.value = saved.phone;
+            if (f3 && saved.address) f3.value = saved.address;
+            btn.textContent = '✓ Подставлено';
+            btn.disabled = true;
+          });
+        }
+      })();
+      </script>
 
       <section class="checkout-block">
         <h2>2. Способ доставки</h2>
@@ -92,6 +132,28 @@
               <small id="delivery-note" style="display:<%= deliveryNote ? 'block' : 'none' %>;color:#6b7280;font-size:12px"><%= deliveryNote %></small>
             </span>
           </div>
+
+          <% if (loyalty && loyalty.enabled && loyalty.balance > 0 && maxPointsUsable > 0) { %>
+            <div class="summary-row summary-loyalty">
+              <label class="loyalty-toggle">
+                <input type="checkbox" id="use-points-toggle">
+                <span>Использовать баллы</span>
+                <span class="loyalty-balance">(<%= loyalty.balance %> доступно)</span>
+              </label>
+              <div class="loyalty-slider" id="loyalty-slider" hidden>
+                <input type="range" id="points-range" name="usePoints" min="0" max="<%= maxPointsUsable %>" value="0" step="1">
+                <div class="loyalty-slider-info">
+                  <span><strong id="points-value">0</strong> баллов</span>
+                  <span class="loyalty-discount">−<strong id="points-discount">0</strong> ₽</span>
+                </div>
+                <div class="loyalty-max-hint">
+                  Макс. к списанию: <strong><%= maxPointsUsable %></strong> б.
+                  (<%= loyalty.maxPayPercent %>% от заказа)
+                </div>
+              </div>
+            </div>
+          <% } %>
+
           <div class="summary-row summary-row-total">
             <span>Итого</span>
             <span><strong id="total"><%= total.toLocaleString('ru-RU') %></strong> ₽</span>
@@ -112,6 +174,8 @@
 (function () {
   var SUBTOTAL = <%= subtotal %>;
   var WEIGHT = <%= weight %>;
+  var POINT_VALUE = <%= (loyalty && loyalty.pointValue) || 1 %>;
+  var deliveryCost = <%= deliveryFee %>;
 
   function calcFee(radio) {
     var type = radio.dataset.type;
@@ -128,19 +192,52 @@
 
   function fmt(n) { return Number(n).toLocaleString('ru-RU'); }
 
+  function getPointsDiscount() {
+    var range = document.getElementById('points-range');
+    if (!range || range.parentNode.hidden) return 0;
+    return Math.floor(Number(range.value) || 0) * POINT_VALUE;
+  }
+
   function updateTotals() {
     var radio = document.querySelector('input[name="delivery"]:checked');
-    if (!radio) return;
-    var r = calcFee(radio);
-    document.getElementById('delivery-fee').textContent = fmt(r.cost);
-    var noteEl = document.getElementById('delivery-note');
-    noteEl.textContent = r.note;
-    noteEl.style.display = r.note ? 'block' : 'none';
-    document.getElementById('total').textContent = fmt(SUBTOTAL + r.cost);
+    if (radio) {
+      var r = calcFee(radio);
+      deliveryCost = r.cost;
+      document.getElementById('delivery-fee').textContent = fmt(r.cost);
+      var noteEl = document.getElementById('delivery-note');
+      noteEl.textContent = r.note;
+      noteEl.style.display = r.note ? 'block' : 'none';
+    }
+    var discount = getPointsDiscount();
+    var total = Math.max(0, SUBTOTAL + deliveryCost - discount);
+    document.getElementById('total').textContent = fmt(total);
   }
 
   document.querySelectorAll('input[name="delivery"]').forEach(function (r) {
     r.addEventListener('change', updateTotals);
   });
+
+  // Тоггл баллов
+  var toggle = document.getElementById('use-points-toggle');
+  var slider = document.getElementById('loyalty-slider');
+  var range = document.getElementById('points-range');
+  var valEl = document.getElementById('points-value');
+  var discEl = document.getElementById('points-discount');
+
+  if (toggle && slider && range) {
+    toggle.addEventListener('change', function () {
+      slider.hidden = !toggle.checked;
+      if (!toggle.checked) range.value = 0;
+      valEl.textContent = range.value;
+      discEl.textContent = fmt(Math.floor(Number(range.value)) * POINT_VALUE);
+      updateTotals();
+    });
+
+    range.addEventListener('input', function () {
+      valEl.textContent = range.value;
+      discEl.textContent = fmt(Math.floor(Number(range.value)) * POINT_VALUE);
+      updateTotals();
+    });
+  }
 })();
 </script>

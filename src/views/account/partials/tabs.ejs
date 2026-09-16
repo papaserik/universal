@@ -1,0 +1,9 @@
+<%
+  var t = typeof activeTab !== 'undefined' ? activeTab : 'dashboard';
+%>
+<div class="cabinet-tabs">
+  <a href="/account"          class="cabinet-tab <%= t === 'dashboard' ? 'active' : '' %>">Обзор</a>
+  <a href="/account/orders"   class="cabinet-tab <%= t === 'orders'    ? 'active' : '' %>">Мои заказы</a>
+  <a href="/account/loyalty"  class="cabinet-tab <%= t === 'loyalty'   ? 'active' : '' %>">Баллы</a>
+  <a href="/account/profile"  class="cabinet-tab <%= t === 'profile'   ? 'active' : '' %>">Профиль и адрес</a>
+</div>

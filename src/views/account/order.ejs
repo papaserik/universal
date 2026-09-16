@@ -1,53 +1,50 @@
-<p style="margin-bottom:20px"><a href="/account/orders" class="btn btn-sm">← К списку заказов</a></p>
+<div class="cabinet">
+  <p style="margin: 0 0 16px"><a href="/account/orders" class="cabinet-link">← Все заказы</a></p>
 
-<% const st = statusMap[order.status] || { name: order.status, color: '#6b7280', icon: '' }; %>
-<div class="account-order-detail">
-  <div class="account-order-detail-head">
-    <div>
-      <h1 style="margin:0 0 6px"><%= order.number %></h1>
-      <p style="color:#6b7280;margin:0"><%= order.createdAt.toLocaleString('ru-RU') %></p>
-    </div>
-    <span class="status-pill" style="background:<%= st.color %>1a;color:<%= st.color %>;font-size:13px;padding:6px 14px">
-      <%= st.icon || '' %> <%= st.name %>
-    </span>
-  </div>
+  <%- include('partials/tabs', { activeTab: 'orders' }) %>
 
-  <section class="checkout-block">
-    <h2>Состав заказа</h2>
-    <ul class="success-items">
-      <% order.items.forEach(i => { %>
-        <li>
-          <span class="success-item-name"><%= i.name %></span>
-          <span class="success-item-qty">× <%= i.qty %></span>
-          <span class="success-item-price"><%= (i.price * i.qty).toLocaleString('ru-RU') %> ₽</span>
-        </li>
-      <% }) %>
-    </ul>
-    <div class="success-rows">
-      <div class="success-row"><span>Товары</span><span><%= order.subtotal.toLocaleString('ru-RU') %> ₽</span></div>
-      <div class="success-row"><span>Доставка</span><span><%= order.deliveryFee.toLocaleString('ru-RU') %> ₽</span></div>
-      <div class="success-row success-row-total"><span>Итого</span><span><%= order.total.toLocaleString('ru-RU') %> ₽</span></div>
-    </div>
-  </section>
-
-  <section class="checkout-block">
-    <h2>Данные доставки</h2>
-    <div class="account-detail-rows">
-      <div><span>Получатель</span><strong><%= order.name %></strong></div>
-      <div><span>Email</span><strong><%= order.email %></strong></div>
-      <div><span>Телефон</span><strong><%= order.phone %></strong></div>
-      <% if (order.address) { %><div><span>Адрес</span><strong><%= order.address %></strong></div><% } %>
-      <% if (order.comment) { %><div><span>Комментарий</span><strong><%= order.comment %></strong></div><% } %>
-    </div>
-  </section>
-
-  <% if (order.status === 'NEW') { %>
-    <div class="success-info">
-      <div class="success-info-icon">📞</div>
+  <% const st = statusMap[order.status] || { name: order.status, color: '#6b7280', icon: '' }; %>
+  <div class="account-order-detail">
+    <div class="account-order-detail-head">
       <div>
-        <strong>Заказ обрабатывается</strong>
-        <p>Менеджер свяжется с вами для подтверждения. Если у вас есть вопросы — ответьте на письмо с заказом.</p>
+        <h1 style="margin:0 0 6px"><%= order.number %></h1>
+        <p style="color:#6b7280;margin:0"><%= order.createdAt.toLocaleString('ru-RU') %></p>
       </div>
+      <span class="status-pill" style="background:<%= st.color %>1a;color:<%= st.color %>;font-size:13px;padding:6px 14px">
+        <%= st.icon || '' %> <%= st.name %>
+      </span>
     </div>
-  <% } %>
+
+    <section class="checkout-block">
+      <h2>Состав заказа</h2>
+      <ul class="success-items">
+        <% order.items.forEach(i => { %>
+          <li>
+            <span class="success-item-name"><%= i.name %></span>
+            <span class="success-item-qty">× <%= i.qty %></span>
+            <span class="success-item-price"><%= (i.price * i.qty).toLocaleString('ru-RU') %> ₽</span>
+          </li>
+        <% }) %>
+      </ul>
+      <div class="success-rows">
+        <div class="success-row"><span>Товары</span><span><%= order.subtotal.toLocaleString('ru-RU') %> ₽</span></div>
+        <div class="success-row"><span>Доставка</span><span><%= order.deliveryFee.toLocaleString('ru-RU') %> ₽</span></div>
+        <% if (order.pointsDiscount && order.pointsDiscount > 0) { %>
+          <div class="success-row"><span>Оплачено баллами</span><span style="color:#16a34a">−<%= order.pointsDiscount.toLocaleString('ru-RU') %> ₽</span></div>
+        <% } %>
+        <div class="success-row success-row-total"><span>Итого</span><span><%= order.total.toLocaleString('ru-RU') %> ₽</span></div>
+      </div>
+    </section>
+
+    <section class="checkout-block">
+      <h2>Данные доставки</h2>
+      <div class="account-detail-rows">
+        <div><span>Получатель</span><strong><%= order.name %></strong></div>
+        <div><span>Email</span><strong><%= order.email %></strong></div>
+        <div><span>Телефон</span><strong><%= order.phone %></strong></div>
+        <% if (order.address) { %><div><span>Адрес</span><strong><%= order.address %></strong></div><% } %>
+        <% if (order.comment) { %><div><span>Комментарий</span><strong><%= order.comment %></strong></div><% } %>
+      </div>
+    </section>
+  </div>
 </div>

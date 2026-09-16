@@ -1,5 +1,6 @@
 const { prisma } = require('../config/db');
 const bc = require('../services/breadcrumbs');
+const reviews = require('./reviews');
 
 async function getMarketplaceBySlug(slug) {
   if (!slug) return null;
@@ -87,12 +88,38 @@ exports.product = async (req, res) => {
   });
   const marketplace = p.marketplace ? await getMarketplaceBySlug(p.marketplace) : null;
 
+  // Отзывы
+  const productReviews = await reviews.listForProduct(p.id);
+  const rating = await reviews.ratingSummary(p.id);
+
   // Хлебные крошки + микроразметка
   const breadcrumbs = await bc.forProduct(p);
   const baseUrl = process.env.SITE_URL || (req.protocol + '://' + req.get('host'));
   res.locals.addJsonLd(bc.jsonLd(breadcrumbs, baseUrl));
 
-  res.render('shop/product', { p, related, marketplace, breadcrumbs });
+  // Микроразметка рейтинга
+  if (rating.count > 0) {
+    res.locals.addJsonLd({
+      '@context': 'https://schema.org',
+      '@type': 'AggregateRating',
+      ratingValue: rating.avg,
+      reviewCount: rating.count
+    });
+  }
+
+  // Проверяем, может ли текущий пользователь оставить отзыв
+  let canReview = !!req.session.user;
+  let alreadyReviewed = false;
+  if (req.session.user) {
+    alreadyReviewed = await prisma.review.findFirst({
+      where: { productId: p.id, userId: req.session.user.id }
+    }) ? true : false;
+  }
+
+  res.render('shop/product', {
+    p, related, marketplace, breadcrumbs,
+    productReviews, rating, canReview, alreadyReviewed
+  });
 };
 
 exports.sitemap = async (req, res) => {

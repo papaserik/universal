@@ -92,6 +92,82 @@
     </div>
   </div>
 
+  <!-- Отзывы -->
+  <section class="product-reviews" id="reviews">
+    <h2>
+      Отзывы
+      <% if (rating && rating.count > 0) { %>
+        <span class="reviews-rating">
+          <%= '★'.repeat(Math.round(rating.avg)) %><%= '☆'.repeat(5 - Math.round(rating.avg)) %>
+          <strong><%= rating.avg %></strong>
+          <small>(<%= rating.count %> <%= rating.count === 1 ? 'отзыв' : 'отзывов' %>)</small>
+        </span>
+      <% } %>
+    </h2>
+
+    <% if (productReviews.length) { %>
+      <ul class="reviews-list">
+        <% productReviews.forEach(r => { %>
+          <li class="review-item">
+            <div class="review-header">
+              <div class="review-author">
+                <span class="review-avatar"><%= r.name.charAt(0).toUpperCase() %></span>
+                <div>
+                  <strong><%= r.name %></strong>
+                  <% if (r.userId && r.orderId) { %><span class="review-verified">✓ Купил</span><% } %>
+                  <div class="review-date"><%= r.createdAt.toLocaleDateString('ru-RU') %></div>
+                </div>
+              </div>
+              <div class="review-stars"><%= '★'.repeat(r.rating) %><%= '☆'.repeat(5 - r.rating) %></div>
+            </div>
+            <p class="review-text"><%= r.text %></p>
+          </li>
+        <% }) %>
+      </ul>
+    <% } else { %>
+      <p class="reviews-empty">Отзывов пока нет. Будьте первым!</p>
+    <% } %>
+
+    <div class="review-form-wrap">
+      <h3>Оставить отзыв</h3>
+
+      <% if (!canReview) { %>
+        <p class="review-login-hint">
+          <a href="/login">Войдите</a> или <a href="/login/code">получите код на email</a>, чтобы оставить отзыв и получить баллы.
+        </p>
+      <% } else if (alreadyReviewed) { %>
+        <p class="review-login-hint">Вы уже оставляли отзыв об этом товаре. Спасибо!</p>
+      <% } else { %>
+        <form class="review-form" id="review-form" data-product-id="<%= p.id %>">
+          <div class="review-form-row">
+            <label>Ваше имя
+              <input type="text" name="name" value="<%= user.name || '' %>" required>
+            </label>
+            <label>Оценка
+              <div class="review-rating-input">
+                <input type="radio" name="rating" value="5" id="r5" checked><label for="r5">★</label>
+                <input type="radio" name="rating" value="4" id="r4"><label for="r4">★</label>
+                <input type="radio" name="rating" value="3" id="r3"><label for="r3">★</label>
+                <input type="radio" name="rating" value="2" id="r2"><label for="r2">★</label>
+                <input type="radio" name="rating" value="1" id="r1"><label for="r1">★</label>
+              </div>
+            </label>
+          </div>
+          <label>Текст отзыва
+            <textarea name="text" rows="4" required minlength="10" maxlength="3000" placeholder="Что понравилось, что нет…"></textarea>
+          </label>
+
+          <!-- Honeypot — невидимое поле для ботов -->
+          <input type="text" name="website" style="position:absolute;left:-9999px" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+          <button type="submit" class="btn">Отправить отзыв</button>
+          <p class="review-hint">Отзыв появится после модерации. За отзыв мы начисляем баллы 💰</p>
+        </form>
+        <div id="review-result"></div>
+      <% } %>
+    </div>
+  </section>
+
   <% if (related.length) { %>
     <section>
       <h2>Похожие товары</h2>
@@ -133,3 +209,39 @@
   <button type="button" class="modal-close" aria-label="Закрыть">×</button>
   <img src="" alt="">
 </div>
+
+
+<script>
+(function () {
+  var form = document.getElementById('review-form');
+  if (!form) return;
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var productId = form.dataset.productId;
+    var data = {
+      name: form.name.value,
+      text: form.text.value,
+      rating: form.querySelector('input[name="rating"]:checked').value,
+      website: form.website ? form.website.value : ''
+    };
+    fetch('/product/' + productId + '/review', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        var result = document.getElementById('review-result');
+        if (d.ok) {
+          form.style.display = 'none';
+          result.innerHTML = '<div class="review-success">✓ Спасибо! Отзыв отправлен на модерацию. Баллы зачислены.</div>';
+        } else {
+          result.innerHTML = '<div class="review-error">' + (d.error || 'Ошибка') + '</div>';
+        }
+      })
+      .catch(function () {
+        document.getElementById('review-result').innerHTML = '<div class="review-error">Ошибка сети</div>';
+      });
+  });
+})();
+</script>

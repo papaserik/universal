@@ -28,6 +28,8 @@ const marketing  = require('../controllers/admin/marketing');
 const orderStatuses = require('../controllers/admin/orderStatuses');
 const emailTemplates = require('../controllers/admin/emailTemplates');
 const loyalty    = require('../controllers/admin/loyalty');
+const reviews    = require('../controllers/admin/reviews');
+const reviewsCtrl = require('../controllers/reviews');
 const payment    = require('../controllers/admin/payment');
 const ordersExport = require('../controllers/admin/ordersExport');
 
@@ -215,5 +217,10 @@ router.post('/loyalty/levels/:id/delete', loyalty.levelRemove);
 router.get('/loyalty/transactions', loyalty.transactions);
 router.post('/loyalty/transactions/manual', loyalty.addManual);
 router.get('/loyalty/user-balance', loyalty.userBalance);
+
+router.get('/reviews', reviews.list);
+router.post('/reviews/:id/approve', reviewsCtrl.approve);
+router.post('/reviews/:id/reject', reviewsCtrl.reject);
+router.post('/reviews/:id/delete', reviewsCtrl.remove);
 
 module.exports = router;
