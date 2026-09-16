@@ -1,0 +1,81 @@
+<div class="admin-header">
+  <h1><%= item ? 'Изменить маркетплейс' : 'Новый маркетплейс' %></h1>
+  <a href="/admin/marketplaces" class="btn btn-sm">← К списку</a>
+</div>
+
+<form method="post" action="<%= item ? '/admin/marketplaces/' + item.id : '/admin/marketplaces' %>" class="admin-form">
+  <div class="form-row">
+    <label>Название * <input type="text" name="name" value="<%= item ? item.name : '' %>" placeholder="Ozon" required></label>
+    <label>Slug (латиница, для кода) <input type="text" name="slug" value="<%= item ? item.slug : '' %>" placeholder="ozon"></label>
+  </div>
+
+  <fieldset class="full">
+    <legend>Иконка маркетплейса</legend>
+    <p style="font-size:13px;color:#6b7280;margin:0 0 10px">Загрузите логотип (PNG/SVG/JPG) или введите эмодзи.</p>
+
+    <div class="mp-icon-block">
+      <div class="mp-icon-preview" id="icon-preview">
+        <% if (item && item.iconUrl && (item.iconUrl.startsWith('/uploads/') || item.iconUrl.startsWith('http'))) { %>
+          <img src="<%= item.iconUrl %>" alt="">
+        <% } else if (item && item.iconUrl) { %>
+          <span style="font-size:32px"><%= item.iconUrl %></span>
+        <% } else { %>
+          <span style="font-size:32px;color:#9ca3af">🏪</span>
+        <% } %>
+      </div>
+      <div class="mp-icon-actions">
+        <label class="upload-label-inline">Загрузить файл<input type="file" id="icon-file" accept="image/*" hidden></label>
+        <input type="text" name="iconUrl" id="icon-url" value="<%= item && item.iconUrl ? item.iconUrl : '' %>" placeholder="или эмодзи / URL">
+      </div>
+    </div>
+  </fieldset>
+
+  <div class="form-row">
+    <label>Цвет (для кнопки «Купить на…»)
+      <div style="display:flex;gap:8px;align-items:center">
+        <input type="color" name="color" value="<%= item ? item.color : '#0f172a' %>" style="width:60px;height:38px;padding:2px">
+        <input type="text" id="color-text" value="<%= item ? item.color : '#0f172a' %>" style="flex:1" readonly>
+      </div>
+    </label>
+    <label>Сортировка <input type="number" name="sort" value="<%= item ? item.sort : 0 %>"></label>
+  </div>
+
+  <label class="checkbox-label"><input type="checkbox" name="active" <%= !item || item.active ? 'checked' : '' %>> Активен</label>
+
+  <div class="form-actions"><button class="btn">Сохранить</button></div>
+</form>
+
+<script>
+(function(){
+  var fileInput = document.getElementById('icon-file');
+  var urlInput = document.getElementById('icon-url');
+  var preview = document.getElementById('icon-preview');
+  var colorInput = document.querySelector('input[name="color"]');
+  var colorText = document.getElementById('color-text');
+
+  fileInput.addEventListener('change', function(e){
+    var f = e.target.files[0]; if (!f) return;
+    var fd = new FormData(); fd.append('files', f);
+    fetch('/admin/marketplaces/upload-icon', { method: 'POST', body: fd })
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        if (!d.ok) return alert('Ошибка загрузки');
+        urlInput.value = d.url;
+        preview.innerHTML = '<img src="' + d.url + '" alt="">';
+      });
+  });
+
+  urlInput.addEventListener('input', function(){
+    var v = urlInput.value.trim();
+    if (v.startsWith('/uploads/') || v.startsWith('http')) {
+      preview.innerHTML = '<img src="' + v + '" alt="">';
+    } else if (v) {
+      preview.innerHTML = '<span style="font-size:32px">' + v + '</span>';
+    } else {
+      preview.innerHTML = '<span style="font-size:32px;color:#9ca3af">🏪</span>';
+    }
+  });
+
+  colorInput.addEventListener('input', function(){ colorText.value = colorInput.value; });
+})();
+</script>

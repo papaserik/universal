@@ -1,14 +1,36 @@
-<h1>Блог</h1>
-<% if (!posts.length) { %>
-  <p>Пока нет записей.</p>
-<% } else { %>
-  <ul class="posts-list">
-    <% posts.forEach(p => { %>
-      <li>
-        <a href="/blog/<%= p.slug %>"><h3><%= p.title %></h3></a>
-        <% if (p.excerpt) { %><p><%= p.excerpt %></p><% } %>
-        <small><%= p.createdAt.toLocaleDateString('ru-RU') %></small>
-      </li>
-    <% }) %>
-  </ul>
-<% } %>
+<h1><%= currentCat ? currentCat.name : 'Блог' %></h1>
+
+<div class="blog-layout">
+  <aside class="blog-sidebar">
+    <h3>Категории</h3>
+    <ul class="blog-cats">
+      <li><a href="/blog" class="<%= !currentCat ? 'active' : '' %>">Все статьи</a></li>
+      <% cats.forEach(c => { %>
+        <li>
+          <a href="/blog/category/<%= c.slug %>" class="<%= currentCat && currentCat.id === c.id ? 'active' : '' %>">
+            <%= c.name %> <small>(<%= c._count.posts %>)</small>
+          </a>
+        </li>
+      <% }) %>
+    </ul>
+  </aside>
+
+  <div class="blog-main">
+    <% if (!posts.length) { %>
+      <p>Записей пока нет.</p>
+    <% } else { %>
+      <ul class="posts-list">
+        <% posts.forEach(p => { %>
+          <li>
+            <a href="/blog/<%= p.slug %>"><h3><%= p.title %></h3></a>
+            <% if (p.excerpt) { %><p><%= p.excerpt %></p><% } %>
+            <small>
+              <%= p.createdAt.toLocaleDateString('ru-RU') %>
+              <% if (p.blogCategory) { %> · <a href="/blog/category/<%= p.blogCategory.slug %>"><%= p.blogCategory.name %></a><% } %>
+            </small>
+          </li>
+        <% }) %>
+      </ul>
+    <% } %>
+  </div>
+</div>

@@ -46,3 +46,11 @@ exports.notifyClient = async (order) => {
   `;
   await mail.send({ to: order.email, subject: `Заказ ${order.number} принят`, html });
 };
+
+
+exports.notifyChannels = async (order) => {
+  try {
+    const notify = require('./notify');
+    await notify.notifyNewOrder(order);
+  } catch (e) { console.error('[notify] error:', e.message); }
+};

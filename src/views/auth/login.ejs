@@ -1,8 +1,21 @@
 <h1>Вход</h1>
 <% if (error) { %><p class="error"><%= error %></p><% } %>
+
+<div class="auth-tabs">
+  <button class="auth-tab active" data-tab="password">По паролю</button>
+  <a href="/login/code" class="auth-tab">По коду на email</a>
+</div>
+
 <form method="post" action="/login" class="auth-form">
   <label>Email <input type="email" name="email" required></label>
   <label>Пароль <input type="password" name="password" required></label>
   <button type="submit" class="btn">Войти</button>
 </form>
-<p>Нет аккаунта? <a href="/register">Регистрация</a></p>
+
+<div class="auth-alt">
+  <p>Впервые здесь?</p>
+  <a href="/login/code" class="btn btn-outline">Получить код на email</a>
+  <p class="auth-alt-note">Регистрация не нужна — код сам создаст аккаунт.</p>
+</div>
+
+<p style="margin-top:20px"><a href="/register">Классическая регистрация с паролем</a></p>

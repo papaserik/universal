@@ -19,7 +19,246 @@
           <header class="settings-section-header">
             <h2><span class="settings-section-icon"><%= s.icon %></span><%= s.title %></h2>
             <p class="settings-section-desc"><%= s.desc %></p>
+            <% if (s.id === 'notifications') { %>
+              <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+                <button type="button" class="btn btn-sm" data-test-channel="telegram">📨 Проверить Telegram</button>
+                <button type="button" class="btn btn-sm" data-test-channel="whatsapp">📨 Проверить WhatsApp</button>
+                <span id="test-result" style="font-size:13px;color:#6b7280;align-self:center"></span>
+              </div>
+
+              <details class="notif-help" open>
+                <summary>📖 Как настроить Telegram-уведомления (5 минут)</summary>
+
+                <div class="notif-steps">
+                  <p><strong>Шаг 1. Создайте бота</strong></p>
+                  <ol>
+                    <li>Откройте Telegram, найдите бота <a href="https://t.me/BotFather" target="_blank" rel="noopener"><strong>@BotFather</strong></a></li>
+                    <li>Отправьте ему команду <code>/newbot</code></li>
+                    <li>Задайте имя бота (любое) → задайте username (должен заканчиваться на <code>_bot</code>)</li>
+                    <li>BotFather пришлёт вам <strong>токен</strong> вида <code>1234567890:ABCdefGhIJKlmNoPQRsTUVwxyZ</code></li>
+                    <li>Скопируйте этот токен — это ваш <em>Bot Token</em> для поля ниже</li>
+                  </ol>
+
+                  <p><strong>Шаг 2. Узнайте свой Chat ID</strong></p>
+                  <ol>
+                    <li>В Telegram найдите бота <a href="https://t.me/userinfobot" target="_blank" rel="noopener"><strong>@userinfobot</strong></a></li>
+                    <li>Отправьте ему <code>/start</code></li>
+                    <li>Он ответит вашим профилем. Число после слова <code>Id:</code> — это ваш Chat ID (например, <code>123456789</code>)</li>
+                  </ol>
+
+                  <p><strong>Шаг 3. Активируйте бота</strong></p>
+                  <ol>
+                    <li>Найдите в Telegram <strong>вашего нового бота</strong> (по тому username, что задали в шаге 1)</li>
+                    <li>Нажмите <em>Start</em> / отправьте <code>/start</code></li>
+                    <li><strong>Это обязательно</strong> — иначе бот не сможет присылать вам сообщения</li>
+                  </ol>
+
+                  <p><strong>Шаг 4. Заполните поля и проверьте</strong></p>
+                  <ol>
+                    <li>В полях ниже укажите: Bot Token, Chat ID</li>
+                    <li>Поставьте галочку «Telegram — включить»</li>
+                    <li>Нажмите <strong>💾 Сохранить все настройки</strong></li>
+                    <li>Затем нажмите <strong>📨 Проверить Telegram</strong> — должно прийти сообщение в чат с ботом</li>
+                  </ol>
+
+                  <p><strong>Для группового чата</strong></p>
+                  <ul>
+                    <li>Добавьте бота в группу, дайте ему права писать</li>
+                    <li>Chat ID группы — <strong>отрицательное число</strong> (например, <code>-1001234567890</code>)</li>
+                    <li>Узнайте его через бота <a href="https://t.me/getidsbot" target="_blank" rel="noopener">@getidsbot</a></li>
+                  </ul>
+
+                  <p><strong>Частые ошибки</strong></p>
+                  <ul>
+                    <li><code>chat not found</code> — не написали боту <code>/start</code>, или Chat ID неверный</li>
+                    <li><code>Unauthorized</code> — неверный токен</li>
+                    <li><code>bot was blocked</code> — вы заблокировали бота в Telegram</li>
+                  </ul>
+                </div>
+              </details>
+
+              <details class="notif-help">
+                <summary>📖 Как настроить WhatsApp-уведомления</summary>
+
+                <div class="notif-steps">
+                  <p><strong>Вариант A. CallMeBot — бесплатно, 5 минут</strong></p>
+                  <ol>
+                    <li>Добавьте в WhatsApp номер <code>+34 644 51 95 23</code></li>
+                    <li>Отправьте ему сообщение: <code>I allow callmebot to send me messages</code></li>
+                    <li>В ответ придёт <strong>API-key</strong> (число вроде <code>123456</code>)</li>
+                    <li>В настройках ниже:
+                      <ul>
+                        <li>WhatsApp — включить: <strong>✓</strong></li>
+                        <li>Провайдер: <strong>CallMeBot</strong></li>
+                        <li>Номер: ваш в формате <code>+79001234567</code></li>
+                        <li>CallMeBot API-key: полученное число</li>
+                      </ul>
+                    </li>
+                    <li>Сохранить → <strong>📨 Проверить WhatsApp</strong></li>
+                  </ol>
+                  <p style="font-size:12.5px;color:#6b7280">
+                    Ограничения CallMeBot: сообщения приходят с задержкой до 1 минуты,
+                    лимит ~60 сообщений в час, отправляются в чат с самим CallMeBot-ботом.
+                  </p>
+
+                  <p><strong>Вариант B. Webhook — через свой сервис</strong></p>
+                  <ol>
+                    <li>Используйте сервис отправки WhatsApp: <strong>Wazzup</strong>, <strong>Chat-API</strong>, <strong>Make</strong>, <strong>n8n</strong>, <strong>Zapier</strong>, или собственный сервер</li>
+                    <li>Создайте в сервисе входящий <em>Webhook</em></li>
+                    <li>Скопируйте URL вебхука и вставьте в поле «Webhook URL» ниже</li>
+                    <li>Укажите ваш WhatsApp номер в формате <code>+79001234567</code></li>
+                    <li>Провайдер: <strong>Webhook URL</strong></li>
+                    <li>Сохранить → <strong>📨 Проверить WhatsApp</strong></li>
+                  </ol>
+
+                  <p>Магазин будет отправлять на ваш URL такой POST-запрос:</p>
+<pre style="background:#f3f4f6;padding:12px;border-radius:6px;font-size:12px;overflow-x:auto">POST https://your-webhook-url
+Content-Type: application/json
+
+{
+  "to": "+79001234567",
+  "type": "order",
+  "order": {
+    "number": "ORD-XXX",
+    "total": 1300,
+    "name": "Иван",
+    "email": "i@example.com",
+    "phone": "+79001234567",
+    "items": [...]
+  },
+  "text": "🛒 Новый заказ ORD-XXX\n..."
+}</pre>
+
+                  <p><strong>Проверка логов</strong></p>
+                  <p>Если уведомление не приходит, откройте терминал и выполните:</p>
+                  <pre style="background:#f3f4f6;padding:8px;border-radius:6px;font-size:12px">tail -50 /tmp/shop.log</pre>
+                  <p style="font-size:12.5px;color:#6b7280">
+                    Там будут строки <code>[notify] Telegram — отправлено</code> или
+                    <code>[notify] WhatsApp — не отправлено: no_config</code>
+                  </p>
+                </div>
+              </details>
+            <% } %>
           </header>
+
+          <% if (s.id === 'mail') { %>
+            <details class="notif-help" open>
+              <summary>📖 Как настроить SMTP для популярных серверов</summary>
+              <div class="notif-steps">
+
+                <p><strong>🇷🇺 Яндекс.Почта (рекомендуется для рунета)</strong></p>
+                <ol>
+                  <li>Войдите в Яндекс.Почту → <a href="https://id.yandex.ru/security/app-passwords" target="_blank" rel="noopener">настройки паролей приложений</a></li>
+                  <li>Нажмите «Создать пароль приложения» → тип: <strong>«Почта»</strong></li>
+                  <li>Скопируйте полученный пароль (16 символов) — это ваш <em>SMTP-пароль</em>, а не основной пароль от аккаунта!</li>
+                  <li>Заполните поля ниже:
+                    <ul>
+                      <li>SMTP-хост: <code>smtp.yandex.ru</code></li>
+                      <li>Порт: <code>465</code></li>
+                      <li>Логин: полный email (например, <code>shop@yandex.ru</code>)</li>
+                      <li>Пароль: полученный пароль приложения</li>
+                      <li>SSL: ✓</li>
+                      <li>Адрес отправителя: <code>Мой Магазин &lt;shop@yandex.ru&gt;</code></li>
+                    </ul>
+                  </li>
+                </ol>
+                <p style="font-size:12.5px;color:#6b7280">⚠️ Обычный пароль не сработает — Яндекс блокирует небезопасный вход. Нужен именно пароль приложения.</p>
+
+                <p style="margin-top:18px"><strong>📧 Gmail / Google Workspace</strong></p>
+                <ol>
+                  <li>Включите двухфакторную аутентификацию: <a href="https://myaccount.google.com/security" target="_blank" rel="noopener">myaccount.google.com/security</a></li>
+                  <li>Откройте <a href="https://myaccount.google.com/apppasswords" target="_blank" rel="noopener">Пароли приложений</a></li>
+                  <li>Выберите «Другое» → введите название (например, «Магазин») → <strong>Создать</strong></li>
+                  <li>Скопируйте пароль из 16 символов</li>
+                  <li>Заполните:
+                    <ul>
+                      <li>SMTP-хост: <code>smtp.gmail.com</code></li>
+                      <li>Порт: <code>465</code></li>
+                      <li>Логин: полный email (<code>shop@gmail.com</code>)</li>
+                      <li>Пароль: пароль приложения</li>
+                      <li>SSL: ✓</li>
+                    </ul>
+                  </li>
+                </ol>
+                <p style="font-size:12.5px;color:#6b7280">⚠️ Для Google Workspace (свой домен) — то же самое.</p>
+
+                <p style="margin-top:18px"><strong>📨 Mail.ru</strong></p>
+                <ol>
+                  <li>Войдите в <a href="https://mail.ru" target="_blank" rel="noopener">Mail.ru</a> → <strong>Настройки → Безопасность → Пароли для внешних приложений</strong></li>
+                  <li>Создайте пароль для «Почтовых клиентов» — скопируйте</li>
+                  <li>Заполните:
+                    <ul>
+                      <li>SMTP-хост: <code>smtp.mail.ru</code></li>
+                      <li>Порт: <code>465</code></li>
+                      <li>Логин: полный email (<code>shop@mail.ru</code>)</li>
+                      <li>Пароль: пароль приложения</li>
+                      <li>SSL: ✓</li>
+                    </ul>
+                  </li>
+                </ol>
+
+                <p style="margin-top:18px"><strong>🌐 SendPulse (12 000 писем/мес бесплатно)</strong></p>
+                <ol>
+                  <li>Зарегистрируйтесь на <a href="https://sendpulse.com" target="_blank" rel="noopener">sendpulse.com</a></li>
+                  <li>Настройки → SMTP → получите данные</li>
+                  <li>Поля:
+                    <ul>
+                      <li>Хост: <code>smtp-pulse.com</code></li>
+                      <li>Порт: <code>465</code></li>
+                      <li>Логин и пароль: из ЛК SendPulse</li>
+                      <li>SSL: ✓</li>
+                    </ul>
+                  </li>
+                </ol>
+
+                <p style="margin-top:18px"><strong>🚀 Mailgun (для зарубежных проектов)</strong></p>
+                <ol>
+                  <li>Регистрация: <a href="https://mailgun.com" target="_blank" rel="noopener">mailgun.com</a></li>
+                  <li>Добавьте домен, подтвердите DNS-записи (SPF, DKIM)</li>
+                  <li>Поля:
+                    <ul>
+                      <li>Хост: <code>smtp.mailgun.org</code></li>
+                      <li>Порт: <code>465</code></li>
+                      <li>Логин: <code>postmaster@ваш-домен</code></li>
+                      <li>Пароль: SMTP-пароль из ЛК</li>
+                      <li>SSL: ✓</li>
+                    </ul>
+                  </li>
+                </ol>
+
+                <p style="margin-top:18px"><strong>📮 Что вписать в поля</strong></p>
+                <ul>
+                  <li><strong>SMTP-хост</strong> — сервер отправки (см. выше)</li>
+                  <li><strong>SMTP-порт</strong> — обычно <code>465</code> (SSL) или <code>587</code> (TLS)</li>
+                  <li><strong>SMTP-логин</strong> — обычно полный email</li>
+                  <li><strong>SMTP-пароль</strong> — пароль приложения, НЕ основной пароль</li>
+                  <li><strong>Адрес отправителя</strong> — формат <code>Имя &lt;email&gt;</code></li>
+                  <li><strong>SSL</strong> — ✓ для порта 465, ✗ для порта 587</li>
+                </ul>
+
+                <p style="margin-top:18px"><strong>⚠️ Частые ошибки</strong></p>
+                <ul>
+                  <li><code>Invalid login</code> — используете основной пароль вместо пароля приложения</li>
+                  <li><code>Connection timeout</code> — неверный порт или хостинг блокирует исходящие</li>
+                  <li><code>Relay access denied</code> — email в «Отправителе» не совпадает с логином</li>
+                  <li>Письма в спаме — настройте SPF/DKIM в DNS вашего домена</li>
+                </ul>
+
+                <p style="margin-top:18px"><strong>✅ Как проверить</strong></p>
+                <ol>
+                  <li>Заполните поля, сохраните настройки</li>
+                  <li>Откройте <a href="/login/code" target="_blank">/login/code</a> — введите свой email</li>
+                  <li>Нажмите «Получить код» — на почту должно прийти письмо</li>
+                </ol>
+
+                <p style="margin-top:18px"><strong>💡 Тест через консоль</strong></p>
+                <p>Выполните в терминале:</p>
+                <pre style="background:#0f172a;color:#e2e8f0;padding:12px;border-radius:6px;font-size:12px">cd ~/universal && node -e "const m=require('./src/services/mail');m.send({to:'ваш@email.ru',subject:'Тест SMTP',html:'<b>Работает!</b>'}).then(r=>console.log(r))"</pre>
+                <p style="font-size:12.5px;color:#6b7280">Если <code>{ ok: true }</code> — SMTP работает. Иначе смотрите поле reason.</p>
+
+              </div>
+            </details>
+          <% } %>
 
           <% s.fields.forEach(f => { %>
             <div class="settings-field">
@@ -34,6 +273,31 @@
                     <option value="<%= t %>" <%= values[f.key] === t ? 'selected' : '' %>><%= t %></option>
                   <% }) %>
                 </select>
+
+              <% } else if (f.type === 'select') { %>
+                <label><%= f.label %></label>
+                <select name="<%= f.key %>">
+                  <% (f.options || []).forEach(o => { %>
+                    <option value="<%= o.value %>" <%= values[f.key] === o.value ? 'selected' : '' %>><%= o.label %></option>
+                  <% }) %>
+                </select>
+
+              <% } else if (f.type === 'image') { %>
+                <label><%= f.label %></label>
+                <div class="settings-image-block">
+                  <div class="settings-image-preview" id="preview-<%= f.key %>">
+                    <% if (values[f.key]) { %>
+                      <img src="<%= values[f.key] %>" alt="">
+                    <% } else { %>
+                      <span class="settings-image-empty">Нет файла</span>
+                    <% } %>
+                  </div>
+                  <div class="settings-image-actions">
+                    <label class="upload-label-inline">Загрузить файл<input type="file" class="settings-image-input" data-key="<%= f.key %>" accept="image/*" hidden></label>
+                    <input type="text" name="<%= f.key %>" id="input-<%= f.key %>" value="<%= values[f.key] || '' %>" placeholder="или URL">
+                    <% if (f.hint) { %><small class="settings-image-hint"><%= f.hint %></small><% } %>
+                  </div>
+                </div>
 
               <% } else if (f.type === 'password') { %>
                 <label><%= f.label %></label>
@@ -81,6 +345,60 @@
     let active = null;
     sections.forEach(s => { if (s.offsetTop <= scrollY) active = s.id; });
     navLinks.forEach(l => l.classList.toggle('active', l.dataset.target === active));
+  });
+})();
+</script>
+
+<script>
+(function () {
+  document.querySelectorAll('.settings-image-input').forEach(function (inp) {
+    inp.addEventListener('change', function (e) {
+      var file = e.target.files[0];
+      if (!file) return;
+      var key = inp.dataset.key;
+      var fd = new FormData();
+      fd.append('file', file);
+      fetch('/admin/settings/upload', { method: 'POST', body: fd })
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          if (!d.ok) return alert('Ошибка загрузки');
+          document.getElementById('input-' + key).value = d.url;
+          document.getElementById('preview-' + key).innerHTML = '<img src="' + d.url + '" alt="">';
+        })
+        .catch(function () { alert('Ошибка загрузки'); });
+    });
+  });
+})();
+</script>
+
+<script>
+(function () {
+  document.querySelectorAll('[data-test-channel]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var ch = btn.dataset.testChannel;
+      var res = document.getElementById('test-result');
+      res.textContent = 'Отправляю...';
+      res.style.color = '#6b7280';
+      fetch('/admin/settings/test-notify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ channel: ch })
+      })
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          if (d.ok) {
+            res.textContent = '✓ Отправлено в ' + ch;
+            res.style.color = '#16a34a';
+          } else {
+            res.textContent = '✗ Ошибка: ' + (d.reason || 'неизвестно');
+            res.style.color = '#dc2626';
+          }
+        })
+        .catch(function (e) {
+          res.textContent = '✗ Ошибка сети';
+          res.style.color = '#dc2626';
+        });
+    });
   });
 })();
 </script>

@@ -1,0 +1,78 @@
+<div class="admin-header">
+  <h1>🛒 Брошенные корзины</h1>
+  <a href="/admin/sales" class="btn btn-sm">← К аналитике</a>
+</div>
+<p class="admin-hint">
+  Здесь показаны корзины с товарами, которые не оформились более часа назад.
+  Если у корзины есть email — можно связаться с покупателем.
+</p>
+
+<div class="sales-stats">
+  <div class="sales-stat">
+    <div class="sales-stat-label">Брошенных сейчас</div>
+    <div class="sales-stat-value"><%= carts.length %></div>
+    <div class="sales-stat-sub">на <%= totalAmount.toLocaleString('ru-RU') %> ₽</div>
+  </div>
+  <div class="sales-stat">
+    <div class="sales-stat-label">Активных (в процессе)</div>
+    <div class="sales-stat-value"><%= stats.active %></div>
+    <div class="sales-stat-sub">за последний час</div>
+  </div>
+  <div class="sales-stat">
+    <div class="sales-stat-label">Оформлено (30 дней)</div>
+    <div class="sales-stat-value"><%= stats.converted %></div>
+    <div class="sales-stat-sub">—</div>
+  </div>
+  <div class="sales-stat">
+    <div class="sales-stat-label">Отменено/очищено (30 дн.)</div>
+    <div class="sales-stat-value"><%= stats.abandoned %></div>
+    <div class="sales-stat-sub">—</div>
+  </div>
+</div>
+
+<section class="sales-block">
+  <h2>Список брошенных корзин</h2>
+  <% if (!carts.length) { %>
+    <p style="color:#6b7280">Брошенных корзин пока нет — это хорошо.</p>
+  <% } else { %>
+    <table class="admin-table">
+      <thead><tr>
+        <th>Дата</th>
+        <th>Клиент</th>
+        <th>Товары</th>
+        <th>Сумма</th>
+        <th></th>
+      </tr></thead>
+      <tbody>
+        <% carts.forEach(c => { %>
+          <tr>
+            <td><%= c.updatedAt.toLocaleString('ru-RU') %></td>
+            <td>
+              <% if (c.name || c.email) { %>
+                <%= c.name || '—' %><br><small><%= c.email || 'без email' %></small>
+                <% if (c.phone) { %><br><small><%= c.phone %></small><% } %>
+              <% } else { %>
+                <em style="color:#9ca3af">Гость</em>
+              <% } %>
+            </td>
+            <td>
+              <% c.items.slice(0, 3).forEach(it => { %>
+                <%= it.name %> × <%= it.qty %><br>
+              <% }) %>
+              <% if (c.items.length > 3) { %><small style="color:#6b7280">и ещё <%= c.items.length - 3 %></small><% } %>
+            </td>
+            <td><strong><%= c.total.toLocaleString('ru-RU') %> ₽</strong></td>
+            <td class="row-actions">
+              <% if (c.email) { %>
+                <a href="mailto:<%= c.email %>?subject=Ваш заказ в магазине" class="btn btn-sm">✉ Написать</a>
+              <% } %>
+              <form method="post" action="/admin/sales/abandoned/<%= c.id %>/remove" onsubmit="return confirm('Скрыть эту корзину?')">
+                <button class="btn btn-sm btn-danger">×</button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  <% } %>
+</section>

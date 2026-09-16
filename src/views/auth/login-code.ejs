@@ -1,0 +1,34 @@
+<h1>Вход по коду</h1>
+
+<% if (error) { %><p class="error"><%= error %></p><% } %>
+
+<% if (step === 'email') { %>
+  <p class="auth-hint">Введите свой email — мы отправим на него 6-значный код. Если аккаунта ещё нет — он создастся автоматически.</p>
+  <form method="post" action="/login/code" class="auth-form">
+    <label>Email <input type="email" name="email" value="<%= email || '' %>" required autofocus></label>
+    <button type="submit" class="btn">Получить код</button>
+  </form>
+<% } else { %>
+  <p class="auth-hint">
+    Мы отправили 6-значный код на <strong><%= email %></strong>.<br>
+    Он действует 10 минут.
+  </p>
+  <form method="post" action="/login/code/verify" class="auth-form">
+    <input type="hidden" name="email" value="<%= email %>">
+    <label>Код из письма
+      <input type="text" name="code" inputmode="numeric" pattern="[0-9]{6}" maxlength="6"
+             style="font-size:24px;letter-spacing:8px;text-align:center;font-family:monospace"
+             placeholder="••••••" required autofocus>
+    </label>
+    <button type="submit" class="btn">Войти</button>
+  </form>
+  <p style="margin-top:16px;font-size:14px">
+    Не пришло?
+    <form method="post" action="/login/code" style="display:inline">
+      <input type="hidden" name="email" value="<%= email %>">
+      <button type="submit" class="btn-link">Отправить ещё раз</button>
+    </form>
+  </p>
+<% } %>
+
+<p style="margin-top:24px"><a href="/login">← Вход по паролю</a></p>

@@ -20,10 +20,17 @@ const pages      = require('../controllers/admin/pages');
 const settings   = require('../controllers/admin/settings');
 const importer   = require('../controllers/admin/import');
 const delivery   = require('../controllers/admin/delivery');
+const blogCats   = require('../controllers/admin/blogCategories');
+const sales      = require('../controllers/admin/sales');
+const abandoned  = require('../controllers/admin/abandoned');
+const marketplaces = require('../controllers/admin/marketplaces');
 const payment    = require('../controllers/admin/payment');
 const ordersExport = require('../controllers/admin/ordersExport');
 
 router.get('/', dashboard.index);
+router.get('/sales', sales.index);
+router.get('/sales/abandoned', abandoned.list);
+router.post('/sales/abandoned/:id/remove', abandoned.remove);
 
 router.get('/categories', categories.list);
 router.get('/categories/new', categories.form);
@@ -73,6 +80,19 @@ router.post('/pages', pages.save);
 router.post('/pages/:id', pages.save);
 router.post('/pages/:id/delete', pages.remove);
 
+router.post('/settings/upload', imageUpload.single('file'), async (req, res) => {
+  if (!req.file) return res.json({ ok: false });
+  res.json({ ok: true, url: '/uploads/' + req.file.filename });
+});
+router.post('/settings/test-notify', async (req, res) => {
+  try {
+    const notify = require('../services/notify');
+    const out = await notify.sendTest(req.body.channel);
+    res.json(out || { ok: false });
+  } catch (e) {
+    res.json({ ok: false, reason: e.message });
+  }
+});
 router.get('/settings', settings.form);
 router.post('/settings', settings.save);
 
@@ -94,5 +114,21 @@ router.post('/payment', payment.save);
 router.post('/payment/:id', payment.save);
 router.post('/payment/:id/toggle', payment.toggle);
 router.post('/payment/:id/delete', payment.remove);
+
+router.get('/blog-categories', blogCats.list);
+router.get('/blog-categories/new', blogCats.form);
+router.get('/blog-categories/:id', blogCats.form);
+router.post('/blog-categories', blogCats.save);
+router.post('/blog-categories/:id', blogCats.save);
+router.post('/blog-categories/:id/delete', blogCats.remove);
+
+router.get('/marketplaces', marketplaces.list);
+router.get('/marketplaces/new', marketplaces.form);
+router.get('/marketplaces/:id', marketplaces.form);
+router.post('/marketplaces', marketplaces.save);
+router.post('/marketplaces/:id', marketplaces.save);
+router.post('/marketplaces/:id/toggle', marketplaces.toggle);
+router.post('/marketplaces/:id/delete', marketplaces.remove);
+router.post('/marketplaces/upload-icon', imageUpload.single('files'), marketplaces.uploadIcon);
 
 module.exports = router;

@@ -1,0 +1,99 @@
+<div class="admin-header">
+  <h1>📈 Продажи и аналитика</h1>
+  <a href="/admin/orders" class="btn btn-sm">Все заказы →</a>
+</div>
+
+<div class="sales-stats">
+  <div class="sales-stat">
+    <div class="sales-stat-label">За 7 дней</div>
+    <div class="sales-stat-value"><%= revenue7.toLocaleString('ru-RU') %> ₽</div>
+    <div class="sales-stat-sub"><%= ordersCount7 %> заказ(ов)</div>
+  </div>
+  <div class="sales-stat">
+    <div class="sales-stat-label">За 30 дней</div>
+    <div class="sales-stat-value"><%= revenue30.toLocaleString('ru-RU') %> ₽</div>
+    <div class="sales-stat-sub"><%= ordersCount30 %> заказ(ов)</div>
+  </div>
+  <div class="sales-stat">
+    <div class="sales-stat-label">Средний чек (30 дн.)</div>
+    <div class="sales-stat-value"><%= avgCheck.toLocaleString('ru-RU') %> ₽</div>
+    <div class="sales-stat-sub">—</div>
+  </div>
+  <div class="sales-stat">
+    <div class="sales-stat-label">Всего выручка</div>
+    <div class="sales-stat-value"><%= revenueAll.toLocaleString('ru-RU') %> ₽</div>
+    <div class="sales-stat-sub">за всё время</div>
+  </div>
+</div>
+
+<section class="sales-block">
+  <h2>Выручка за 14 дней</h2>
+  <div class="sales-chart">
+    <% chart.forEach(d => { %>
+      <div class="sales-chart-bar" title="<%= d.label %>: <%= d.revenue %> ₽ (<%= d.count %> заказ.)">
+        <div class="sales-chart-bar-fill" style="height:<%= Math.round((d.revenue / chartMax) * 100) %>%"></div>
+        <div class="sales-chart-bar-label"><%= d.label %></div>
+        <div class="sales-chart-bar-value"><%= d.revenue > 0 ? d.revenue : '' %></div>
+      </div>
+    <% }) %>
+  </div>
+</section>
+
+<div class="sales-grid">
+  <section class="sales-block">
+    <h2>Статусы заказов (30 дней)</h2>
+    <ul class="sales-status-list">
+      <li><span class="badge badge-new">NEW</span> <strong><%= byStatus.NEW %></strong></li>
+      <li><span class="badge badge-paid">PAID</span> <strong><%= byStatus.PAID %></strong></li>
+      <li><span class="badge badge-shipped">SHIPPED</span> <strong><%= byStatus.SHIPPED %></strong></li>
+      <li><span class="badge badge-done">DONE</span> <strong><%= byStatus.DONE %></strong></li>
+      <li><span class="badge badge-cancelled">CANCELLED</span> <strong><%= byStatus.CANCELLED %></strong></li>
+    </ul>
+  </section>
+
+  <section class="sales-block">
+    <h2>Топ-5 товаров (30 дней)</h2>
+    <% if (!topProducts.length) { %><p style="color:#6b7280">Пока нет данных</p><% } %>
+    <ul class="sales-top">
+      <% topProducts.forEach(p => { %>
+        <li>
+          <span class="sales-top-name"><%= p.name %></span>
+          <span class="sales-top-meta"><%= p.qty %> шт · <strong><%= p.revenue.toLocaleString('ru-RU') %> ₽</strong></span>
+        </li>
+      <% }) %>
+    </ul>
+  </section>
+
+  <section class="sales-block">
+    <h2>Топ-5 клиентов (30 дней)</h2>
+    <% if (!topClients.length) { %><p style="color:#6b7280">Пока нет данных</p><% } %>
+    <ul class="sales-top">
+      <% topClients.forEach(c => { %>
+        <li>
+          <span class="sales-top-name"><%= c.name %><br><small><%= c.email %></small></span>
+          <span class="sales-top-meta"><%= c.orders %> заказ. · <strong><%= c.revenue.toLocaleString('ru-RU') %> ₽</strong></span>
+        </li>
+      <% }) %>
+    </ul>
+  </section>
+</div>
+
+<section class="sales-block">
+  <h2>Последние 10 заказов</h2>
+  <table class="admin-table">
+    <thead><tr><th>Номер</th><th>Дата</th><th>Клиент</th><th>Сумма</th><th>Статус</th><th></th></tr></thead>
+    <tbody>
+      <% recent.forEach(o => { %>
+        <tr>
+          <td><%= o.number %></td>
+          <td><%= o.createdAt.toLocaleString('ru-RU') %></td>
+          <td><%= o.name %><br><small><%= o.email %></small></td>
+          <td><strong><%= o.total %> ₽</strong></td>
+          <td><span class="badge badge-<%= o.status.toLowerCase() %>"><%= o.status %></span></td>
+          <td><a href="/admin/orders/<%= o.id %>" class="btn btn-sm">Открыть</a></td>
+        </tr>
+      <% }) %>
+      <% if (!recent.length) { %><tr><td colspan="6">Заказов пока нет</td></tr><% } %>
+    </tbody>
+  </table>
+</section>

@@ -1,0 +1,24 @@
+<div class="admin-header">
+  <h1><%= cat ? 'Изменить категорию' : 'Новая категория блога' %></h1>
+  <a href="/admin/blog-categories" class="btn btn-sm">← К списку</a>
+</div>
+<form method="post" action="<%= cat ? '/admin/blog-categories/' + cat.id : '/admin/blog-categories' %>" class="admin-form">
+  <div class="form-row">
+    <label>Название * <input type="text" name="name" value="<%= cat ? cat.name : '' %>" required></label>
+    <label>Slug <input type="text" name="slug" value="<%= cat ? cat.slug : '' %>" placeholder="автогенерация"></label>
+  </div>
+  <div class="form-row">
+    <label>Родительская категория
+      <select name="parentId">
+        <option value="">— нет —</option>
+        <% cats.forEach(c => { %>
+          <% if (!cat || c.id !== cat.id) { %>
+            <option value="<%= c.id %>" <%= cat && cat.parentId === c.id ? 'selected' : '' %>><%= c.name %></option>
+          <% } %>
+        <% }) %>
+      </select>
+    </label>
+    <label>Сортировка <input type="number" name="sort" value="<%= cat ? cat.sort : 0 %>"></label>
+  </div>
+  <div class="form-actions"><button class="btn">Сохранить</button></div>
+</form>

@@ -5,17 +5,35 @@
 
 <form method="post" action="<%= post ? '/admin/blog/' + post.id : '/admin/blog' %>" class="admin-form">
   <label>Заголовок <input type="text" name="title" value="<%= post ? post.title : '' %>" required></label>
-  <label>Slug <input type="text" name="slug" value="<%= post ? post.slug : '' %>" placeholder="автогенерация"></label>
+  <div class="form-row">
+    <label>Slug <input type="text" name="slug" value="<%= post ? post.slug : '' %>" placeholder="автогенерация"></label>
+    <label>Категория блога
+      <select name="blogCategoryId">
+        <option value="">— без категории —</option>
+        <% blogCategories.forEach(c => { %>
+          <option value="<%= c.id %>" <%= post && post.blogCategoryId === c.id ? 'selected' : '' %>><%= c.name %></option>
+        <% }) %>
+      </select>
+    </label>
+  </div>
   <label>Краткое описание <textarea name="excerpt" rows="2"><%= post && post.excerpt ? post.excerpt : '' %></textarea></label>
   <label>Контент <textarea name="content" rows="14" required><%= post ? post.content : '' %></textarea></label>
   <label>Обложка (URL) <input type="text" name="cover" value="<%= post && post.cover ? post.cover : '' %>"></label>
-  <label class="checkbox-label">
-    <input type="checkbox" name="published" <%= !post || post.published ? 'checked' : '' %>>
-    Опубликован
-  </label>
+  <label class="checkbox-label"><input type="checkbox" name="published" <%= !post || post.published ? 'checked' : '' %>> Опубликован</label>
   <label>SEO Title <input type="text" name="seoTitle" value="<%= post && post.seoTitle ? post.seoTitle : '' %>"></label>
   <label>SEO Description <input type="text" name="seoDesc" value="<%= post && post.seoDesc ? post.seoDesc : '' %>"></label>
   <div class="form-actions"><button class="btn">Сохранить</button></div>
 </form>
 
-<%- include('../partials/wysiwyg', { selector: 'textarea[name=content]' }) %>
+<script src="https://cdn.jsdelivr.net/npm/tinymce@7.4.1/tinymce.min.js" referrerpolicy="origin"></script>
+<script>
+tinymce.init({
+  selector: 'textarea[name=content]',
+  language: 'ru',
+  language_url: 'https://cdn.jsdelivr.net/npm/tinymce-i18n@24.10.22/langs7/ru.js',
+  height: 480, menubar: true,
+  plugins: 'lists link image table code fullscreen preview media codesample autoresize',
+  toolbar: 'undo redo | styles h1 h2 h3 | bold italic underline | bullist numlist | link image media table | blockquote codesample | alignleft aligncenter alignright | code fullscreen preview',
+  branding: false, promotion: false, convert_urls: false
+});
+</script>

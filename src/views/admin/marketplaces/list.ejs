@@ -1,0 +1,49 @@
+<div class="admin-header">
+  <h1>🏪 Маркетплейсы</h1>
+  <a href="/admin/marketplaces/new" class="btn">+ Добавить маркетплейс</a>
+</div>
+<p class="admin-hint">Созданные маркетплейсы появятся в форме товара — можно привязать ссылку на товар на этом маркетплейсе.</p>
+
+<table class="admin-table">
+  <thead><tr>
+    <th style="width:60px">Иконка</th>
+    <th>Название</th>
+    <th>Slug</th>
+    <th>Цвет</th>
+    <th>Сортировка</th>
+    <th>Статус</th>
+    <th></th>
+  </tr></thead>
+  <tbody>
+    <% items.forEach(m => { %>
+      <tr>
+        <td>
+          <% if (m.iconUrl && (m.iconUrl.startsWith('/uploads/') || m.iconUrl.startsWith('http'))) { %>
+            <img src="<%= m.iconUrl %>" alt="" style="width:36px;height:36px;object-fit:contain;border-radius:6px;background:#f3f4f6;padding:3px">
+          <% } else if (m.iconUrl) { %>
+            <span style="font-size:24px"><%= m.iconUrl %></span>
+          <% } else { %>
+            <span style="font-size:20px;color:#9ca3af">—</span>
+          <% } %>
+        </td>
+        <td><strong><%= m.name %></strong></td>
+        <td><code><%= m.slug %></code></td>
+        <td>
+          <span style="display:inline-block;width:20px;height:20px;border-radius:4px;background:<%= m.color %>;vertical-align:middle;margin-right:6px"></span>
+          <code><%= m.color %></code>
+        </td>
+        <td><%= m.sort %></td>
+        <td>
+          <form method="post" action="/admin/marketplaces/<%= m.id %>/toggle" style="display:inline">
+            <button class="btn btn-sm <%= m.active ? '' : 'btn-muted' %>"><%= m.active ? '✓ Активен' : '✗ Отключён' %></button>
+          </form>
+        </td>
+        <td class="row-actions">
+          <a href="/admin/marketplaces/<%= m.id %>" class="btn btn-sm">Изменить</a>
+          <form method="post" action="/admin/marketplaces/<%= m.id %>/delete" onsubmit="return confirm('Удалить маркетплейс?')"><button class="btn btn-sm btn-danger">×</button></form>
+        </td>
+      </tr>
+    <% }) %>
+    <% if (!items.length) { %><tr><td colspan="7">Маркетплейсов пока нет</td></tr><% } %>
+  </tbody>
+</table>

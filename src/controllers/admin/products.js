@@ -6,8 +6,10 @@ const path = require('path');
 const UPLOAD_DIR = path.join(__dirname, '..', '..', '..', 'data', 'uploads');
 
 async function getMarketplaces() {
-  const s = await prisma.setting.findUnique({ where: { key: 'marketplaces' } });
-  try { return JSON.parse(s?.value || '[]'); } catch (e) { return []; }
+  return prisma.marketplace.findMany({
+    where: { active: true },
+    orderBy: [{ sort: 'asc' }, { id: 'asc' }]
+  });
 }
 
 exports.list = async (req, res) => {

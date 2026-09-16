@@ -14,8 +14,11 @@ const SECTIONS = [
   },
   {
     id: 'theme', icon: '🎨', title: 'Оформление',
-    desc: 'Какая тема используется на витрине. Переключение — мгновенное.',
+    desc: 'Логотип, фавикон и активная тема витрины.',
     fields: [
+      { key: 'logo_image', label: 'Логотип — картинка', type: 'image', hint: 'PNG/SVG, высота 40–60 px. Если загружен — показывается вместо текста.' },
+      { key: 'logo_text', label: 'Логотип — текст', hint: 'Если картинка не загружена.' },
+      { key: 'favicon', label: 'Фавикон', type: 'image', hint: 'ICO или PNG 32×32 / 64×64.' },
       { key: 'active_theme', label: 'Активная тема', type: 'theme' }
     ]
   },
@@ -27,21 +30,20 @@ const SECTIONS = [
     ]
   },
   {
-    id: 'delivery', icon: '🚚', title: 'Доставка',
-    desc: 'Стоимость доставки и порог бесплатной доставки. Порог 0 — отключить бесплатную доставку.',
+    id: 'notifications', icon: '🔔', title: 'Уведомления в мессенджеры',
+    desc: 'Куда отправлять уведомления о новых заказах: Telegram-бот, WhatsApp. Email настраивается в разделе «Почта».',
     fields: [
-      { key: 'delivery_flat_cost', label: 'Фиксированная стоимость, ₽' },
-      { key: 'delivery_free_from', label: 'Бесплатная доставка от, ₽' },
-      { key: 'delivery_per_kg', label: 'Цена за кг (для расчёта по весу), ₽' }
-    ]
-  },
-  {
-    id: 'payment', icon: '💳', title: 'Оплата',
-    desc: 'Ключи платёжных систем. Оплата при получении работает без настроек.',
-    fields: [
-      { key: 'stripe_secret', label: 'Stripe Secret Key', type: 'password' },
-      { key: 'yookassa_shop_id', label: 'ЮKassa Shop ID' },
-      { key: 'yookassa_secret', label: 'ЮKassa Secret Key', type: 'password' }
+      { key: 'telegram_enabled', label: 'Telegram — включить', type: 'checkbox' },
+      { key: 'telegram_bot_token', label: 'Telegram Bot Token', placeholder: '123456:ABC-DEF...', hint: 'Получить у @BotFather' },
+      { key: 'telegram_chat_id', label: 'Telegram Chat ID', placeholder: '123456789', hint: 'Узнать у @userinfobot' },
+      { key: 'whatsapp_enabled', label: 'WhatsApp — включить', type: 'checkbox' },
+      { key: 'whatsapp_provider', label: 'WhatsApp провайдер', type: 'select', options: [
+        { value: 'webhook', label: 'Webhook URL (Wazzup, Make, n8n, свой сервер)' },
+        { value: 'callmebot', label: 'CallMeBot (бесплатно, простой)' }
+      ]},
+      { key: 'whatsapp_phone', label: 'WhatsApp номер для уведомлений', placeholder: '+79001234567' },
+      { key: 'whatsapp_webhook_url', label: 'Webhook URL', placeholder: 'https://...' },
+      { key: 'whatsapp_callmebot_apikey', label: 'CallMeBot API-key', placeholder: '123456' }
     ]
   },
   {
@@ -57,15 +59,8 @@ const SECTIONS = [
     ]
   },
   {
-    id: 'marketplaces', icon: '🏪', title: 'Маркетплейсы',
-    desc: 'Список маркетплейсов в JSON-формате. Используется в форме товара. Формат: [{"name":"Ozon","slug":"ozon"}]',
-    fields: [
-      { key: 'marketplaces', label: 'Список маркетплейсов (JSON)', type: 'textarea' }
-    ]
-  },
-  {
     id: 'contacts', icon: '🗺️', title: 'Карта на контактах',
-    desc: 'Вставьте HTML-код карты из Яндекс.Карт, Google Maps или 2ГИС (iframe-код «Поделиться» → «Встроить»).',
+    desc: 'Вставьте HTML-код карты из Яндекс.Карт, Google Maps или 2ГИС.',
     fields: [
       { key: 'contacts_map', label: 'HTML карты', type: 'textarea' }
     ]
@@ -80,7 +75,7 @@ const SECTIONS = [
   },
   {
     id: 'custom', icon: '</>', title: 'Произвольный код',
-    desc: 'HTML/JS вставляется на всех страницах сайта. Для сторонних виджетов, чатов, пикселей.',
+    desc: 'HTML/JS вставляется на всех страницах сайта.',
     fields: [
       { key: 'custom_head', label: 'HTML в <head>', type: 'textarea' },
       { key: 'custom_body', label: 'HTML перед </body>', type: 'textarea' }

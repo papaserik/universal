@@ -65,6 +65,18 @@ exports.submit = async (req, res) => {
     paymentCode ? prisma.paymentMethod.findUnique({ where: { code: paymentCode } }) : null
   ]);
 
+  // Обновим корзину в БД — сохраним контакты и последний статус
+  try {
+    await prisma.cart.updateMany({
+      where: { sessionId: req.sessionID, status: 'active' },
+      data: {
+        email: req.body.email || null,
+        name: req.body.name || null,
+        phone: req.body.phone || null
+      }
+    });
+  } catch (e) { /* ignore */ }
+
   const dResult = delivery.calc(deliveryMethod, subtotal, weight);
   const total = subtotal + dResult.cost;
   const number = 'ORD-' + Date.now().toString(36).toUpperCase();
@@ -85,6 +97,8 @@ exports.submit = async (req, res) => {
     },
     include: { items: true }
   });
+
+  await cart.markConverted(req);
 
   const pay = await payment.createPayment(order, paymentMethod);
   req.session.cart = [];

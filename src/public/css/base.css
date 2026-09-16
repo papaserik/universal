@@ -442,3 +442,58 @@ main.container{padding:24px 16px;min-height:60vh}
 .totals{display:flex;flex-direction:column;gap:6px}
 .totals-final{margin-top:8px;padding-top:10px;border-top:1px solid #e5e7eb;font-size:17px}
 .btn-lg{padding:14px 32px;font-size:16px;min-height:52px}
+
+/* Блог: сетка с сайдбаром */
+.blog-layout{display:grid;grid-template-columns:240px 1fr;gap:32px;margin-top:20px}
+.blog-sidebar{background:#fff;padding:18px;border-radius:10px;border:1px solid #e5e7eb;align-self:start;position:sticky;top:20px}
+.blog-sidebar h3{margin:0 0 12px;font-size:14px;text-transform:uppercase;letter-spacing:.5px;color:#6b7280}
+.blog-cats{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:2px}
+.blog-cats a{display:flex;justify-content:space-between;padding:8px 10px;font-size:14px;text-decoration:none;color:#374151;border-radius:6px;transition:background .1s}
+.blog-cats a:hover{background:#f3f4f6}
+.blog-cats a.active{background:#0f172a;color:#fff}
+.blog-cats small{color:#9ca3af;font-size:12px}
+.blog-cats a.active small{color:rgba(255,255,255,.6)}
+@media(max-width:820px){.blog-layout{grid-template-columns:1fr}.blog-sidebar{position:static}}
+
+/* Логотип-картинка */
+.logo-img, .c-logo img { display: block; max-height: 40px; width: auto; }
+.c-header .c-logo img { max-height: 34px; }
+
+/* Авторизация: табы и вспомогательные элементы */
+.auth-tabs {
+  display: flex; gap: 4px; margin: 16px 0 20px;
+  border-bottom: 1px solid #e5e7eb; padding-bottom: 0;
+}
+.auth-tab {
+  padding: 10px 18px; font-size: 14px; font-weight: 500;
+  text-decoration: none; color: #6b7280; background: transparent;
+  border: 0; border-bottom: 2px solid transparent; cursor: pointer;
+  transition: color .15s, border-color .15s; margin-bottom: -1px;
+}
+.auth-tab:hover { color: #111; }
+.auth-tab.active { color: #111; border-bottom-color: #111; }
+
+.auth-hint {
+  color: #6b7280; font-size: 14px; line-height: 1.6;
+  margin: 0 0 16px; padding: 12px 14px;
+  background: #f9fafb; border-left: 3px solid #3b82f6; border-radius: 6px;
+}
+
+.btn-outline {
+  background: transparent; color: #111; border: 2px solid #111;
+}
+.btn-outline:hover { background: #111; color: #fff; }
+
+.btn-link {
+  background: transparent; border: 0; color: #1976d2;
+  text-decoration: underline; cursor: pointer; font: inherit; padding: 0;
+}
+.btn-link:hover { color: #0d47a1; }
+
+.auth-alt {
+  margin-top: 28px; padding: 20px;
+  background: #f9fafb; border-radius: 10px; text-align: center;
+}
+.auth-alt p { margin: 0 0 12px; color: #374151; }
+.auth-alt .btn { display: inline-block; }
+.auth-alt-note { font-size: 13px; color: #6b7280; margin-top: 12px !important; }

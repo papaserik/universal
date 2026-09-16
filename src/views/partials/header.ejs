@@ -1,6 +1,12 @@
 
 <header class="site-header"><div class="container header-inner">
-  <a href="/" class="logo"><%= settings.siteName %></a>
+  <a href="/" class="logo">
+    <% if (settings.logoImage) { %>
+      <img src="<%= settings.logoImage %>" alt="<%= settings.siteName %>" class="logo-img">
+    <% } else { %>
+      <%= settings.logoText || settings.siteName %>
+    <% } %>
+  </a>
   <div class="header-search" data-search>
     <form method="get" action="/search" autocomplete="off">
       <input type="text" name="q" class="js-search-input" placeholder="Поиск товаров…" value="<%= (req.query && req.query.q) || '' %>" data-suggest-url="/api/search/suggest">

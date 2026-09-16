@@ -1,6 +1,12 @@
 <header class="c-header">
   <div class="container c-header-inner">
-    <a href="/" class="c-logo"><%= settings.siteName %></a>
+    <a href="/" class="c-logo">
+    <% if (settings.logoImage) { %>
+      <img src="<%= settings.logoImage %>" alt="<%= settings.siteName %>" class="logo-img">
+    <% } else { %>
+      <%= settings.logoText || settings.siteName %>
+    <% } %>
+  </a>
 
     <div class="c-search" data-search>
       <form method="get" action="/search" autocomplete="off" style="display:flex;flex:1">

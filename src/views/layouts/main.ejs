@@ -7,6 +7,7 @@
 <meta name="description" content="<%= meta.description %>">
 <meta name="keywords" content="<%= meta.keywords %>">
 <link rel="canonical" href="<%= meta.canonical %>">
+<% if (settings.favicon) { %><link rel="icon" href="<%= settings.favicon %>"><% } %>
 <link rel="stylesheet" href="/css/base.css">
 <% jsonLd.forEach(o => { %><script type="application/ld+json"><%- JSON.stringify(o) %></script><% }) %>
 <% if (settings.gaId) { %>

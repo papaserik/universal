@@ -53,14 +53,22 @@ app.use(async (req, res, next) => {
     gaId:       await getSetting('ga_id'),
     metrikaId:  await getSetting('metrika_id'),
     customHead: await getSetting('custom_head'),
-    customBody: await getSetting('custom_body')
+    customBody: await getSetting('custom_body'),
+    logoImage:  await getSetting('logo_image'),
+    logoText:   await getSetting('logo_text'),
+    favicon:    await getSetting('favicon')
   };
 
-  // Карта маркетплейсов: { ozon: 'Ozon', wildberries: 'Wildberries' }
+  // Карта маркетплейсов из БД: slug -> { name, color, iconUrl }
   res.locals.marketplaces = {};
+  res.locals.marketplaceMeta = {};
   try {
-    const mpList = JSON.parse(await getSetting('marketplaces', '[]'));
-    for (const m of mpList) res.locals.marketplaces[m.slug] = m.name;
+    const mpService = require('./services/marketplaces');
+    const mpList = await mpService.allActive();
+    for (const m of mpList) {
+      res.locals.marketplaces[m.slug] = m.name;
+      res.locals.marketplaceMeta[m.slug] = { name: m.name, color: m.color, iconUrl: m.iconUrl, slug: m.slug };
+    }
   } catch (e) { }
   res.locals.meta = {
     title: res.locals.settings.siteName,

@@ -21,11 +21,15 @@ router.post('/checkout', checkout.submit);
 router.get('/checkout/success', checkout.success);
 
 router.get('/blog', blog.list);
+router.get('/blog/category/:slug', blog.category);
 router.get('/blog/:slug', blog.post);
 
 router.get('/page/:slug', pages.show);
 
 router.get('/login', auth.loginForm);
+router.get('/login/code', auth.codeForm);
+router.post('/login/code', auth.codeRequest);
+router.post('/login/code/verify', auth.codeVerify);
 router.post('/login', auth.login);
 router.get('/register', auth.registerForm);
 router.post('/register', auth.register);

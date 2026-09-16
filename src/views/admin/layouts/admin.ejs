@@ -10,19 +10,57 @@
 <body class="admin-body">
 <div class="admin-shell">
   <aside class="admin-side">
-    <a href="/admin" class="admin-logo"><%= settings.siteName %></a>
+    <a href="/admin" class="admin-logo">
+      <% if (settings.logoImage) { %>
+        <img src="<%= settings.logoImage %>" alt="" class="admin-logo-img">
+      <% } else { %>
+        <%= settings.logoText || settings.siteName %>
+      <% } %>
+    </a>
     <nav class="admin-nav">
       <a href="/admin">📊 Дашборд</a>
-      <a href="/admin/products">📦 Товары</a>
-      <a href="/admin/categories">📂 Категории</a>
-      <a href="/admin/options">🎛 Опции</a>
-      <a href="/admin/orders">🛒 Заказы</a>
-      <a href="/admin/delivery">🚚 Доставка</a>
-      <a href="/admin/payment">💳 Оплата</a>
-      <a href="/admin/blog">📝 Блог</a>
-      <a href="/admin/pages">📄 Страницы</a>
+
+      <div class="admin-group <%= req.path.startsWith('/admin/products') || req.path.startsWith('/admin/categories') || req.path.startsWith('/admin/options') ? 'open' : '' %>">
+        <button type="button" class="admin-group-toggle">
+          <span>📦 Каталог</span>
+          <span class="admin-group-arrow">▸</span>
+        </button>
+        <div class="admin-group-items">
+          <a href="/admin/products">Товары</a>
+          <a href="/admin/categories">Категории</a>
+          <a href="/admin/options">Опции</a>
+        </div>
+      </div>
+
+      <div class="admin-group <%= req.path.startsWith('/admin/sales') || req.path.startsWith('/admin/orders') || req.path.startsWith('/admin/delivery') || req.path.startsWith('/admin/payment') ? 'open' : '' %>">
+        <button type="button" class="admin-group-toggle">
+          <span>💰 Продажи</span>
+          <span class="admin-group-arrow">▸</span>
+        </button>
+        <div class="admin-group-items">
+          <a href="/admin/sales">Аналитика</a>
+          <a href="/admin/sales/abandoned">Брошенные корзины</a>
+          <a href="/admin/orders">Заказы</a>
+          <a href="/admin/delivery">Доставка</a>
+          <a href="/admin/payment">Оплата</a>
+        </div>
+      </div>
+
+      <div class="admin-group <%= req.path.startsWith('/admin/blog') || req.path.startsWith('/admin/pages') ? 'open' : '' %>">
+        <button type="button" class="admin-group-toggle">
+          <span>📝 Контент</span>
+          <span class="admin-group-arrow">▸</span>
+        </button>
+        <div class="admin-group-items">
+          <a href="/admin/blog">Посты</a>
+          <a href="/admin/blog-categories">Категории блога</a>
+          <a href="/admin/pages">Страницы</a>
+        </div>
+      </div>
+
       <a href="/admin/users">👥 Пользователи</a>
       <a href="/admin/import">📥 Импорт</a>
+      <a href="/admin/marketplaces">🏪 Маркетплейсы</a>
       <a href="/admin/settings">⚙ Настройки</a>
     </nav>
     <div class="admin-bottom">
@@ -41,5 +79,19 @@
     </footer>
   </main>
 </div>
+
+<script>
+(function(){
+  document.querySelectorAll('.admin-group').forEach(function(g){
+    var btn = g.querySelector('.admin-group-toggle');
+    if (!btn) return;
+    btn.addEventListener('click', function(){ g.classList.toggle('open'); });
+  });
+  var path = window.location.pathname;
+  document.querySelectorAll('.admin-group-items a').forEach(function(a){
+    if (a.getAttribute('href') === path) a.classList.add('active');
+  });
+})();
+</script>
 </body>
 </html>

@@ -11,6 +11,10 @@
   <div class="stat-card"><span class="stat-num"><%= stats.posts %></span><span>Постов</span></div>
   <div class="stat-card"><span class="stat-num"><%= stats.pages %></span><span>Страниц</span></div>
   <div class="stat-card stat-card-wide"><span class="stat-num"><%= stats.revenue %> ₽</span><span>Выручка (без отменённых)</span></div>
+  <a href="/admin/sales/abandoned" class="stat-card" style="text-decoration:none;color:inherit;<%= stats.abandonedCount > 0 ? 'border-color:#f59e0b' : '' %>">
+    <span class="stat-num"><%= stats.abandonedCount %></span>
+    <span>🛒 Брошенных корзин</span>
+  </a>
 </div>
 
 <h2>Последние заказы</h2>

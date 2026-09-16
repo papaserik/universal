@@ -4,7 +4,7 @@ const slugify = require('slugify');
 exports.list = async (req, res) => {
   const posts = await prisma.blogPost.findMany({
     orderBy: { createdAt: 'desc' },
-    include: { author: true }
+    include: { author: true, blogCategory: true }
   });
   res.render('admin/blog/list', { posts });
 };
@@ -13,13 +13,13 @@ exports.form = async (req, res) => {
   const post = req.params.id
     ? await prisma.blogPost.findUnique({ where: { id: Number(req.params.id) } })
     : null;
-  res.render('admin/blog/form', { post, error: null });
+  const blogCategories = await prisma.blogCategory.findMany({ orderBy: { name: 'asc' } });
+  res.render('admin/blog/form', { post, blogCategories, error: null });
 };
 
 exports.save = async (req, res) => {
-  const { title, slug, excerpt, content, cover, published, seoTitle, seoDesc } = req.body;
+  const { title, slug, excerpt, content, cover, published, seoTitle, seoDesc, blogCategoryId } = req.body;
   if (!title || !content) return res.redirect('/admin/blog');
-
   const data = {
     title, content,
     slug: slug || slugify(title, { lower: true, strict: true }),
@@ -28,9 +28,9 @@ exports.save = async (req, res) => {
     seoTitle: seoTitle || title,
     seoDesc: seoDesc || excerpt || '',
     published: published === 'on' || published === 'true',
-    authorId: req.session.user.id
+    authorId: req.session.user.id,
+    blogCategoryId: blogCategoryId ? Number(blogCategoryId) : null
   };
-
   if (req.params.id) {
     await prisma.blogPost.update({ where: { id: Number(req.params.id) }, data });
   } else {

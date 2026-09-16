@@ -14,17 +14,24 @@ exports.add = async (req, res) => {
   const p = await prisma.product.findUnique({ where: { id: Number(req.body.productId) } });
   if (!p) return res.status(404).json({ ok: false });
   cart.addToCart(req, p, Number(req.body.qty) || 1);
-  req.session.save(() => {
+  req.session.save(async () => {
+    await cart.syncDb(req);
     res.json({ ok: true, count: count(req) });
   });
 };
 
 exports.update = (req, res) => {
   cart.updateQty(req, Number(req.body.productId), Number(req.body.qty));
-  req.session.save(() => res.json({ ok: true, count: count(req) }));
+  req.session.save(async () => {
+    await cart.syncDb(req);
+    res.json({ ok: true, count: count(req) });
+  });
 };
 
 exports.remove = (req, res) => {
   cart.removeFromCart(req, Number(req.body.productId));
-  req.session.save(() => res.json({ ok: true, count: count(req) }));
+  req.session.save(async () => {
+    await cart.syncDb(req);
+    res.json({ ok: true, count: count(req) });
+  });
 };
