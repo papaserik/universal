@@ -1,68 +1,264 @@
 <div class="admin-header">
-  <h1>Заказ <%= order.number %></h1>
+  <div>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:4px">
+      <h1 style="margin:0">Заказ <%= order.number %></h1>
+      <% const st = currentStatus || { name: order.status, color: '#6b7280', icon: '' }; %>
+      <span class="status-pill" style="background:<%= st.color %>1a;color:<%= st.color %>;font-size:13px;padding:5px 12px">
+        <%= st.icon || '' %> <%= st.name %>
+      </span>
+    </div>
+    <div style="color:#6b7280;font-size:13.5px">
+      <%= order.createdAt.toLocaleString('ru-RU') %>
+      <% if (order.ip) { %> · IP <%= order.ip %><% } %>
+    </div>
+  </div>
   <a href="/admin/orders" class="btn btn-sm">← К списку</a>
 </div>
 
-<div class="admin-form" style="max-width:800px">
-  <div class="form-row">
-    <div><strong>Дата:</strong><br><%= order.createdAt.toLocaleString('ru-RU') %></div>
-    <div><strong>Клиент:</strong><br><%= order.name %></div>
+<% if (saved) { %><div class="admin-alert admin-alert-ok">✓ Изменения сохранены, суммы пересчитаны</div><% } %>
+<% if (changed) { %><div class="admin-alert admin-alert-ok">✓ Статус обновлён, уведомления отправлены</div><% } %>
+<% if (error) { %><div class="admin-alert" style="background:#fee2e2;color:#991b1b"><%= error %></div><% } %>
+
+<div class="order-layout">
+
+  <!-- ЛЕВАЯ КОЛОНКА -->
+  <div class="order-main">
+
+    <!-- Клиент + доставка -->
+    <section class="order-block">
+      <header class="order-block-head">
+        <h2>Клиент и доставка</h2>
+        <small>Можно отредактировать при согласовании</small>
+      </header>
+      <form method="post" action="/admin/orders/<%= order.id %>/fields" class="order-fields">
+        <div class="order-fields-grid">
+          <label>Имя <input type="text" name="name" value="<%= order.name %>" required></label>
+          <label>Email <input type="email" name="email" value="<%= order.email %>" required></label>
+          <label>Телефон <input type="tel" name="phone" value="<%= order.phone %>" required></label>
+          <label>Стоимость доставки, ₽ <input type="number" step="0.01" name="deliveryFee" value="<%= order.deliveryFee %>"></label>
+        </div>
+        <label>Адрес доставки <input type="text" name="address" value="<%= order.address || '' %>"></label>
+        <label>Комментарий клиента <textarea name="comment" rows="2"><%= order.comment || '' %></textarea></label>
+        <div class="order-fields-actions">
+          <button type="submit" class="btn">💾 Сохранить</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Состав заказа -->
+    <section class="order-block">
+      <header class="order-block-head">
+        <h2>Состав заказа</h2>
+        <small><%= items.length %> позиц<%= items.length === 1 ? 'ия' : 'ии' %></small>
+      </header>
+
+      <% if (!items.length) { %>
+        <p style="color:#9ca3af;padding:20px 0">Позиций нет. Добавьте товары ниже.</p>
+      <% } else { %>
+        <ul class="order-items">
+          <% items.forEach(it => { %>
+            <li class="order-item">
+              <div class="order-item-image">
+                <% if (it.image) { %>
+                  <img src="<%= it.image %>" alt="">
+                <% } else { %>
+                  <span>Нет фото</span>
+                <% } %>
+              </div>
+
+              <div class="order-item-info">
+                <% if (it.slug) { %>
+                  <a href="/product/<%= it.slug %>" target="_blank" class="order-item-name"><%= it.name %></a>
+                <% } else { %>
+                  <span class="order-item-name"><%= it.name %></span>
+                <% } %>
+                <% if (it.productId) { %><small>ID товара: <%= it.productId %></small><% } %>
+              </div>
+
+              <form method="post" action="/admin/orders/<%= order.id %>/items/<%= it.id %>/update" class="order-item-edit">
+                <label class="order-item-field">
+                  <span>Кол-во</span>
+                  <input type="number" name="qty" value="<%= it.qty %>" min="1">
+                </label>
+                <label class="order-item-field">
+                  <span>Цена, ₽</span>
+                  <input type="number" name="price" step="0.01" value="<%= it.price %>" min="0">
+                </label>
+                <button type="submit" class="btn btn-sm" title="Сохранить изменения">💾</button>
+              </form>
+
+              <div class="order-item-sum">
+                <%= (it.price * it.qty).toLocaleString('ru-RU') %> ₽
+              </div>
+
+              <form method="post" action="/admin/orders/<%= order.id %>/items/<%= it.id %>/remove" class="order-item-remove-form" onsubmit="return confirm('Удалить позицию?')">
+                <button class="order-item-remove" title="Удалить">×</button>
+              </form>
+            </li>
+          <% }) %>
+        </ul>
+      <% } %>
+
+      <!-- Итоги -->
+      <div class="order-totals">
+        <div class="order-totals-row"><span>Товары</span><span><%= order.subtotal.toLocaleString('ru-RU') %> ₽</span></div>
+        <div class="order-totals-row"><span>Доставка</span><span><%= order.deliveryFee.toLocaleString('ru-RU') %> ₽</span></div>
+        <div class="order-totals-row order-totals-final"><span>Итого</span><span><%= order.total.toLocaleString('ru-RU') %> ₽</span></div>
+      </div>
+    </section>
+
+    <!-- Добавить товар -->
+    <section class="order-block">
+      <header class="order-block-head">
+        <h2>Добавить товар</h2>
+        <small>Найдите товар по названию или SKU</small>
+      </header>
+
+      <div class="add-product">
+        <div class="add-product-search">
+          <input type="text" id="product-search" placeholder="Начните вводить название товара…" autocomplete="off">
+          <div class="add-product-results" id="product-results" hidden></div>
+        </div>
+
+        <form method="post" action="/admin/orders/<%= order.id %>/items/add" class="add-product-form" id="add-product-form" hidden>
+          <input type="hidden" name="productId" id="add-product-id">
+          <div class="add-product-selected" id="add-product-selected"></div>
+          <label>Количество <input type="number" name="qty" value="1" min="1" style="width:100px"></label>
+          <button type="submit" class="btn">+ Добавить в заказ</button>
+          <button type="button" class="btn btn-outline" id="add-product-cancel">Отмена</button>
+        </form>
+      </div>
+    </section>
+
   </div>
-  <div class="form-row">
-    <div><strong>Email:</strong><br><%= order.email %></div>
-    <div><strong>Телефон:</strong><br><%= order.phone %></div>
+
+  <!-- ПРАВАЯ КОЛОНКА -->
+  <div class="order-side">
+
+    <!-- Смена статуса -->
+    <section class="order-block">
+      <header class="order-block-head">
+        <h2>Статус заказа</h2>
+      </header>
+
+      <form method="post" action="/admin/orders/<%= order.id %>/status" class="order-status-form">
+        <select name="status">
+          <% statuses.forEach(s => { %>
+            <option value="<%= s.code %>" <%= order.status === s.code ? 'selected' : '' %>>
+              <%= s.icon ? s.icon + ' ' : '' %><%= s.name %>
+            </option>
+          <% }) %>
+        </select>
+        <button type="submit" class="btn" style="width:100%;margin-top:10px">Обновить статус</button>
+      </form>
+
+      <% if (currentStatus && (currentStatus.notifyClient || currentStatus.notifyAdmin)) { %>
+        <div class="order-notify-info">
+          <% if (currentStatus.notifyClient) { %>
+            <div>✉️ Клиенту уйдёт письмо на <strong><%= order.email %></strong></div>
+          <% } %>
+          <% if (currentStatus.notifyAdmin) { %>
+            <div>📨 Админу в Telegram / MAX</div>
+          <% } %>
+        </div>
+      <% } else { %>
+        <div class="order-notify-info order-notify-info-muted">
+          Уведомления для этого статуса отключены
+        </div>
+      <% } %>
+    </section>
+
+    <!-- Оплата и доставка -->
+    <section class="order-block">
+      <header class="order-block-head">
+        <h2>Оплата и доставка</h2>
+      </header>
+      <div class="order-meta">
+        <div class="order-meta-row">
+          <span>Способ оплаты</span>
+          <strong><%= order.payment %></strong>
+        </div>
+        <div class="order-meta-row">
+          <span>Способ доставки</span>
+          <strong><%= order.delivery %></strong>
+        </div>
+        <div class="order-meta-row">
+          <span>Позиций</span>
+          <strong><%= items.length %></strong>
+        </div>
+        <div class="order-meta-row">
+          <span>Обновлён</span>
+          <strong><%= order.updatedAt.toLocaleString('ru-RU') %></strong>
+        </div>
+      </div>
+    </section>
+
   </div>
-  <div><strong>Адрес:</strong><br><%= order.address || '—' %></div>
-  <% if (order.comment) { %><div><strong>Комментарий:</strong><br><%= order.comment %></div><% } %>
 
-  <table class="admin-table" style="margin-top:12px">
-    <thead><tr><th>Товар</th><th>Цена</th><th>Кол-во</th><th>Сумма</th></tr></thead>
-    <tbody>
-      <% order.items.forEach(i => { %>
-        <tr>
-          <td><%= i.name %></td>
-          <td><%= i.price %> ₽</td>
-          <td><%= i.qty %></td>
-          <td><%= i.price * i.qty %> ₽</td>
-        </tr>
-      <% }) %>
-    </tbody>
-    <tfoot>
-      <tr><td colspan="3">Товары</td><td><%= order.subtotal %> ₽</td></tr>
-      <tr><td colspan="3">Доставка</td><td><%= order.deliveryFee %> ₽</td></tr>
-      <tr><td colspan="3"><strong>Итого</strong></td><td><strong><%= order.total %> ₽</strong></td></tr>
-    </tfoot>
-  </table>
-
-  <div><strong>Способ оплаты:</strong> <%= order.payment %></div>
-  <div><strong>Способ доставки:</strong> <%= order.delivery %></div>
-
-  <form method="post" action="/admin/orders/<%= order.id %>/status" class="form-row">
-    <label>Изменить статус
-      <select name="status">
-        <% statuses.forEach(s => { %>
-          <option value="<%= s.code %>" <%= order.status === s.code ? 'selected' : '' %>>
-            <%= s.icon ? s.icon + ' ' : '' %><%= s.name %>
-          </option>
-        <% }) %>
-      </select>
-    </label>
-    <div style="display:flex;align-items:flex-end"><button class="btn">Сохранить</button></div>
-  </form>
-
-  <div class="notify-info">
-    <% if (currentStatus && currentStatus.notifyClient) { %>
-      ✉️ При смене статуса <strong><%= currentStatus.name %></strong> клиенту уйдёт письмо на <%= order.email %>
-    <% } %>
-    <% if (currentStatus && currentStatus.notifyAdmin) { %>
-      <br>📨 Админу уйдёт уведомление в Telegram/MAX
-    <% } %>
-    <% if (currentStatus && !currentStatus.notifyClient && !currentStatus.notifyAdmin) { %>
-      <span style="color:#9ca3af">Уведомления для этого статуса отключены</span>
-    <% } %>
-  </div>
-
-  <% if (changed) { %>
-    <div class="admin-alert admin-alert-ok">✓ Статус обновлён, уведомления отправлены</div>
-  <% } %>
 </div>
+
+<script>
+(function () {
+  var input = document.getElementById('product-search');
+  var results = document.getElementById('product-results');
+  var form = document.getElementById('add-product-form');
+  var selected = document.getElementById('add-product-selected');
+  var idInput = document.getElementById('add-product-id');
+  var cancel = document.getElementById('add-product-cancel');
+  var timer = null;
+
+  function esc(s) {
+    return String(s || '').replace(/[&<>"']/g, function (c) {
+      return { '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c];
+    });
+  }
+
+  input.addEventListener('input', function () {
+    var q = input.value.trim();
+    if (q.length < 2) { results.hidden = true; return; }
+    clearTimeout(timer);
+    timer = setTimeout(function () {
+      fetch('/admin/orders/search-products?q=' + encodeURIComponent(q))
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          if (!d.items.length) {
+            results.innerHTML = '<div class="add-product-empty">Ничего не найдено</div>';
+            results.hidden = false;
+            return;
+          }
+          results.innerHTML = d.items.map(function (p) {
+            var img = p.image ? '<img src="' + p.image + '" alt="">' : '<span class="no-img">нет фото</span>';
+            return '<div class="add-product-result" data-id="' + p.id + '" data-name="' + esc(p.name) + '" data-price="' + p.price + '">' +
+              '<div class="add-product-result-img">' + img + '</div>' +
+              '<div class="add-product-result-info">' +
+                '<div class="add-product-result-name">' + esc(p.name) + '</div>' +
+                '<div class="add-product-result-meta">' + p.price + ' ₽ · остаток: ' + p.stock + '</div>' +
+              '</div>' +
+            '</div>';
+          }).join('');
+          results.hidden = false;
+        });
+    }, 200);
+  });
+
+  results.addEventListener('click', function (e) {
+    var row = e.target.closest('.add-product-result');
+    if (!row) return;
+    idInput.value = row.dataset.id;
+    selected.innerHTML = '<strong>' + esc(row.dataset.name) + '</strong><br><small>' + row.dataset.price + ' ₽</small>';
+    results.hidden = true;
+    input.value = '';
+    form.hidden = false;
+  });
+
+  cancel.addEventListener('click', function () {
+    form.hidden = true;
+    idInput.value = '';
+    selected.innerHTML = '';
+  });
+
+  document.addEventListener('click', function (e) {
+    if (!input.contains(e.target) && !results.contains(e.target)) results.hidden = true;
+  });
+})();
+</script>

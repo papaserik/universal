@@ -195,4 +195,10 @@ router.get('/email-templates/:id', emailTemplates.form);
 router.post('/email-templates/:id', emailTemplates.save);
 router.post('/email-templates/:id/reset', emailTemplates.reset);
 
+router.post('/orders/:id/items/add', orders.addItem);
+router.post('/orders/:id/items/:itemId/update', orders.updateItem);
+router.post('/orders/:id/items/:itemId/remove', orders.removeItem);
+router.post('/orders/:id/fields', orders.updateFields);
+router.get('/orders/search-products', orders.searchProducts);
+
 module.exports = router;
