@@ -1,0 +1,37 @@
+<h1>Оформление заказа</h1>
+<form method="post" action="/checkout" class="checkout-form">
+  <label>Имя <input type="text" name="name" required></label>
+  <label>Email <input type="email" name="email" required></label>
+  <label>Телефон <input type="tel" name="phone" required></label>
+  <label>Адрес <input type="text" name="address"></label>
+
+  <fieldset>
+    <legend>Доставка</legend>
+    <% deliveries.forEach((d, idx) => { %>
+      <label>
+        <input type="radio" name="delivery" value="<%= d.code %>" <%= idx === 0 ? 'checked' : '' %>>
+        <%= d.title %>
+      </label>
+    <% }) %>
+  </fieldset>
+
+  <fieldset>
+    <legend>Оплата</legend>
+    <% payments.forEach((p, idx) => { %>
+      <label>
+        <input type="radio" name="payment" value="<%= p.code %>" <%= idx === 0 ? 'checked' : '' %>>
+        <%= p.title %>
+      </label>
+    <% }) %>
+  </fieldset>
+
+  <label>Комментарий <textarea name="comment" rows="3"></textarea></label>
+
+  <div class="totals">
+    Товары: <%= subtotal %> ₽<br>
+    Доставка: <%= deliveryFee %> ₽<br>
+    <strong>Итого: <%= total %> ₽</strong>
+  </div>
+
+  <button type="submit" class="btn">Оформить заказ</button>
+</form>

@@ -1,0 +1,14 @@
+<header class="site-header"><div class="container header-inner">
+  <a href="/" class="logo"><%= settings.siteName %></a>
+  <nav class="nav">
+    <a href="/catalog">Каталог</a>
+    <a href="/blog">Блог</a>
+    <a href="/cart">Корзина (<%= cartCount %>)</a>
+    <% if (user) { %>
+      <% if (user.role !== 'USER') { %><a href="/admin">Админка</a><% } %>
+      <a href="/logout">Выйти</a>
+    <% } else { %>
+      <a href="/login">Войти</a>
+    <% } %>
+  </nav>
+</div></header>

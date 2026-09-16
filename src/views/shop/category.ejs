@@ -1,0 +1,19 @@
+<h1><%= cat.name %></h1>
+<div class="products-grid">
+  <% cat.products.forEach(p => { %>
+    <article class="product-card">
+      <a href="/product/<%= p.slug %>"><h3><%= p.name %></h3></a>
+      <div class="price-row">
+        <% if (p.oldPrice && p.oldPrice > p.price) { %>
+          <s class="old"><%= p.oldPrice %> ₽</s>
+          <span class="new"><%= p.price %> ₽</span>
+        <% } else { %>
+          <span class="price"><%= p.price %> ₽</span>
+        <% } %>
+      </div>
+      <form class="add-form" data-product="<%= p.id %>">
+        <button type="submit" class="btn btn-sm">В корзину</button>
+      </form>
+    </article>
+  <% }) %>
+</div>

@@ -1,0 +1,168 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int        @id @default(autoincrement())
+  email     String     @unique
+  password  String
+  name      String?
+  role      String     @default("USER")   // USER | MANAGER | ADMIN
+  active    Boolean    @default(true)
+  createdAt DateTime   @default(now())
+  orders    Order[]
+  posts     BlogPost[]
+}
+
+model Category {
+  id        Int        @id @default(autoincrement())
+  slug      String     @unique
+  name      String
+  parentId  Int?
+  parent    Category?  @relation("CatTree", fields: [parentId], references: [id], onDelete: SetNull)
+  children  Category[] @relation("CatTree")
+  products  Product[]
+  sort      Int        @default(0)
+  seoTitle  String?
+  seoDesc   String?
+  createdAt DateTime   @default(now())
+}
+
+model Product {
+  id           Int             @id @default(autoincrement())
+  slug         String          @unique
+  sku          String?         @unique
+  name         String
+  description  String?
+  price        Float
+  oldPrice     Float?
+  stock        Int             @default(0)
+  weight       Float           @default(0.5)
+  images       String          @default("[]")
+  categoryId   Int?
+  category     Category?       @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  options      ProductOption[]
+  seoTitle     String?
+  seoDesc      String?
+  seoKeywords  String?
+  published    Boolean         @default(true)
+  sort         Int             @default(0)
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+
+  @@index([categoryId, published])
+  @@index([price])
+}
+
+model Option {
+  id       Int             @id @default(autoincrement())
+  name     String
+  slug     String          @unique
+  values   OptionValue[]
+  products ProductOption[]
+}
+
+model OptionValue {
+  id             Int             @id @default(autoincrement())
+  optionId       Int
+  option         Option          @relation(fields: [optionId], references: [id], onDelete: Cascade)
+  value          String
+  slug           String
+  productOptions ProductOption[]
+
+  @@unique([optionId, slug])
+}
+
+model ProductOption {
+  productId Int
+  optionId  Int
+  valueId   Int
+  product   Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  option    Option      @relation(fields: [optionId], references: [id], onDelete: Cascade)
+  value     OptionValue @relation(fields: [valueId], references: [id], onDelete: Cascade)
+
+  @@id([productId, optionId, valueId])
+}
+
+model Order {
+  id          Int         @id @default(autoincrement())
+  number      String      @unique
+  userId      Int?
+  user        User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
+  email       String
+  phone       String
+  name        String
+  address     String?
+  items       OrderItem[]
+  subtotal    Float
+  deliveryFee Float       @default(0)
+  total       Float
+  status      String      @default("NEW")   // NEW | PAID | SHIPPED | DONE | CANCELLED
+  payment     String      @default("cod")
+  delivery    String      @default("flat")
+  comment     String?
+  ip          String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@index([status, createdAt])
+}
+
+model OrderItem {
+  id        Int     @id @default(autoincrement())
+  orderId   Int
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId Int?
+  name      String
+  price     Float
+  qty       Int
+}
+
+model BlogPost {
+  id        Int      @id @default(autoincrement())
+  slug      String   @unique
+  title     String
+  excerpt   String?
+  content   String
+  cover     String?
+  authorId  Int?
+  author    User?    @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  published Boolean  @default(true)
+  views     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  seoTitle  String?
+  seoDesc   String?
+
+  @@index([published, createdAt])
+}
+
+model Page {
+  id        Int      @id @default(autoincrement())
+  slug      String   @unique
+  title     String
+  content   String
+  published Boolean  @default(true)
+  createdAt DateTime @default(now())
+  seoTitle  String?
+  seoDesc   String?
+}
+
+model Setting {
+  key   String @id
+  value String
+}
+
+model MenuItem {
+  id       Int    @id @default(autoincrement())
+  label    String
+  url      String
+  position String @default("main")
+  sort     Int    @default(0)
+  parentId Int?
+}

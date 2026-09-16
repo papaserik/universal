@@ -1,0 +1,6 @@
+<% if (!cookieAccepted) { %>
+<div id="cookie-banner" class="cookie-banner">
+  <p>Мы используем cookie и обрабатываем персональные данные. Продолжая, вы соглашаетесь с <a href="/page/privacy-policy">политикой</a>.</p>
+  <button onclick="document.cookie='cookie_ok=1;path=/;max-age=31536000';this.parentNode.remove()">Принять</button>
+</div>
+<% } %>

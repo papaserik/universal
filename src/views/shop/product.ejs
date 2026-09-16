@@ -1,0 +1,45 @@
+<article class="product-page">
+  <h1><%= p.name %></h1>
+  <div class="price-row price-row-lg">
+    <% if (p.oldPrice && p.oldPrice > p.price) { %>
+      <s class="old"><%= p.oldPrice %> ₽</s>
+      <span class="new"><%= p.price %> ₽</span>
+      <span class="discount">-<%= Math.round((1 - p.price / p.oldPrice) * 100) %>%</span>
+    <% } else { %>
+      <span class="price"><%= p.price %> ₽</span>
+    <% } %>
+  </div>
+
+  <% if (p.options && p.options.length) { %>
+    <div class="product-options">
+      <% const grouped = {}; p.options.forEach(o => { (grouped[o.option.name] = grouped[o.option.name] || []).push(o.value); }); %>
+      <% Object.entries(grouped).forEach(([name, values]) => { %>
+        <div class="opt-group">
+          <strong><%= name %>:</strong>
+          <% values.forEach(v => { %><span class="opt"><%= v.value %></span><% }) %>
+        </div>
+      <% }) %>
+    </div>
+  <% } %>
+
+  <div class="description"><%- p.description || '' %></div>
+
+  <form class="add-form" data-product="<%= p.id %>">
+    <input type="number" name="qty" value="1" min="1" class="qty">
+    <button type="submit" class="btn">Добавить в корзину</button>
+  </form>
+
+  <% if (related.length) { %>
+    <section>
+      <h2>Похожие товары</h2>
+      <div class="products-grid">
+        <% related.forEach(r => { %>
+          <article class="product-card">
+            <a href="/product/<%= r.slug %>"><h3><%= r.name %></h3></a>
+            <span class="price"><%= r.price %> ₽</span>
+          </article>
+        <% }) %>
+      </div>
+    </section>
+  <% } %>
+</article>

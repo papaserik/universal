@@ -1,0 +1,9 @@
+<h1>Регистрация</h1>
+<% if (error) { %><p class="error"><%= error %></p><% } %>
+<form method="post" action="/register" class="auth-form">
+  <label>Имя <input type="text" name="name"></label>
+  <label>Email <input type="email" name="email" required></label>
+  <label>Пароль <input type="password" name="password" required></label>
+  <button type="submit" class="btn">Зарегистрироваться</button>
+</form>
+<p>Уже есть аккаунт? <a href="/login">Войти</a></p>

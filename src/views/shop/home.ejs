@@ -1,0 +1,41 @@
+<section class="hero">
+  <h1><%= settings.siteName %></h1>
+  <p>Универсальный интернет-магазин</p>
+  <a href="/catalog" class="btn">Перейти в каталог</a>
+</section>
+
+<% if (products.length) { %>
+<section>
+  <h2>Новинки</h2>
+  <div class="products-grid">
+    <% products.forEach(p => { %>
+      <article class="product-card">
+        <a href="/product/<%= p.slug %>"><h3><%= p.name %></h3></a>
+        <div class="price-row">
+          <% if (p.oldPrice && p.oldPrice > p.price) { %>
+            <s class="old"><%= p.oldPrice %> ₽</s>
+            <span class="new"><%= p.price %> ₽</span>
+            <span class="discount">-<%= Math.round((1 - p.price / p.oldPrice) * 100) %>%</span>
+          <% } else { %>
+            <span class="price"><%= p.price %> ₽</span>
+          <% } %>
+        </div>
+        <form class="add-form" data-product="<%= p.id %>">
+          <button type="submit" class="btn btn-sm">В корзину</button>
+        </form>
+      </article>
+    <% }) %>
+  </div>
+</section>
+<% } %>
+
+<% if (posts.length) { %>
+<section>
+  <h2>Из блога</h2>
+  <ul class="posts-list">
+    <% posts.forEach(post => { %>
+      <li><a href="/blog/<%= post.slug %>"><%= post.title %></a></li>
+    <% }) %>
+  </ul>
+</section>
+<% } %>

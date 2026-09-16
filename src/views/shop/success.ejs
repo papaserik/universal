@@ -1,0 +1,13 @@
+<h1>Заказ оформлен!</h1>
+<% if (order) { %>
+  <p>Номер заказа: <strong><%= order.number %></strong></p>
+  <p>Сумма: <strong><%= order.total %> ₽</strong></p>
+  <ul>
+    <% order.items.forEach(i => { %>
+      <li><%= i.name %> × <%= i.qty %> = <%= i.price * i.qty %> ₽</li>
+    <% }) %>
+  </ul>
+<% } else { %>
+  <p>Спасибо за заказ!</p>
+<% } %>
+<p><a href="/" class="btn">На главную</a></p>

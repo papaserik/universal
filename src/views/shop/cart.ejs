@@ -1,0 +1,33 @@
+<h1>Корзина</h1>
+<% if (!items.length) { %>
+  <p>Корзина пуста. <a href="/catalog">Перейти в каталог</a></p>
+<% } else { %>
+  <table class="cart-table">
+    <thead>
+      <tr><th>Товар</th><th>Цена</th><th>Кол-во</th><th>Сумма</th><th></th></tr>
+    </thead>
+    <tbody>
+      <% items.forEach(i => { %>
+        <tr>
+          <td><a href="/product/<%= i.slug %>"><%= i.name %></a></td>
+          <td><%= i.price %> ₽</td>
+          <td>
+            <form class="update-form" data-product="<%= i.productId %>">
+              <input type="number" name="qty" value="<%= i.qty %>" min="1" class="qty">
+            </form>
+          </td>
+          <td><%= i.price * i.qty %> ₽</td>
+          <td><button class="remove-btn" data-product="<%= i.productId %>">×</button></td>
+        </tr>
+      <% }) %>
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="3"></td>
+        <td><strong>Итого: <%= total %> ₽</strong></td>
+        <td></td>
+      </tr>
+    </tfoot>
+  </table>
+  <p><a href="/checkout" class="btn">Оформить заказ</a></p>
+<% } %>

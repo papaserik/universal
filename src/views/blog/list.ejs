@@ -1,0 +1,14 @@
+<h1>Блог</h1>
+<% if (!posts.length) { %>
+  <p>Пока нет записей.</p>
+<% } else { %>
+  <ul class="posts-list">
+    <% posts.forEach(p => { %>
+      <li>
+        <a href="/blog/<%= p.slug %>"><h3><%= p.title %></h3></a>
+        <% if (p.excerpt) { %><p><%= p.excerpt %></p><% } %>
+        <small><%= p.createdAt.toLocaleDateString('ru-RU') %></small>
+      </li>
+    <% }) %>
+  </ul>
+<% } %>

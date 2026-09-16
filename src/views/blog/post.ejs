@@ -1,0 +1,6 @@
+<article class="blog-post">
+  <h1><%= post.title %></h1>
+  <p><small><%= post.createdAt.toLocaleDateString('ru-RU') %> · <%= post.views %> просмотров</small></p>
+  <%- post.content %>
+</article>
+<p><a href="/blog">← Все записи</a></p>
