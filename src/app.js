@@ -29,6 +29,8 @@ app.use(session({
 }));
 
 app.set('view engine', 'ejs');
+app.set('view cache', false); // всегда рендерить шаблоны заново
+app.disable('etag'); // отключаем кеш браузера для HTML
 app.use(expressLayouts);
 // extractScripts отключён — inline-скрипты работают на месте
 // extractStyles отключён — inline-стили работают на месте

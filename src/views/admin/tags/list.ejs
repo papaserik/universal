@@ -1,0 +1,45 @@
+<div class="admin-header">
+  <h1>🏷️ Теги</h1>
+  <a href="/admin/tags/new" class="btn">+ Добавить тег</a>
+</div>
+<p class="admin-hint">
+  Теги помогают фильтровать товары (Новинка, Хит, Скидка). Можно выводить их бейджами на карточке.
+</p>
+
+<table class="admin-table">
+  <thead><tr>
+    <th style="width:80px">Бейдж</th>
+    <th>Название</th>
+    <th>Slug</th>
+    <th>Цвет</th>
+    <th>Товаров</th>
+    <th>Сортировка</th>
+    <th></th>
+  </tr></thead>
+  <tbody>
+    <% items.forEach(t => { %>
+      <tr>
+        <td>
+          <span style="display:inline-block;padding:3px 10px;border-radius:12px;background:<%= t.color %>1a;color:<%= t.color %>;font-weight:600;font-size:12.5px">
+            <%= t.name %>
+          </span>
+        </td>
+        <td><%= t.name %></td>
+        <td><code><%= t.slug %></code></td>
+        <td>
+          <span style="display:inline-block;width:16px;height:16px;border-radius:4px;background:<%= t.color %>;vertical-align:middle;margin-right:4px"></span>
+          <code><%= t.color %></code>
+        </td>
+        <td><%= t._count.products %></td>
+        <td><%= t.sort %></td>
+        <td class="row-actions">
+          <a href="/admin/tags/<%= t.id %>" class="btn btn-sm">Изменить</a>
+          <form method="post" action="/admin/tags/<%= t.id %>/delete" onsubmit="return confirm('Удалить тег?')">
+            <button class="btn btn-sm btn-danger">×</button>
+          </form>
+        </td>
+      </tr>
+    <% }) %>
+    <% if (!items.length) { %><tr><td colspan="7" style="text-align:center;color:#9ca3af;padding:24px">Тегов нет</td></tr><% } %>
+  </tbody>
+</table>

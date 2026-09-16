@@ -20,7 +20,7 @@
     <nav class="admin-nav">
       <a href="/admin">📊 Дашборд</a>
 
-      <div class="admin-group <%= req.path.startsWith('/admin/products') || req.path.startsWith('/admin/categories') || req.path.startsWith('/admin/options') ? 'open' : '' %>">
+      <div class="admin-group <%= req.path.startsWith('/admin/products') || req.path.startsWith('/admin/categories') || req.path.startsWith('/admin/options') || req.path.startsWith('/admin/brands') || req.path.startsWith('/admin/tags') || req.path.startsWith('/admin/marketplaces') ? 'open' : '' %>">
         <button type="button" class="admin-group-toggle">
           <span>📦 Каталог</span>
           <span class="admin-group-arrow">▸</span>
@@ -29,6 +29,8 @@
           <a href="/admin/products">Товары</a>
           <a href="/admin/categories">Категории</a>
           <a href="/admin/options">Опции</a>
+          <a href="/admin/brands">Бренды</a>
+          <a href="/admin/tags">Теги</a>
         </div>
       </div>
 
@@ -60,12 +62,13 @@
       </div>
 
 
-      <div class="admin-group <%= (req.path.startsWith('/admin/marketing') || req.path.startsWith('/admin/loyalty')  ) ? 'open' : '' %>">
+      <div class="admin-group <%= ((req.path.startsWith('/admin/marketing') || req.path.startsWith('/admin/banners')) || req.path.startsWith('/admin/loyalty')  ) ? 'open' : '' %>">
         <button type="button" class="admin-group-toggle">
           <span>📣 Маркетинг</span>
           <span class="admin-group-arrow">▸</span>
         </button>
         <div class="admin-group-items">
+          <a href="/admin/banners">Баннеры</a>
           <a href="/admin/marketing/subscribers">Подписчики</a>
           <a href="/admin/marketing/newsletters">Рассылки</a>
           <a href="/admin/email-templates">Шаблоны писем</a>
@@ -78,6 +81,7 @@
       <a href="/admin/users">👥 Пользователи</a>
       <a href="/admin/import">📥 Импорт</a>
       <a href="/admin/marketplaces">🏪 Маркетплейсы</a>
+      <a href="/admin/images">🖼 Изображения</a>
       <a href="/admin/backup">💾 Бэкап БД</a>
       <a href="/admin/settings">⚙ Настройки</a>
     </nav>

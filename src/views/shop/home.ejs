@@ -1,66 +1,167 @@
-<section class="hero">
-  <h1><%= settings.siteName %></h1>
-  <p>Универсальный интернет-магазин</p>
-  <a href="/catalog" class="btn">Перейти в каталог</a>
-</section>
+<div class="home-page">
 
-<% if (products.length) { %>
-<section>
-  <h2>Новинки</h2>
-  <div class="products-grid">
-    <% products.forEach(p => { const imgs = JSON.parse(p.images || '[]'); %>
-      <article class="product-card">
-        <a href="/product/<%= p.slug %>" class="product-image">
-            <% if (imgs.length) { %>
-              <img src="<%= imgs[0] %>" alt="<%= p.name %>" loading="lazy">
-            <% } else { %>
-              <div class="no-image">Нет фото</div>
+  <%# ═══ БАННЕРЫ ═══ %>
+  <% if (banners && banners.length) { %>
+    <section class="home-banners">
+      <% banners.forEach((b, i) => {
+           const bgImg = b.imageUrl ? `background-image:url('${b.imageUrl}');background-size:cover;background-position:center;` : '';
+      %>
+        <div class="home-banner layout-<%= b.layout %> pos-<%= b.textPosition %>"
+             style="background-color: <%= b.bgColor %>; <%= bgImg %> color: <%= b.textColor %>;">
+          <% if (b.imageUrl && b.overlay > 0) { %>
+            <div class="home-banner-overlay" style="background:rgba(0,0,0,<%= b.overlay/100 %>)"></div>
+          <% } %>
+          <div class="home-banner-content">
+            <h2 class="home-banner-title"><%= b.title %></h2>
+            <% if (b.subtitle) { %><p class="home-banner-sub"><%= b.subtitle %></p><% } %>
+            <% if (b.body) { %><p class="home-banner-body"><%= b.body %></p><% } %>
+            <% if (b.ctaText && b.ctaUrl) { %>
+              <a href="<%= b.ctaUrl %>" class="home-banner-cta"><%= b.ctaText %></a>
             <% } %>
-            <% if (p.oldPrice && p.oldPrice > p.price) { %>
-              <span class="badge-discount">-<%= Math.round((1 - p.price / p.oldPrice) * 100) %>%</span>
-            <% } %>
+          </div>
+        </div>
+      <% }) %>
+    </section>
+  <% } else { %>
+    <section class="home-hero-empty">
+      <h1><%= settings.siteName %></h1>
+      <p>Универсальный интернет-магазин</p>
+      <a href="/catalog" class="btn">Перейти в каталог</a>
+    </section>
+  <% } %>
+
+  <%# ═══ ПРЕИМУЩЕСТВА ═══ %>
+  <section class="home-features">
+    <div class="home-feature">
+      <div class="home-feature-icon">🚚</div>
+      <div class="home-feature-body">
+        <strong>Быстрая доставка</strong>
+        <span>Курьером или почтой</span>
+      </div>
+    </div>
+    <div class="home-feature">
+      <div class="home-feature-icon">💳</div>
+      <div class="home-feature-body">
+        <strong>Удобная оплата</strong>
+        <span>Онлайн или при получении</span>
+      </div>
+    </div>
+    <div class="home-feature">
+      <div class="home-feature-icon">🎁</div>
+      <div class="home-feature-body">
+        <strong>Бонусы за покупки</strong>
+        <span>Кэшбэк баллами 5%</span>
+      </div>
+    </div>
+    <div class="home-feature">
+      <div class="home-feature-icon">🛡️</div>
+      <div class="home-feature-body">
+        <strong>Гарантия качества</strong>
+        <span>Возврат 14 дней</span>
+      </div>
+    </div>
+  </section>
+
+  <%# ═══ КАТЕГОРИИ ═══ %>
+  <% if (categories && categories.length) { %>
+    <section class="home-section">
+      <header class="home-section-head">
+        <h2>Категории</h2>
+        <a href="/catalog" class="home-section-link">Весь каталог →</a>
+      </header>
+      <div class="home-categories">
+        <% categories.forEach(c => { %>
+          <a href="/catalog/<%= c.slug %>" class="home-category">
+            <div class="home-category-icon">📦</div>
+            <div class="home-category-name"><%= c.name %></div>
+            <div class="home-category-count"><%= c._count.products %> товаров</div>
           </a>
-        <a href="/product/<%= p.slug %>"><h3><%= p.name %></h3></a>
-        <div class="price-row">
-          <% if (p.oldPrice && p.oldPrice > p.price) { %>
-            <s class="old"><%= p.oldPrice %> ₽</s>
-            <span class="new"><%= p.price %> ₽</span>
-            <% } else { %>
-            <span class="price"><%= p.price %> ₽</span>
-          <% } %>
-        </div>
-        <div class="card-actions">
-          <% if (p.stock > 0) { %>
-            <form class="add-form" data-product="<%= p.id %>">
-              <button type="submit" class="btn-card btn-card-primary">В корзину</button>
-            </form>
-          <% } %>
-          <% let mpList = [];
-               try { mpList = JSON.parse(p.marketplaceLinks || '[]'); } catch (e) {}
-               if (!mpList.length && p.marketplace && p.marketplaceUrl) mpList = [{ slug: p.marketplace, url: p.marketplaceUrl }];
-               mpList.forEach(mp => {
-                 const mpName = marketplaces[mp.slug] || mp.slug;
-                 const mpSlug = (mp.slug || '').toLowerCase();
-                 const mpColor = mpSlug === 'ozon' ? 'mp-ozon' : mpSlug === 'wildberries' ? 'mp-wb' : 'mp-default';
-            %>
-              <a class="btn-card <%= mpColor %>" href="<%= mp.url %>" target="_blank" rel="noopener nofollow">
-                Купить на <%= mpName %>
-              </a>
-            <% }) %>
-        </div>
-      </article>
-    <% }) %>
-  </div>
-</section>
-<% } %>
+        <% }) %>
+      </div>
+    </section>
+  <% } %>
 
-<% if (posts.length) { %>
-<section>
-  <h2>Из блога</h2>
-  <ul class="posts-list">
-    <% posts.forEach(post => { %>
-      <li><a href="/blog/<%= post.slug %>"><%= post.title %></a></li>
-    <% }) %>
-  </ul>
-</section>
-<% } %>
+  <%# ═══ ХИТЫ СО СКИДКОЙ ═══ %>
+  <% if (hitProducts && hitProducts.length) { %>
+    <section class="home-section">
+      <header class="home-section-head">
+        <h2>🔥 Хиты со скидкой</h2>
+        <a href="/catalog?sort=price-asc" class="home-section-link">Все акции →</a>
+      </header>
+      <div class="products-grid">
+        <% hitProducts.forEach(p => {
+             const imgs = JSON.parse(p.images || '[]');
+             const discount = p.oldPrice && p.oldPrice > p.price
+               ? Math.round((1 - p.price / p.oldPrice) * 100) : 0;
+        %>
+          <%- include('partials/product-card', { p: p, marketplaces: marketplaces }) %>
+        <% }) %>
+      </div>
+    </section>
+  <% } %>
+
+  <%# ═══ НОВИНКИ ═══ %>
+  <% if (newProducts && newProducts.length) { %>
+    <section class="home-section">
+      <header class="home-section-head">
+        <h2>✨ Новинки</h2>
+        <a href="/catalog?sort=new" class="home-section-link">Все новинки →</a>
+      </header>
+      <div class="products-grid">
+        <% newProducts.slice(0, 4).forEach(p => {
+             const imgs = JSON.parse(p.images || '[]');
+             const discount = p.oldPrice && p.oldPrice > p.price
+               ? Math.round((1 - p.price / p.oldPrice) * 100) : 0;
+        %>
+          <%- include('partials/product-card', { p: p, marketplaces: marketplaces }) %>
+        <% }) %>
+      </div>
+    </section>
+  <% } %>
+
+  <%# ═══ О МАГАЗИНЕ ═══ %>
+  <section class="home-about">
+    <div class="home-about-content">
+      <h2><%= settings.siteName %></h2>
+      <p>
+        Мы продаём качественные товары с быстрой доставкой по всей России.
+        В каталоге <strong><%= totalProducts %></strong> товаров, работаем с 2020 года.
+      </p>
+      <p>
+        Программа лояльности: получайте баллы за каждую покупку, отзывы и подписку — оплачивайте ими до 50% следующих заказов.
+      </p>
+      <div class="home-about-actions">
+        <a href="/catalog" class="btn">В каталог</a>
+        <a href="/contacts" class="btn btn-outline">Связаться</a>
+      </div>
+    </div>
+    <div class="home-about-visual">
+      <div class="home-about-badge">
+        <div class="home-about-badge-num"><%= totalProducts %>+</div>
+        <div class="home-about-badge-label">товаров</div>
+      </div>
+    </div>
+  </section>
+
+  <%# ═══ БЛОГ ═══ %>
+  <% if (posts && posts.length) { %>
+    <section class="home-section">
+      <header class="home-section-head">
+        <h2>📝 Из блога</h2>
+        <a href="/blog" class="home-section-link">Все статьи →</a>
+      </header>
+      <div class="home-blog">
+        <% posts.forEach(post => { %>
+          <a href="/blog/<%= post.slug %>" class="home-blog-card">
+            <div class="home-blog-title"><%= post.title %></div>
+            <% if (post.excerpt) { %>
+              <div class="home-blog-excerpt"><%= post.excerpt.slice(0, 120) %><%= post.excerpt.length > 120 ? '…' : '' %></div>
+            <% } %>
+            <div class="home-blog-meta"><%= post.createdAt.toLocaleDateString('ru-RU') %></div>
+          </a>
+        <% }) %>
+      </div>
+    </section>
+  <% } %>
+
+</div>

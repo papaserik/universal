@@ -1,0 +1,186 @@
+<div class="admin-header">
+  <h1><%= item ? 'Изменить баннер' : 'Новый баннер' %></h1>
+  <a href="/admin/banners" class="btn btn-sm">← К списку</a>
+</div>
+
+<div class="banner-form-grid">
+
+  <form method="post" action="<%= item ? '/admin/banners/' + item.id : '/admin/banners' %>" class="admin-form" id="banner-form">
+    <fieldset class="full">
+      <legend>Текст</legend>
+
+      <label>Заголовок *
+        <input type="text" name="title" id="f-title" value="<%= item ? item.title : '' %>" required>
+      </label>
+
+      <label>Подзаголовок
+        <input type="text" name="subtitle" id="f-subtitle" value="<%= item && item.subtitle ? item.subtitle : '' %>">
+      </label>
+
+      <label>Основной текст (необязательно)
+        <textarea name="body" id="f-body" rows="3"><%= item && item.body ? item.body : '' %></textarea>
+      </label>
+
+      <div class="form-row">
+        <label>Текст кнопки
+          <input type="text" name="ctaText" id="f-ctaText" value="<%= item && item.ctaText ? item.ctaText : '' %>" placeholder="Перейти в каталог">
+        </label>
+        <label>Ссылка кнопки
+          <input type="text" name="ctaUrl" id="f-ctaUrl" value="<%= item && item.ctaUrl ? item.ctaUrl : '' %>" placeholder="/catalog">
+        </label>
+      </div>
+    </fieldset>
+
+    <fieldset class="full">
+      <legend>Оформление</legend>
+
+      <div class="form-row">
+        <label>Раскладка
+          <select name="layout" id="f-layout">
+            <option value="hero" <%= item && item.layout === 'hero' ? 'selected' : '' %>>Большой баннер (hero)</option>
+            <option value="strip" <%= item && item.layout === 'strip' ? 'selected' : '' %>>Узкая полоса</option>
+            <option value="card" <%= item && item.layout === 'card' ? 'selected' : '' %>>Карточка</option>
+          </select>
+        </label>
+        <label>Позиция текста
+          <select name="textPosition" id="f-textPosition">
+            <option value="left"   <%= item && item.textPosition === 'left'   ? 'selected' : '' %>>Слева</option>
+            <option value="center" <%= item && item.textPosition === 'center' ? 'selected' : '' %>>По центру</option>
+            <option value="right"  <%= item && item.textPosition === 'right'  ? 'selected' : '' %>>Справа</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="form-row">
+        <label>Цвет фона
+          <div style="display:flex;gap:8px;align-items:center">
+            <input type="color" name="bgColor" id="f-bgColor" value="<%= item ? item.bgColor : '#0f172a' %>" style="width:60px;height:38px;padding:2px">
+          </div>
+        </label>
+        <label>Цвет текста
+          <div style="display:flex;gap:8px;align-items:center">
+            <input type="color" name="textColor" id="f-textColor" value="<%= item ? item.textColor : '#ffffff' %>" style="width:60px;height:38px;padding:2px">
+          </div>
+        </label>
+        <label>Затемнение картинки, % (0–80)
+          <input type="number" name="overlay" id="f-overlay" min="0" max="80" value="<%= item ? item.overlay : 40 %>">
+        </label>
+      </div>
+
+      <label>Картинка (URL или загрузите файл)
+        <div style="display:flex;gap:8px;align-items:center;margin-top:6px">
+          <input type="text" name="imageUrl" id="f-imageUrl" value="<%= item && item.imageUrl ? item.imageUrl : '' %>" placeholder="/uploads/banner.jpg или https://..." style="flex:1">
+          <label class="upload-label-inline" style="flex:0 0 auto">📷 Загрузить<input type="file" id="banner-upload" accept="image/*" hidden></label>
+          <button type="button" class="btn btn-sm btn-muted" id="banner-clear">Очистить</button>
+        </div>
+      </label>
+    </fieldset>
+
+    <fieldset class="full">
+      <legend>Публикация</legend>
+      <div class="form-row">
+        <label>Сортировка <input type="number" name="sort" value="<%= item ? item.sort : 0 %>"></label>
+        <label class="checkbox-label" style="align-self:flex-end">
+          <input type="checkbox" name="active" <%= !item || item.active ? 'checked' : '' %>> Активен
+        </label>
+      </div>
+      <div class="form-row">
+        <label>Показывать с <input type="datetime-local" name="startsAt" value="<%= item && item.startsAt ? item.startsAt.toISOString().slice(0,16) : '' %>"></label>
+        <label>Показывать до <input type="datetime-local" name="endsAt" value="<%= item && item.endsAt ? item.endsAt.toISOString().slice(0,16) : '' %>"></label>
+      </div>
+    </fieldset>
+
+    <div class="form-actions">
+      <button type="submit" class="btn">Сохранить</button>
+    </div>
+  </form>
+
+  <div class="banner-preview-column">
+    <h3>Предпросмотр</h3>
+    <div class="banner-live-preview" id="live-preview">
+      <div class="banner-live-overlay" id="live-overlay"></div>
+      <div class="banner-live-inner pos-left" id="live-inner">
+        <div class="banner-live-title" id="live-title">Заголовок баннера</div>
+        <div class="banner-live-sub" id="live-sub">Подзаголовок</div>
+        <div class="banner-live-cta" id="live-cta" style="display:none">Кнопка</div>
+      </div>
+    </div>
+    <p class="banner-preview-hint">Обновляется в реальном времени</p>
+  </div>
+</div>
+
+<script>
+(function () {
+  var form = document.getElementById('banner-form');
+  if (!form) return;
+
+  var pv = document.getElementById('live-preview');
+  var inner = document.getElementById('live-inner');
+  var overlay = document.getElementById('live-overlay');
+  var tTitle = document.getElementById('live-title');
+  var tSub = document.getElementById('live-sub');
+  var tCta = document.getElementById('live-cta');
+  var fImg = document.getElementById('banner-upload');
+
+  function sync() {
+    var title = form.title.value || 'Заголовок баннера';
+    var sub = form.subtitle.value;
+    var ctaText = form.ctaText.value;
+    var bg = form.bgColor.value;
+    var tc = form.textColor.value;
+    var pos = form.textPosition.value;
+    var ov = Number(form.overlay.value) || 0;
+    var img = form.imageUrl.value;
+
+    pv.style.backgroundColor = bg;
+    if (img) {
+      pv.style.backgroundImage = "url('" + img + "')";
+      pv.style.backgroundSize = 'cover';
+      pv.style.backgroundPosition = 'center';
+    } else {
+      pv.style.backgroundImage = 'none';
+    }
+
+    inner.style.color = tc;
+    inner.className = 'banner-live-inner pos-' + pos;
+
+    tTitle.textContent = title;
+    tSub.textContent = sub;
+    tSub.style.display = sub ? '' : 'none';
+
+    if (ctaText) {
+      tCta.textContent = ctaText;
+      tCta.style.display = '';
+    } else {
+      tCta.style.display = 'none';
+    }
+
+    overlay.style.background = 'rgba(0,0,0,' + (ov / 100) + ')';
+  }
+
+  form.addEventListener('input', sync);
+  form.addEventListener('change', sync);
+  sync();
+
+  // Загрузка картинки
+  fImg.addEventListener('change', function (e) {
+    var file = e.target.files[0];
+    if (!file) return;
+    var fd = new FormData();
+    fd.append('files', file);
+    fetch('/admin/banners/upload', { method: 'POST', body: fd })
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (d.ok) {
+          form.imageUrl.value = d.url;
+          sync();
+        } else { alert('Ошибка загрузки'); }
+      });
+  });
+
+  document.getElementById('banner-clear').addEventListener('click', function () {
+    form.imageUrl.value = '';
+    sync();
+  });
+})();
+</script>

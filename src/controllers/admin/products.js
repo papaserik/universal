@@ -47,11 +47,20 @@ exports.form = async (req, res) => {
   let library = [];
   try {
     library = fs.readdirSync(UPLOAD_DIR)
-      .filter(f => /\.(png|jpe?g|webp|gif|svg)$/i.test(f))
+      .filter(f => /\.(png|jpe?g|webp|gif|svg)$/i.test(f) && !f.startsWith('_'))
       .map(f => '/uploads/' + f);
   } catch (e) {}
 
   const marketplaces = await getMarketplaces();
+  const brands = await prisma.brand.findMany({ where: { active: true }, orderBy: [{ sort: 'asc' }, { name: 'asc' }] });
+  const allTags = await prisma.tag.findMany({ orderBy: [{ sort: 'asc' }, { name: 'asc' }] });
+
+  // Текущие теги товара
+  let productTags = [];
+  if (product) {
+    const pts = await prisma.productTag.findMany({ where: { productId: product.id } });
+    productTags = pts.map(pt => pt.tagId);
+  }
 
   // Собираем список привязанных маркетплейсов
   let currentMps = [];
@@ -64,6 +73,7 @@ exports.form = async (req, res) => {
 
   res.render('admin/products/form', {
     product, categories, options, library, marketplaces,
+    brands, allTags, productTags,
     currentMps,
     error: null,
     selectedOptions: product ? product.options.map(o => o.valueId) : []
@@ -74,7 +84,7 @@ exports.save = async (req, res) => {
   const {
     name, slug, sku, price, oldPrice, stock, weight, description,
     categoryId, seoTitle, seoDesc, seoKeywords, published, sort, images,
-    optionValues, marketplaceLinks
+    optionValues, marketplaceLinks, brandId, tags
   } = req.body;
 
   // Парсим массив маркетплейсов
@@ -97,6 +107,7 @@ exports.save = async (req, res) => {
     weight: Number(weight) || 0.5,
     description: description || '',
     categoryId: categoryId ? Number(categoryId) : null,
+    brandId: brandId ? Number(brandId) : null,
     seoTitle: seoTitle || name,
     seoDesc: seoDesc || '',
     seoKeywords: seoKeywords || '',
@@ -126,6 +137,14 @@ exports.save = async (req, res) => {
     });
   }
 
+  // Обновляем теги
+  await prisma.productTag.deleteMany({ where: { productId } });
+  const tagIds = [].concat(tags || []).map(Number).filter(Boolean);
+  for (const tagId of tagIds) {
+    const t = await prisma.tag.findUnique({ where: { id: tagId } });
+    if (t) await prisma.productTag.create({ data: { productId, tagId } });
+  }
+
   res.redirect('/admin/products/' + productId + '?saved=1');
 };
 
@@ -136,7 +155,11 @@ exports.remove = async (req, res) => {
 
 exports.uploadImages = async (req, res) => {
   if (!req.files || !req.files.length) return res.json({ ok: false });
-  res.json({ ok: true, urls: req.files.map(f => '/uploads/' + f.filename) });
+  const urls = req.files.map(f => {
+    if (f.processed && f.processed.url) return f.processed.url;
+    return '/uploads/' + f.filename;
+  });
+  res.json({ ok: true, urls });
 };
 
 exports.listFiles = async (req, res) => {

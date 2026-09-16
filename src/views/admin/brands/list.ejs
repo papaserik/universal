@@ -1,0 +1,52 @@
+<div class="admin-header">
+  <h1>🏢 Бренды</h1>
+  <a href="/admin/brands/new" class="btn">+ Добавить бренд</a>
+</div>
+<p class="admin-hint">
+  Бренды показываются на странице товара и используются в фильтрах каталога.
+</p>
+
+<table class="admin-table">
+  <thead><tr>
+    <th style="width:60px">Логотип</th>
+    <th>Название</th>
+    <th>Slug</th>
+    <th>Страна</th>
+    <th>Товаров</th>
+    <th>Сортировка</th>
+    <th>Статус</th>
+    <th></th>
+  </tr></thead>
+  <tbody>
+    <% items.forEach(b => { %>
+      <tr>
+        <td>
+          <% if (b.logoUrl) { %>
+            <img src="<%= b.logoUrl %>" alt="" style="width:40px;height:40px;object-fit:contain;border-radius:6px;background:#f3f4f6;padding:3px">
+          <% } else { %>
+            <span style="color:#9ca3af">—</span>
+          <% } %>
+        </td>
+        <td><strong><%= b.name %></strong></td>
+        <td><code><%= b.slug %></code></td>
+        <td><%= b.country || '—' %></td>
+        <td><%= b._count.products %></td>
+        <td><%= b.sort %></td>
+        <td>
+          <form method="post" action="/admin/brands/<%= b.id %>/toggle" style="display:inline">
+            <button class="btn btn-sm <%= b.active ? '' : 'btn-muted' %>">
+              <%= b.active ? '✓' : '✗' %>
+            </button>
+          </form>
+        </td>
+        <td class="row-actions">
+          <a href="/admin/brands/<%= b.id %>" class="btn btn-sm">Изменить</a>
+          <form method="post" action="/admin/brands/<%= b.id %>/delete" onsubmit="return confirm('Удалить бренд?')">
+            <button class="btn btn-sm btn-danger">×</button>
+          </form>
+        </td>
+      </tr>
+    <% }) %>
+    <% if (!items.length) { %><tr><td colspan="8" style="text-align:center;color:#9ca3af;padding:24px">Брендов нет</td></tr><% } %>
+  </tbody>
+</table>

@@ -18,7 +18,7 @@ exports.form = async (req, res) => {
 };
 
 exports.save = async (req, res) => {
-  const { name, slug, parentId, sort, seoTitle, seoDesc } = req.body;
+  const { name, slug, parentId, sort, seoTitle, seoDesc, imageUrl } = req.body;
   if (!name) return res.render('admin/categories/form', { cat: req.body, categories: [], error: 'Укажите название' });
   const data = {
     name,
@@ -26,7 +26,8 @@ exports.save = async (req, res) => {
     parentId: parentId ? Number(parentId) : null,
     sort: Number(sort) || 0,
     seoTitle: seoTitle || null,
-    seoDesc: seoDesc || null
+    seoDesc: seoDesc || null,
+    imageUrl: imageUrl || null
   };
   if (req.params.id) {
     await prisma.category.update({ where: { id: Number(req.params.id) }, data });

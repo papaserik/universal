@@ -1,8 +1,12 @@
 const router = require('express').Router();
 const backupAdmin = require('../controllers/admin/backup');
+const bannersAdmin = require('../controllers/admin/banners');
+const brandsAdmin = require('../controllers/admin/brands');
+const tagsAdmin = require('../controllers/admin/tags');
+const imagesAdmin = require('../controllers/admin/images');
 const { requireAuth } = require('../middleware/auth');
 const roles = require('../middleware/roles');
-const { imageUpload, importUpload } = require('../services/upload');
+const { imageUpload, importUpload, processUploaded } = require('../services/upload');
 
 router.use(requireAuth);
 router.use((req, res, next) => {
@@ -58,7 +62,7 @@ router.get('/products/:id', products.form);
 router.post('/products', products.save);
 router.post('/products/:id', products.save);
 router.post('/products/:id/delete', products.remove);
-router.post('/products/upload-images', imageUpload.array('files', 10), products.uploadImages);
+router.post('/products/upload-images', imageUpload.array('files', 10), processUploaded, products.uploadImages);
 
 router.get('/orders', orders.list);
 router.get('/orders/export/csv', ordersExport.export);
@@ -136,7 +140,7 @@ router.post('/marketplaces', marketplaces.save);
 router.post('/marketplaces/:id', marketplaces.save);
 router.post('/marketplaces/:id/toggle', marketplaces.toggle);
 router.post('/marketplaces/:id/delete', marketplaces.remove);
-router.post('/marketplaces/upload-icon', imageUpload.single('files'), marketplaces.uploadIcon);
+router.post('/marketplaces/upload-icon', imageUpload.single('files'), processUploaded, marketplaces.uploadIcon);
 
 router.get('/marketing/subscribers', marketing.subscribers);
 router.get('/marketing/subscribers/export', marketing.subscribersExport);
@@ -228,5 +232,34 @@ router.get('/backup', backupAdmin.index);
 router.get('/backup/download', backupAdmin.download);
 router.get('/backup/import', backupAdmin.importView);
 router.post('/backup/import', require('../services/upload').importUpload.single('file'), backupAdmin.importRun);
+
+router.get('/banners', bannersAdmin.list);
+router.get('/banners/new', bannersAdmin.form);
+router.get('/banners/:id', bannersAdmin.form);
+router.post('/banners', bannersAdmin.save);
+router.post('/banners/:id', bannersAdmin.save);
+router.post('/banners/:id/toggle', bannersAdmin.toggle);
+router.post('/banners/:id/delete', bannersAdmin.remove);
+router.post('/banners/upload', require('../services/upload').imageUpload.array('files', 1), processUploaded, bannersAdmin.uploadImage);
+
+router.get('/images', imagesAdmin.index);
+router.post('/images/settings', imagesAdmin.saveSettings);
+router.post('/images/optimize', imagesAdmin.runOptimize);
+
+router.get('/brands', brandsAdmin.list);
+router.get('/brands/new', brandsAdmin.form);
+router.get('/brands/:id', brandsAdmin.form);
+router.post('/brands', brandsAdmin.save);
+router.post('/brands/:id', brandsAdmin.save);
+router.post('/brands/:id/toggle', brandsAdmin.toggle);
+router.post('/brands/:id/delete', brandsAdmin.remove);
+router.post('/brands/upload', imageUpload.array('files', 1), processUploaded, brandsAdmin.list);
+
+router.get('/tags', tagsAdmin.list);
+router.get('/tags/new', tagsAdmin.form);
+router.get('/tags/:id', tagsAdmin.form);
+router.post('/tags', tagsAdmin.save);
+router.post('/tags/:id', tagsAdmin.save);
+router.post('/tags/:id/delete', tagsAdmin.remove);
 
 module.exports = router;

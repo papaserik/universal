@@ -1,134 +1,243 @@
-<%- include('../partials/breadcrumbs') %>
 <% const imgs = JSON.parse(p.images || '[]'); %>
 <%
   let mpList = [];
-  try { mpList = JSON.parse(p.marketplaceLinks || '[]'); } catch (e) { mpList = []; }
+  try { mpList = JSON.parse(p.marketplaceLinks || '[]'); } catch (e) {}
   if (!mpList.length && p.marketplace && p.marketplaceUrl) {
     mpList = [{ slug: p.marketplace, url: p.marketplaceUrl }];
   }
+  const discount = (p.oldPrice && p.oldPrice > p.price)
+    ? Math.round((1 - p.price / p.oldPrice) * 100) : 0;
 %>
-<article class="product-page">
-  <div class="product-layout">
-    <div class="product-gallery" data-gallery='<%= JSON.stringify(imgs) %>'>
+
+<%- include('../partials/breadcrumbs') %>
+
+<article class="product-page-v2">
+
+  <div class="product-main-grid">
+
+    <%# ═══ ГАЛЕРЕЯ ═══ %>
+    <div class="product-gallery-v2" data-gallery='<%= JSON.stringify(imgs) %>'>
       <% if (imgs.length) { %>
-        <div class="gallery-main">
-          <img src="<%= imgs[0] %>" alt="<%= p.name %>" title="Нажмите для увеличения">
-          <% if (p.oldPrice && p.oldPrice > p.price) { %>
-            <span class="badge-discount badge-discount-lg">-<%= Math.round((1 - p.price / p.oldPrice) * 100) %>%</span>
+        <div class="gallery-main-v2">
+          <img src="<%= imgs[0] %>" alt="<%= p.name %>" id="gallery-main-img" title="Нажмите для увеличения">
+          <% if (discount > 0) { %>
+            <span class="badge-discount badge-discount-lg">-<%= discount %>%</span>
           <% } %>
           <% if (imgs.length > 1) { %>
-            <button type="button" class="gallery-prev" aria-label="Назад">‹</button>
-            <button type="button" class="gallery-next" aria-label="Вперёд">›</button>
-            <span class="gallery-counter">1 / <%= imgs.length %></span>
+            <button type="button" class="gallery-arrow gallery-arrow-prev" id="gallery-prev">‹</button>
+            <button type="button" class="gallery-arrow gallery-arrow-next" id="gallery-next">›</button>
+            <span class="gallery-counter" id="gallery-counter">1 / <%= imgs.length %></span>
           <% } %>
         </div>
         <% if (imgs.length > 1) { %>
-          <div class="thumbs">
+          <div class="gallery-thumbs-v2">
             <% imgs.forEach((url, i) => { %>
-              <img src="<%= url %>" class="<%= i === 0 ? 'active' : '' %>" alt="">
+              <img src="<%= url %>" class="<%= i === 0 ? 'active' : '' %>" data-idx="<%= i %>" alt="">
             <% }) %>
           </div>
         <% } %>
       <% } else { %>
-        <div class="gallery-main no-image">Нет фото</div>
+        <div class="gallery-main-v2 no-image">
+          <div class="no-image-content">
+            <span>📷</span>
+            <p>Фото пока нет</p>
+          </div>
+        </div>
       <% } %>
     </div>
 
-    <div class="product-info">
-      <h1><%= p.name %></h1>
-      <div class="price-row price-row-lg">
-        <% if (p.oldPrice && p.oldPrice > p.price) { %>
-          <s class="old"><%= p.oldPrice %> ₽</s>
-          <span class="new"><%= p.price %> ₽</span>
-          <% } else { %>
-          <span class="price"><%= p.price %> ₽</span>
+    <%# ═══ ИНФО ═══ %>
+    <div class="product-info-v2">
+
+      <% if (p.brand) { %>
+        <a href="/catalog?brand=<%= p.brand.slug %>" class="product-brand-line">
+          <% if (p.brand.logoUrl) { %>
+            <img src="<%= p.brand.logoUrl %>" alt="<%= p.brand.name %>" class="product-brand-logo">
+          <% } %>
+          <span><%= p.brand.name %></span>
+        </a>
+      <% } %>
+
+      <h1 class="product-title-v2"><%= p.name %></h1>
+
+      <div class="product-meta-row">
+        <% if (p.tags && p.tags.length) { %>
+          <% p.tags.forEach(pt => { %>
+            <a href="/catalog?tag=<%= pt.tag.slug %>" class="product-tag-lg" style="background:<%= pt.tag.color %>1a;color:<%= pt.tag.color %>">
+              <%= pt.tag.name %>
+            </a>
+          <% }) %>
+        <% } %>
+        <% if (p.sku) { %>
+          <span class="product-sku">Арт. <%= p.sku %></span>
         <% } %>
       </div>
 
-      <% if (p.stock > 0) { %>
-        <div class="stock-info"><span class="in-stock">✓ В наличии (<%= p.stock %> шт.)</span></div>
-      <% } %>
+      <%# Цена %>
+      <div class="product-price-block">
+        <% if (discount > 0) { %>
+          <span class="price-old"><%= p.oldPrice %> ₽</span>
+          <span class="price-new"><%= p.price %> ₽</span>
+          <span class="price-save">Экономия <%= p.oldPrice - p.price %> ₽</span>
+        <% } else { %>
+          <span class="price-main"><%= p.price %> ₽</span>
+        <% } %>
+      </div>
 
-      <% if (p.options && p.options.length) { %>
-        <div class="product-options">
-          <% const grouped = {}; p.options.forEach(o => { (grouped[o.option.name] = grouped[o.option.name] || []).push(o.value); }); %>
-          <% Object.entries(grouped).forEach(([name, values]) => { %>
-            <div class="opt-group">
-              <strong><%= name %>:</strong>
-              <% values.forEach(v => { %><span class="opt"><%= v.value %></span><% }) %>
+      <%# Наличие %>
+      <div class="product-stock-line">
+        <% if (p.stock > 0) { %>
+          <span class="stock-in">✓ В наличии</span>
+          <span class="stock-count"><%= p.stock %> шт.</span>
+        <% } else { %>
+          <span class="stock-out">Нет в наличии</span>
+        <% } %>
+      </div>
+
+      <%# Кнопки действия %>
+      <div class="product-actions-v2">
+        <% if (p.stock > 0) { %>
+          <form class="add-form add-form-v2" data-product="<%= p.id %>">
+            <div class="qty-wrap-v2">
+              <button type="button" class="qty-dec" aria-label="Меньше">−</button>
+              <input type="number" name="qty" value="1" min="1" max="<%= p.stock %>">
+              <button type="button" class="qty-inc" aria-label="Больше">+</button>
             </div>
-          <% }) %>
-        </div>
-      <% } %>
+            <button type="submit" class="btn-cart-v2">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:6px">
+                <circle cx="9" cy="21" r="1"></circle>
+                <circle cx="20" cy="21" r="1"></circle>
+                <path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"></path>
+              </svg>
+              Добавить в корзину
+            </button>
+          </form>
+        <% } %>
 
-      <% if (p.stock > 0) { %>
-        <form class="add-form add-form-lg" data-product="<%= p.id %>">
-          <div class="qty-wrap">
-            <button type="button" class="qty-dec" aria-label="Меньше">−</button>
-            <input type="number" name="qty" value="1" min="1" max="<%= p.stock %>">
-            <button type="button" class="qty-inc" aria-label="Больше">+</button>
+        <button type="button" class="fav-btn-inline" data-fav-id="<%= p.id %>" aria-label="В избранное" title="В избранное">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+          </svg>
+          <span>В избранное</span>
+        </button>
+      </div>
+
+      <%# Маркетплейсы %>
+      <% if (mpList.length) { %>
+        <div class="product-mp-block">
+          <div class="product-mp-title">Также доступно на маркетплейсах:</div>
+          <div class="product-mp-list">
+            <% mpList.forEach(mp => {
+                 const mpName = marketplaces[mp.slug] || mp.slug;
+                 const mpSlug = (mp.slug || '').toLowerCase();
+                 const mpColor = mpSlug === 'ozon' ? '#005bff' : mpSlug === 'wildberries' ? '#cb11ab' : '#0f172a';
+            %>
+              <a href="<%= mp.url %>" target="_blank" rel="noopener nofollow" class="product-mp-btn" style="--mp-color:<%= mpColor %>">
+                <span class="product-mp-dot" style="background:<%= mpColor %>"></span>
+                Купить на <%= mpName %>
+              </a>
+            <% }) %>
           </div>
-          <button type="submit" class="btn">Добавить в корзину</button>
-        </form>
-      <% } %>
-
-      <% mpList.forEach(mp => {
-           const mpName = marketplaces[mp.slug] || mp.slug;
-           const mpSlug = (mp.slug || '').toLowerCase();
-           const mpColor = mpSlug === 'ozon' ? 'mp-ozon' : mpSlug === 'wildberries' ? 'mp-wb' : 'mp-default';
-      %>
-        <a class="btn-card btn-card-lg <%= mpColor %>" style="margin-top:6px"
-           href="<%= mp.url %>" target="_blank" rel="noopener nofollow">
-          Купить на <%= mpName %>
-        </a>
-      <% }) %>
-
-      <% if (p.description) { %>
-        <div class="description">
-          <h3>Описание</h3>
-          <%- p.description %>
         </div>
       <% } %>
+
+      <%# Характеристики %>
+      <div class="product-specs">
+        <div class="product-spec-row">
+          <span>Категория</span>
+          <strong>
+            <% if (p.category) { %>
+              <a href="/catalog/<%= p.category.slug %>"><%= p.category.name %></a>
+            <% } else { %>—<% } %>
+          </strong>
+        </div>
+        <% if (p.brand) { %>
+          <div class="product-spec-row">
+            <span>Бренд</span>
+            <strong><a href="/catalog?brand=<%= p.brand.slug %>"><%= p.brand.name %></a></strong>
+          </div>
+        <% } %>
+        <% if (p.sku) { %>
+          <div class="product-spec-row">
+            <span>Артикул</span>
+            <strong><%= p.sku %></strong>
+          </div>
+        <% } %>
+        <% if (p.weight) { %>
+          <div class="product-spec-row">
+            <span>Вес</span>
+            <strong><%= p.weight %> кг</strong>
+          </div>
+        <% } %>
+      </div>
     </div>
   </div>
 
-  <!-- Отзывы -->
-  <section class="product-reviews" id="reviews">
-    <h2>
-      Отзывы
-      <% if (rating && rating.count > 0) { %>
-        <span class="reviews-rating">
-          <%= '★'.repeat(Math.round(rating.avg)) %><%= '☆'.repeat(5 - Math.round(rating.avg)) %>
-          <strong><%= rating.avg %></strong>
-          <small>(<%= rating.count %> <%= rating.count === 1 ? 'отзыв' : 'отзывов' %>)</small>
-        </span>
-      <% } %>
-    </h2>
+  <%# ═══ ОПЦИИ ═══ %>
+  <% if (p.options && p.options.length) { %>
+    <div class="product-options-v2">
+      <% const grouped = {}; p.options.forEach(o => { (grouped[o.option.name] = grouped[o.option.name] || []).push(o.value); }); %>
+      <% Object.entries(grouped).forEach(([name, values]) => { %>
+        <div class="opt-group-v2">
+          <span class="opt-label"><%= name %>:</span>
+          <% values.forEach(v => { %>
+            <a href="/catalog?opt[<%= name.toLowerCase() %>]=<%= v.slug %>" class="opt-chip"><%= v.value %></a>
+          <% }) %>
+        </div>
+      <% }) %>
+    </div>
+  <% } %>
+
+  <%# ═══ ОПИСАНИЕ ═══ %>
+  <% if (p.description) { %>
+    <section class="product-section">
+      <h2>Описание</h2>
+      <div class="product-description-v2"><%- p.description %></div>
+    </section>
+  <% } %>
+
+  <%# ═══ ОТЗЫВЫ ═══ %>
+  <section class="product-section product-reviews" id="reviews">
+    <header class="product-section-head">
+      <h2>
+        Отзывы
+        <% if (rating && rating.count > 0) { %>
+          <span class="reviews-rating-inline">
+            <span class="reviews-stars-inline"><%= '★'.repeat(Math.round(rating.avg)) %><%= '☆'.repeat(5 - Math.round(rating.avg)) %></span>
+            <strong><%= rating.avg %></strong>
+            <small>· <%= rating.count %> <%= rating.count === 1 ? 'отзыв' : 'отзывов' %></small>
+          </span>
+        <% } %>
+      </h2>
+    </header>
 
     <% if (productReviews.length) { %>
-      <ul class="reviews-list">
+      <ul class="reviews-list-v2">
         <% productReviews.forEach(r => { %>
-          <li class="review-item">
-            <div class="review-header">
-              <div class="review-author">
-                <span class="review-avatar"><%= r.name.charAt(0).toUpperCase() %></span>
+          <li class="review-item-v2">
+            <div class="review-header-v2">
+              <div class="review-author-v2">
+                <span class="review-avatar-v2"><%= r.name.charAt(0).toUpperCase() %></span>
                 <div>
                   <strong><%= r.name %></strong>
-                  <% if (r.userId && r.orderId) { %><span class="review-verified">✓ Купил</span><% } %>
-                  <div class="review-date"><%= r.createdAt.toLocaleDateString('ru-RU') %></div>
+                  <% if (r.userId && r.orderId) { %><span class="review-verified-v2">✓ Купил</span><% } %>
+                  <div class="review-date-v2"><%= r.createdAt.toLocaleDateString('ru-RU') %></div>
                 </div>
               </div>
-              <div class="review-stars"><%= '★'.repeat(r.rating) %><%= '☆'.repeat(5 - r.rating) %></div>
+              <div class="review-stars-v2"><%= '★'.repeat(r.rating) %><%= '☆'.repeat(5 - r.rating) %></div>
             </div>
-            <p class="review-text"><%= r.text %></p>
+            <p class="review-text-v2"><%= r.text %></p>
           </li>
         <% }) %>
       </ul>
     <% } else { %>
-      <p class="reviews-empty">Отзывов пока нет. Будьте первым!</p>
+      <div class="reviews-empty-v2">
+        <span class="reviews-empty-icon">💬</span>
+        <p>Пока нет отзывов. Будьте первым — это поможет другим покупателям!</p>
+      </div>
     <% } %>
 
-    <div class="review-form-wrap">
+    <div class="review-form-wrap-v2">
       <h3>Оставить отзыв</h3>
 
       <% if (!canReview) { %>
@@ -138,8 +247,8 @@
       <% } else if (alreadyReviewed) { %>
         <p class="review-login-hint">Вы уже оставляли отзыв об этом товаре. Спасибо!</p>
       <% } else { %>
-        <form class="review-form" id="review-form" data-product-id="<%= p.id %>">
-          <div class="review-form-row">
+        <form class="review-form-v2" id="review-form" data-product-id="<%= p.id %>">
+          <div class="review-form-row-v2">
             <label>Ваше имя
               <input type="text" name="name" value="<%= user.name || '' %>" required>
             </label>
@@ -156,49 +265,22 @@
           <label>Текст отзыва
             <textarea name="text" rows="4" required minlength="10" maxlength="3000" placeholder="Что понравилось, что нет…"></textarea>
           </label>
-
-          <!-- Honeypot — невидимое поле для ботов -->
           <input type="text" name="website" style="position:absolute;left:-9999px" tabindex="-1" autocomplete="off" aria-hidden="true">
-
           <button type="submit" class="btn">Отправить отзыв</button>
-          <p class="review-hint">Отзыв появится после модерации. За отзыв мы начисляем баллы 💰</p>
+          <p class="review-hint">Отзыв появится после модерации. За отзыв начисляем баллы 🎁</p>
         </form>
         <div id="review-result"></div>
       <% } %>
     </div>
   </section>
 
+  <%# ═══ ПОХОЖИЕ ═══ %>
   <% if (related.length) { %>
-    <section>
+    <section class="product-section">
       <h2>Похожие товары</h2>
       <div class="products-grid">
-        <% related.forEach(r => {
-             const rImgs = JSON.parse(r.images || '[]');
-             %>
-          <article class="product-card">
-            <a href="/product/<%= r.slug %>" class="product-image">
-              <% if (rImgs.length) { %><img src="<%= rImgs[0] %>" alt="<%= r.name %>" loading="lazy">
-              <% } else { %><div class="no-image">Нет фото</div><% } %>
-              <% if (r.oldPrice && r.oldPrice > r.price) { %>
-                <span class="badge-discount">-<%= Math.round((1 - r.price / r.oldPrice) * 100) %>%</span>
-              <% } %>
-            </a>
-            <a href="/product/<%= r.slug %>"><h3><%= r.name %></h3></a>
-            <span class="price"><%= r.price %> ₽</span>
-            <% if (r.stock === 0) {
-                 let rMps = [];
-                 try { rMps = JSON.parse(r.marketplaceLinks || '[]'); } catch (e) {}
-                 if (!rMps.length && r.marketplace && r.marketplaceUrl) rMps = [{ slug: r.marketplace, url: r.marketplaceUrl }];
-                 const firstMp = rMps[0];
-                 if (firstMp) {
-                   const rMpSlug = (firstMp.slug || '').toLowerCase();
-                   const rMpColor = rMpSlug === 'ozon' ? 'mp-ozon' : rMpSlug === 'wildberries' ? 'mp-wb' : 'mp-default';
-            %>
-              <a class="btn-card <%= rMpColor %>" href="<%= firstMp.url %>" target="_blank" rel="noopener nofollow">
-                Купить на <%= marketplaces[firstMp.slug] || firstMp.slug %>
-              </a>
-            <% } } %>
-          </article>
+        <% related.forEach(r => { %>
+          <%- include('partials/product-card', { p: r, marketplaces: marketplaces }) %>
         <% }) %>
       </div>
     </section>
@@ -210,8 +292,69 @@
   <img src="" alt="">
 </div>
 
-
 <script>
+(function () {
+  var gallery = document.querySelector('[data-gallery]');
+  if (!gallery) return;
+  var imgs = JSON.parse(gallery.dataset.gallery || '[]');
+  if (!imgs.length) return;
+
+  var idx = 0;
+  var main = document.getElementById('gallery-main-img');
+  var counter = document.getElementById('gallery-counter');
+  var thumbs = gallery.querySelectorAll('.gallery-thumbs-v2 img');
+
+  function show(i) {
+    if (!main) return;
+    idx = (i + imgs.length) % imgs.length;
+    main.src = imgs[idx];
+    if (counter) counter.textContent = (idx + 1) + ' / ' + imgs.length;
+    thumbs.forEach(function (t, k) {
+      t.classList.toggle('active', k === idx);
+    });
+  }
+
+  var prev = document.getElementById('gallery-prev');
+  var next = document.getElementById('gallery-next');
+  if (prev) prev.addEventListener('click', function () { show(idx - 1); });
+  if (next) next.addEventListener('click', function () { show(idx + 1); });
+
+  thumbs.forEach(function (t) {
+    t.addEventListener('click', function () { show(Number(t.dataset.idx)); });
+  });
+
+  // Клик по главной — открыть модалку
+  var modal = document.getElementById('image-modal');
+  if (modal) {
+    var modalImg = modal.querySelector('img');
+    main.addEventListener('click', function () {
+      modalImg.src = imgs[idx];
+      modal.classList.add('open');
+    });
+    modal.addEventListener('click', function (e) {
+      if (e.target === modal || e.target.classList.contains('modal-close')) {
+        modal.classList.remove('open');
+      }
+    });
+    document.addEventListener('keydown', function (e) {
+      if (!modal.classList.contains('open')) return;
+      if (e.key === 'Escape') modal.classList.remove('open');
+      if (e.key === 'ArrowLeft') { show(idx - 1); modalImg.src = imgs[idx]; }
+      if (e.key === 'ArrowRight') { show(idx + 1); modalImg.src = imgs[idx]; }
+    });
+  }
+
+  // Свайп на мобильных
+  var startX = 0, moved = false;
+  main.addEventListener('touchstart', function (e) { startX = e.touches[0].clientX; moved = false; }, { passive: true });
+  main.addEventListener('touchmove',  function () { moved = true; }, { passive: true });
+  main.addEventListener('touchend',   function (e) {
+    if (!moved) return;
+    var dx = e.changedTouches[0].clientX - startX;
+    if (Math.abs(dx) > 40) show(dx < 0 ? idx + 1 : idx - 1);
+  });
+})();
+
 (function () {
   var form = document.getElementById('review-form');
   if (!form) return;
@@ -234,7 +377,7 @@
         var result = document.getElementById('review-result');
         if (d.ok) {
           form.style.display = 'none';
-          result.innerHTML = '<div class="review-success">✓ Спасибо! Отзыв отправлен на модерацию. Баллы зачислены.</div>';
+          result.innerHTML = '<div class="review-success">✓ Спасибо! Отзыв отправлен на модерацию. Баллы зачислятся после одобрения.</div>';
         } else {
           result.innerHTML = '<div class="review-error">' + (d.error || 'Ошибка') + '</div>';
         }

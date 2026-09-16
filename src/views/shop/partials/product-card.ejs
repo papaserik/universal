@@ -1,0 +1,83 @@
+<%
+  const imgs = JSON.parse(p.images || '[]');
+  const discount = (p.oldPrice && p.oldPrice > p.price)
+    ? Math.round((1 - p.price / p.oldPrice) * 100) : 0;
+
+  let mpList = [];
+  try { mpList = JSON.parse(p.marketplaceLinks || '[]'); } catch (e) {}
+  if (!mpList.length && p.marketplace && p.marketplaceUrl) {
+    mpList = [{ slug: p.marketplace, url: p.marketplaceUrl }];
+  }
+%>
+<article class="product-card">
+  <div class="product-image-wrap">
+    <a href="/product/<%= p.slug %>" class="product-image">
+      <% if (imgs.length) { %>
+        <img src="<%= imgs[0] %>" alt="<%= p.name %>" loading="lazy">
+      <% } else { %>
+        <div class="no-image">Нет фото</div>
+      <% } %>
+      <% if (discount > 0) { %>
+        <span class="badge-discount">-<%= discount %>%</span>
+      <% } %>
+      <% if (p.tags && p.tags.length) { %>
+        <div class="product-tags-overlay">
+          <% p.tags.slice(0, 2).forEach(pt => { %>
+            <span class="product-tag-mini" style="background:<%= pt.tag.color %>;color:#fff">
+              <%= pt.tag.name %>
+            </span>
+          <% }) %>
+        </div>
+      <% } %>
+    </a>
+
+    <button type="button"
+            class="fav-btn"
+            data-fav-id="<%= p.id %>"
+            aria-label="Добавить в избранное"
+            title="В избранное">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+      </svg>
+    </button>
+  </div>
+
+  <% if (p.brand) { %>
+    <div class="product-card-brand"><%= p.brand.name %></div>
+  <% } %>
+
+  <a href="/product/<%= p.slug %>" class="product-card-title">
+    <h3><%= p.name %></h3>
+  </a>
+
+  <div class="price-row">
+    <% if (discount > 0) { %>
+      <s class="old"><%= p.oldPrice %> ₽</s>
+      <span class="new"><%= p.price %> ₽</span>
+    <% } else { %>
+      <span class="price"><%= p.price %> ₽</span>
+    <% } %>
+  </div>
+
+  <div class="card-actions">
+    <% if (p.stock > 0) { %>
+      <form class="add-form" data-product="<%= p.id %>">
+        <button type="submit" class="btn-card btn-card-primary">В корзину</button>
+      </form>
+    <% } %>
+    <% mpList.forEach(mp => {
+         const mpName = (marketplaces && marketplaces[mp.slug]) || mp.slug;
+         const mpSlug = (mp.slug || '').toLowerCase();
+         const mpColor = mpSlug === 'ozon' ? 'mp-ozon'
+                       : mpSlug === 'wildberries' ? 'mp-wb'
+                       : 'mp-default';
+    %>
+      <a class="btn-card <%= mpColor %>" href="<%= mp.url %>" target="_blank" rel="noopener nofollow">
+        Купить на <%= mpName %>
+      </a>
+    <% }) %>
+    <% if (p.stock === 0 && !mpList.length) { %>
+      <span class="no-stock">Нет в наличии</span>
+    <% } %>
+  </div>
+</article>

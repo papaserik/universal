@@ -3,12 +3,18 @@
   <a href="/admin/categories/new" class="btn">+ Добавить</a>
 </div>
 
-<table class="admin-table" data-sortable="categories">
-  <thead><tr><th>ID</th><th>Название</th><th>Slug</th><th>Товаров</th><th>Сортировка</th><th></th></tr></thead>
+<table class="admin-table">
+  <thead><tr><th style="width:60px">Иконка</th><th>Название</th><th>Slug</th><th>Товаров</th><th>Сортировка</th><th></th></tr></thead>
   <tbody>
     <% categories.forEach(c => { %>
-      <tr data-id="<%= c.id %>">
-        <td><%= c.id %></td>
+      <tr>
+        <td>
+          <% if (c.imageUrl) { %>
+            <img src="<%= c.imageUrl %>" alt="" style="width:40px;height:40px;object-fit:cover;border-radius:6px">
+          <% } else { %>
+            <span style="font-size:22px;color:#9ca3af">📦</span>
+          <% } %>
+        </td>
         <td><%= c.name %></td>
         <td>/catalog/<%= c.slug %></td>
         <td><%= c._count.products %></td>

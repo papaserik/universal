@@ -2,45 +2,6 @@
 <h1><%= cat.name %></h1>
 <div class="products-grid">
   <% cat.products.forEach(p => { const imgs = JSON.parse(p.images || '[]'); %>
-    <article class="product-card">
-      <a href="/product/<%= p.slug %>" class="product-image">
-            <% if (imgs.length) { %>
-              <img src="<%= imgs[0] %>" alt="<%= p.name %>" loading="lazy">
-            <% } else { %>
-              <div class="no-image">Нет фото</div>
-            <% } %>
-            <% if (p.oldPrice && p.oldPrice > p.price) { %>
-              <span class="badge-discount">-<%= Math.round((1 - p.price / p.oldPrice) * 100) %>%</span>
-            <% } %>
-          </a>
-      <a href="/product/<%= p.slug %>"><h3><%= p.name %></h3></a>
-      <div class="price-row">
-        <% if (p.oldPrice && p.oldPrice > p.price) { %>
-          <s class="old"><%= p.oldPrice %> ₽</s>
-          <span class="new"><%= p.price %> ₽</span>
-        <% } else { %>
-          <span class="price"><%= p.price %> ₽</span>
-        <% } %>
-      </div>
-      <div class="card-actions">
-          <% if (p.stock > 0) { %>
-            <form class="add-form" data-product="<%= p.id %>">
-              <button type="submit" class="btn-card btn-card-primary">В корзину</button>
-            </form>
-          <% } %>
-          <% let mpList = [];
-               try { mpList = JSON.parse(p.marketplaceLinks || '[]'); } catch (e) {}
-               if (!mpList.length && p.marketplace && p.marketplaceUrl) mpList = [{ slug: p.marketplace, url: p.marketplaceUrl }];
-               mpList.forEach(mp => {
-                 const mpName = marketplaces[mp.slug] || mp.slug;
-                 const mpSlug = (mp.slug || '').toLowerCase();
-                 const mpColor = mpSlug === 'ozon' ? 'mp-ozon' : mpSlug === 'wildberries' ? 'mp-wb' : 'mp-default';
-            %>
-              <a class="btn-card <%= mpColor %>" href="<%= mp.url %>" target="_blank" rel="noopener nofollow">
-                Купить на <%= mpName %>
-              </a>
-            <% }) %>
-        </div>
-    </article>
+    <%- include('partials/product-card', { p: p, marketplaces: marketplaces }) %>
   <% }) %>
 </div>

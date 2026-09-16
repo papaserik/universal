@@ -12,12 +12,78 @@ async function getMarketplaceBySlug(slug) {
 }
 
 exports.home = async (req, res) => {
-  const [products, posts] = await Promise.all([
-    prisma.product.findMany({ where: { published: true }, orderBy: { createdAt: 'desc' }, take: 8 }),
-    prisma.blogPost.findMany({ where: { published: true }, orderBy: { createdAt: 'desc' }, take: 3 })
+  const now = new Date();
+
+  const [
+    banners,
+    newProducts,
+    hitProducts,
+    categories,
+    posts,
+    totalProducts
+  ] = await Promise.all([
+    // Баннеры с учётом расписания
+    prisma.banner.findMany({
+      where: {
+        active: true,
+        AND: [
+          { OR: [{ startsAt: null }, { startsAt: { lte: now } }] },
+          { OR: [{ endsAt: null }, { endsAt: { gte: now } }] }
+        ]
+      },
+      orderBy: [{ sort: 'asc' }, { id: 'desc' }]
+    }),
+
+    // Новинки
+    prisma.product.findMany({
+      where: { published: true, stock: { gt: 0 } },
+      orderBy: { createdAt: 'desc' },
+      take: 8
+    }),
+
+    // Хиты — товары со скидкой
+    prisma.product.findMany({
+      where: {
+        published: true,
+        stock: { gt: 0 },
+        oldPrice: { not: null }
+      },
+      orderBy: { createdAt: 'desc' },
+      take: 4
+    }),
+
+    // Категории верхнего уровня
+    prisma.category.findMany({
+      where: { parentId: null },
+      include: { _count: { select: { products: true } } },
+      orderBy: [{ sort: 'asc' }, { name: 'asc' }],
+      take: 8
+    }),
+
+    // Посты блога
+    prisma.blogPost.findMany({
+      where: { published: true },
+      orderBy: { createdAt: 'desc' },
+      take: 3
+    }),
+
+    prisma.product.count({ where: { published: true } })
   ]);
-  res.locals.setMeta({ title: res.locals.settings.siteName });
-  res.render('shop/home', { products, posts });
+
+  res.locals.setMeta({
+    title: res.locals.settings.siteName,
+    description: 'Универсальный интернет-магазин: ' + totalProducts + ' товаров в каталоге. Быстрая доставка, оплата онлайн и при получении.'
+  });
+
+  res.render('shop/home', {
+    banners,
+    products: newProducts,
+    newProducts,
+    hitProducts,
+    categories,
+    posts,
+    totalProducts
+  });
 };
 
 exports.catalog = async (req, res) => {

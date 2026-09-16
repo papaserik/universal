@@ -22,12 +22,14 @@ model User {
   orders    Order[]
   posts     BlogPost[]
   loyalty   LoyaltyTransaction[]
+  favorites Favorite[]
 }
 
 model Category {
   id        Int        @id @default(autoincrement())
   slug      String     @unique
   name      String
+  imageUrl  String?
   parentId  Int?
   parent    Category?  @relation("CatTree", fields: [parentId], references: [id], onDelete: SetNull)
   children  Category[] @relation("CatTree")
@@ -53,6 +55,7 @@ model Product {
   category        Category?       @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   options         ProductOption[]
   reviews         Review[]
+  favorites       Favorite[]
   seoTitle        String?
   seoDesc         String?
   seoKeywords     String?
@@ -66,6 +69,9 @@ model Product {
 
   @@index([categoryId, published])
   @@index([price])
+  brandId      Int?
+  brand        Brand?          @relation(fields: [brandId], references: [id], onDelete: SetNull)
+  tags         ProductTag[]
 }
 
 model Option {
@@ -385,4 +391,80 @@ model Review {
   pointsAwarded Boolean @default(false)
   createdAt DateTime @default(now())
   @@index([productId, approved])
+}
+
+model Banner {
+  id           Int      @id @default(autoincrement())
+  title        String
+  subtitle     String?
+  body         String?
+  ctaText      String?
+  ctaUrl       String?
+  imageUrl     String?
+  bgColor      String   @default("#0f172a")
+  textColor    String   @default("#ffffff")
+  textPosition String   @default("left")
+  overlay      Int      @default(40)
+  layout       String   @default("hero")
+  sort         Int      @default(0)
+  active       Boolean  @default(true)
+  startsAt     DateTime?
+  endsAt       DateTime?
+  createdAt    DateTime @default(now())
+}
+
+model ImageVariant {
+  id         Int      @id @default(autoincrement())
+  original   String
+  path       String
+  format     String
+  width      Int
+  height     Int
+  size       Int
+  variant    String   @default("original")
+  createdAt  DateTime @default(now())
+  @@index([original])
+}
+
+model Brand {
+  id        Int      @id @default(autoincrement())
+  slug      String   @unique
+  name      String
+  logoUrl   String?
+  description String?
+  country   String?
+  sort      Int      @default(0)
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  products  Product[]
+}
+
+model Tag {
+  id        Int      @id @default(autoincrement())
+  slug      String   @unique
+  name      String
+  color     String   @default("#6b7280")
+  sort      Int      @default(0)
+  createdAt DateTime @default(now())
+  products  ProductTag[]
+}
+
+model ProductTag {
+  productId Int
+  tagId     Int
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  tag       Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  @@id([productId, tagId])
+}
+
+model Favorite {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId Int
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, productId])
+  @@index([userId])
 }

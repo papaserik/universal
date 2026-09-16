@@ -1,0 +1,150 @@
+<div class="admin-header">
+  <h1>🖼 Оптимизация изображений</h1>
+</div>
+
+<% if (saved) { %><div class="admin-alert admin-alert-ok">✓ Настройки сохранены</div><% } %>
+<% if (msg) { %><div class="admin-alert admin-alert-ok"><%= msg %></div><% } %>
+
+<p class="admin-hint">
+  Все загружаемые картинки автоматически сжимаются и уменьшаются. Дополнительно создаются
+  WebP-версии (на 30% легче JPG) и миниатюры 400×400 для каталога.
+</p>
+
+<div class="sales-stats" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr))">
+  <div class="sales-stat">
+    <div class="sales-stat-label">Файлов в uploads</div>
+    <div class="sales-stat-value"><%= stats.totalFiles %></div>
+    <div class="sales-stat-sub">оригиналов</div>
+  </div>
+  <div class="sales-stat">
+    <div class="sales-stat-label">Общий вес</div>
+    <div class="sales-stat-value"><%= stats.totalSizeMB %> МБ</div>
+    <div class="sales-stat-sub">всех файлов</div>
+  </div>
+  <div class="sales-stat">
+    <div class="sales-stat-label">WebP-версий</div>
+    <div class="sales-stat-value"><%= stats.webps %></div>
+    <div class="sales-stat-sub">на 30% легче</div>
+  </div>
+  <div class="sales-stat">
+    <div class="sales-stat-label">Миниатюр</div>
+    <div class="sales-stat-value"><%= stats.thumbs %></div>
+    <div class="sales-stat-sub">400×400</div>
+  </div>
+</div>
+
+<div class="settings-layout" style="grid-template-columns:1fr">
+
+  <section class="settings-section">
+    <header class="settings-section-header">
+      <h2>⚙️ Параметры оптимизации</h2>
+      <p class="settings-section-desc">
+        Применяются ко всем новым загрузкам. Существующие файлы можно обработать кнопкой ниже.
+      </p>
+    </header>
+
+    <form method="post" action="/admin/images/settings">
+      <div class="settings-field">
+        <label>Максимальная ширина/высота, px</label>
+        <input type="number" name="images_max_width" value="<%= values.images_max_width || '1600' %>" min="200" max="5000">
+        <small style="color:#6b7280;font-size:12px;display:block;margin-top:4px">
+          Большие изображения уменьшаются до этой величины по длинной стороне.
+          Рекомендуется 1600 для галереи и 1200 для карточек товара.
+        </small>
+      </div>
+
+      <div class="settings-field">
+        <label>Качество сжатия, %</label>
+        <input type="number" name="images_quality" value="<%= values.images_quality || '82' %>" min="40" max="100">
+        <small style="color:#6b7280;font-size:12px;display:block;margin-top:4px">
+          82% — оптимальный баланс качества и веса. 90+ — почти без потерь, но тяжелее.
+        </small>
+      </div>
+
+      <div class="settings-field">
+        <label>Формат по умолчанию</label>
+        <select name="images_format">
+          <option value="original" <%= values.images_format === 'original' ? 'selected' : '' %>>Оригинальный (JPG → JPG)</option>
+          <option value="webp" <%= values.images_format === 'webp' ? 'selected' : '' %>>WebP (современный, легче)</option>
+        </select>
+        <small style="color:#6b7280;font-size:12px;display:block;margin-top:4px">
+          WebP поддерживают все современные браузеры. Экономия места ~30%.
+        </small>
+      </div>
+
+      <div class="settings-field">
+        <label>Ширина миниатюр, px</label>
+        <input type="number" name="images_thumb_width" value="<%= values.images_thumb_width || '400' %>" min="100" max="800">
+        <small style="color:#6b7280;font-size:12px;display:block;margin-top:4px">
+          Для сеток каталога, корзины, похожих товаров. 400 — оптимально.
+        </small>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn">💾 Сохранить настройки</button>
+      </div>
+    </form>
+  </section>
+
+  <section class="settings-section" style="margin-top:20px">
+    <header class="settings-section-header">
+      <h2>⚡ Массовая оптимизация</h2>
+      <p class="settings-section-desc">
+        Обработает все уже загруженные файлы: уменьшит, сожмёт, создаст WebP и миниатюры.
+        Займёт время пропорционально количеству файлов.
+      </p>
+    </header>
+
+    <div class="admin-alert" style="background:#fef3c7;color:#92400e;border-left:3px solid #f59e0b">
+      <strong>Важно:</strong> запустите один раз после настройки. Повторный запуск не повредит файлы —
+      уже оптимизированные не трогаются.
+    </div>
+
+    <button type="button" class="btn" id="btn-optimize" style="background:#16a34a">
+      ⚡ Оптимизировать все изображения
+    </button>
+
+    <div id="optimize-result" style="margin-top:16px"></div>
+  </section>
+
+</div>
+
+<script>
+(function () {
+  var btn = document.getElementById('btn-optimize');
+  var res = document.getElementById('optimize-result');
+  if (!btn) return;
+
+  btn.addEventListener('click', function () {
+    if (!confirm('Запустить оптимизацию всех изображений? Это может занять несколько минут.')) return;
+    btn.disabled = true;
+    btn.textContent = '⏳ Обрабатываю...';
+    res.innerHTML = '<div style="color:#6b7280">Пожалуйста, подождите, не закрывайте вкладку…</div>';
+
+    fetch('/admin/images/optimize', { method: 'POST' })
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (d.ok) {
+          res.innerHTML =
+            '<div class="admin-alert admin-alert-ok">' +
+              '<strong>✓ Готово!</strong><br>' +
+              'Обработано: ' + d.processed + ' из ' + d.total + '<br>' +
+              'Ошибок: ' + d.failed + '<br>' +
+              'Сэкономлено: <strong>' + d.savedMB + ' МБ</strong>' +
+            '</div>';
+          btn.disabled = false;
+          btn.textContent = '⚡ Оптимизировать ещё раз';
+        } else {
+          res.innerHTML = '<div class="admin-alert" style="background:#fee2e2;color:#991b1b">✗ Ошибка: ' + (d.error || 'неизвестно') + '</div>';
+          btn.disabled = false;
+          btn.textContent = '⚡ Оптимизировать все изображения';
+        }
+      })
+      .catch(function (e) {
+        res.innerHTML = '<div class="admin-alert" style="background:#fee2e2;color:#991b1b">✗ Ошибка сети: ' + e.message + '</div>';
+        btn.disabled = false;
+        btn.textContent = '⚡ Оптимизировать все изображения';
+      });
+  });
+})();
+</script>

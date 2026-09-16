@@ -42,6 +42,10 @@ router.get('/subscribe', require('../controllers/subscribe').form);
 router.post('/subscribe', require('../controllers/subscribe').submit);
 router.get('/unsubscribe', require('../controllers/subscribe').unsubscribe);
 
+const favorites = require('../controllers/favorites');
+router.post('/api/favorites/toggle', favorites.toggle);
+router.get('/api/favorites/ids', favorites.listIds);
+router.get('/favorites', favorites.page);
 const account = require('../controllers/account');
 const { imageUpload } = require('../services/upload');
 

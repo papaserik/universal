@@ -1,0 +1,61 @@
+<div class="admin-header">
+  <h1>🖼 Баннеры</h1>
+  <a href="/admin/banners/new" class="btn">+ Добавить баннер</a>
+</div>
+<p class="admin-hint">
+  Баннеры показываются на главной странице. Можно задать картинку, цвет фона, текст и кнопку.
+  Порядок — перетаскиванием или числом.
+</p>
+
+<% if (items.length === 0) { %>
+  <div class="admin-empty">
+    <p>Баннеров пока нет.</p>
+    <a href="/admin/banners/new" class="btn">Создать первый баннер</a>
+  </div>
+<% } else { %>
+  <div class="banner-list">
+    <% items.forEach(b => { %>
+      <div class="banner-row">
+        <div class="banner-preview"
+             style="background-color: <%= b.bgColor %>; <% if (b.imageUrl) { %>background-image:url('<%= b.imageUrl %>'); background-size:cover; background-position:center;<% } %>">
+          <% if (b.imageUrl && b.overlay > 0) { %>
+            <div class="banner-preview-overlay" style="background:rgba(0,0,0,<%= b.overlay/100 %>)"></div>
+          <% } %>
+          <div class="banner-preview-inner pos-<%= b.textPosition %>" style="color:<%= b.textColor %>">
+            <div class="banner-preview-title"><%= b.title %></div>
+            <% if (b.subtitle) { %><div class="banner-preview-sub"><%= b.subtitle %></div><% } %>
+          </div>
+        </div>
+
+        <div class="banner-info">
+          <div class="banner-info-title"><%= b.title %></div>
+          <div class="banner-info-meta">
+            <span class="badge"><%= b.layout %></span>
+            <% if (b.ctaText) { %><span class="badge">🔗 <%= b.ctaText %></span><% } %>
+            <% if (b.startsAt || b.endsAt) { %>
+              <span class="badge">
+                📅
+                <%= b.startsAt ? b.startsAt.toLocaleDateString('ru-RU') : 'сейчас' %>
+                —
+                <%= b.endsAt ? b.endsAt.toLocaleDateString('ru-RU') : 'бессрочно' %>
+              </span>
+            <% } %>
+            <span class="badge">Сорт: <%= b.sort %></span>
+          </div>
+        </div>
+
+        <div class="banner-actions">
+          <form method="post" action="/admin/banners/<%= b.id %>/toggle" style="display:inline">
+            <button class="btn btn-sm <%= b.active ? '' : 'btn-muted' %>">
+              <%= b.active ? '✓ Активен' : '✗ Отключён' %>
+            </button>
+          </form>
+          <a href="/admin/banners/<%= b.id %>" class="btn btn-sm">Изменить</a>
+          <form method="post" action="/admin/banners/<%= b.id %>/delete" onsubmit="return confirm('Удалить баннер?')" style="display:inline">
+            <button class="btn btn-sm btn-danger">×</button>
+          </form>
+        </div>
+      </div>
+    <% }) %>
+  </div>
+<% } %>

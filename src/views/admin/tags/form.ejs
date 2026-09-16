@@ -1,0 +1,29 @@
+<div class="admin-header">
+  <h1><%= item ? 'Изменить тег' : 'Новый тег' %></h1>
+  <a href="/admin/tags" class="btn btn-sm">← К списку</a>
+</div>
+
+<form method="post" action="<%= item ? '/admin/tags/' + item.id : '/admin/tags' %>" class="admin-form" style="max-width:640px">
+  <div class="form-row">
+    <label>Название * <input type="text" name="name" value="<%= item ? item.name : '' %>" required placeholder="Новинка"></label>
+    <label>Slug <input type="text" name="slug" value="<%= item ? item.slug : '' %>" placeholder="new"></label>
+  </div>
+
+  <div class="form-row">
+    <label>Цвет бейджа
+      <input type="color" name="color" value="<%= item ? item.color : '#3b82f6' %>" style="width:80px;height:38px;padding:2px">
+    </label>
+    <label>Сортировка <input type="number" name="sort" value="<%= item ? item.sort : 0 %>"></label>
+  </div>
+
+  <% if (item) { %>
+    <div style="padding:14px 16px;background:#f9fafb;border-radius:10px;margin-top:8px">
+      <div style="font-size:13px;color:#6b7280;margin-bottom:8px">Превью:</div>
+      <span style="display:inline-block;padding:4px 12px;border-radius:14px;background:<%= item.color %>1a;color:<%= item.color %>;font-weight:600;font-size:13px">
+        <%= item.name %>
+      </span>
+    </div>
+  <% } %>
+
+  <div class="form-actions"><button class="btn">Сохранить</button></div>
+</form>

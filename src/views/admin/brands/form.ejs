@@ -1,0 +1,68 @@
+<div class="admin-header">
+  <h1><%= item ? 'Изменить бренд' : 'Новый бренд' %></h1>
+  <a href="/admin/brands" class="btn btn-sm">← К списку</a>
+</div>
+
+<form method="post" action="<%= item ? '/admin/brands/' + item.id : '/admin/brands' %>" class="admin-form" style="max-width:720px">
+  <div class="form-row">
+    <label>Название * <input type="text" name="name" value="<%= item ? item.name : '' %>" required placeholder="Apple"></label>
+    <label>Slug <input type="text" name="slug" value="<%= item ? item.slug : '' %>" placeholder="apple"></label>
+  </div>
+
+  <label>Страна <input type="text" name="country" value="<%= item && item.country ? item.country : '' %>" placeholder="США"></label>
+
+  <label>Описание <textarea name="description" rows="3"><%= item && item.description ? item.description : '' %></textarea></label>
+
+  <fieldset>
+    <legend>Логотип</legend>
+    <div class="mp-icon-block">
+      <div class="mp-icon-preview" id="logo-preview">
+        <% if (item && item.logoUrl) { %>
+          <img src="<%= item.logoUrl %>" alt="">
+        <% } else { %>
+          <span style="font-size:28px;color:#9ca3af">🏢</span>
+        <% } %>
+      </div>
+      <div class="mp-icon-actions">
+        <label class="upload-label-inline">📷 Загрузить логотип
+          <input type="file" id="logo-input" accept="image/*" hidden>
+        </label>
+        <input type="text" name="logoUrl" id="logo-url" value="<%= item && item.logoUrl ? item.logoUrl : '' %>" placeholder="или URL">
+      </div>
+    </div>
+  </fieldset>
+
+  <div class="form-row">
+    <label>Сортировка <input type="number" name="sort" value="<%= item ? item.sort : 0 %>"></label>
+    <label class="checkbox-label" style="align-self:flex-end">
+      <input type="checkbox" name="active" <%= !item || item.active ? 'checked' : '' %>> Активен
+    </label>
+  </div>
+
+  <div class="form-actions"><button class="btn">Сохранить</button></div>
+</form>
+
+<script>
+(function () {
+  var input = document.getElementById('logo-input');
+  var url = document.getElementById('logo-url');
+  var preview = document.getElementById('logo-preview');
+  if (!input) return;
+  input.addEventListener('change', function (e) {
+    var f = e.target.files[0]; if (!f) return;
+    var fd = new FormData(); fd.append('files', f);
+    fetch('/admin/brands/upload', { method: 'POST', body: fd })
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (d.ok) {
+          url.value = d.url;
+          preview.innerHTML = '<img src="' + d.url + '" alt="">';
+        }
+      });
+  });
+  url.addEventListener('input', function () {
+    if (url.value) preview.innerHTML = '<img src="' + url.value + '" alt="">';
+    else preview.innerHTML = '<span style="font-size:28px;color:#9ca3af">🏢</span>';
+  });
+})();
+</script>
