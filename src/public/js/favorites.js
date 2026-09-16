@@ -1,25 +1,33 @@
 (function () {
   'use strict';
 
-  // Загружаем список уже избранных
   var favIds = new Set();
-  var loading = true;
 
-  function loadFavorites() {
-    return fetch('/api/favorites/ids')
-      .then(function (r) { return r.json(); })
-      .then(function (d) {
-        if (d && d.ok && Array.isArray(d.ids)) {
-          d.ids.forEach(function (id) { favIds.add(Number(id)); });
-        }
-        loading = false;
-        updateAllButtons();
-      })
-      .catch(function () { loading = false; });
+  function updateHeaderCount(count) {
+    // Все счётчики в шапке (мобильная + десктопная + меню)
+    document.querySelectorAll('.js-favorites-count').forEach(function (el) {
+      if (count > 0) {
+        el.textContent = count;
+        el.hidden = false;
+      } else {
+        el.hidden = true;
+      }
+    });
+  }
+
+  function updateMenuCount(count) {
+    document.querySelectorAll('.js-favorites-count-menu').forEach(function (el) {
+      if (count > 0) {
+        el.textContent = count;
+        el.hidden = false;
+      } else {
+        el.hidden = true;
+      }
+    });
   }
 
   function updateAllButtons() {
-    document.querySelectorAll('.fav-btn[data-fav-id]').forEach(function (btn) {
+    document.querySelectorAll('[data-fav-id]').forEach(function (btn) {
       var id = Number(btn.dataset.favId);
       if (favIds.has(id)) {
         btn.classList.add('active');
@@ -31,9 +39,22 @@
     });
   }
 
-  // Клик — toggle
+  function loadFavorites() {
+    return fetch('/api/favorites/ids')
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (d && d.ok && Array.isArray(d.ids)) {
+          d.ids.forEach(function (id) { favIds.add(Number(id)); });
+          updateHeaderCount(d.ids.length);
+          updateMenuCount(d.ids.length);
+        }
+        updateAllButtons();
+      })
+      .catch(function () {});
+  }
+
   document.addEventListener('click', function (e) {
-    var btn = e.target.closest('.fav-btn');
+    var btn = e.target.closest('[data-fav-id]');
     if (!btn) return;
     e.preventDefault();
 
@@ -60,16 +81,18 @@
           return;
         }
 
+        // Обновляем счётчики в шапке и меню
+        updateHeaderCount(d.count);
+        updateMenuCount(d.count);
+
         if (d.isFavorite) {
           favIds.add(id);
           btn.classList.add('active');
-          btn.setAttribute('title', 'Убрать из избранного');
           btn.classList.add('pop');
           setTimeout(function () { btn.classList.remove('pop'); }, 400);
         } else {
           favIds.delete(id);
           btn.classList.remove('active');
-          btn.setAttribute('title', 'В избранное');
         }
       })
       .catch(function () {
@@ -77,7 +100,6 @@
       });
   });
 
-  // Запуск после загрузки DOM
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', loadFavorites);
   } else {

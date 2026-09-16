@@ -10,7 +10,7 @@ function requireAuth(req, res, next) {
 exports.dashboard = async (req, res) => {
   const user = req.session.user;
 
-  const [orders, statuses, loyaltyInfo, blogPosts, profile] = await Promise.all([
+  const [orders, statuses, loyaltyInfo, blogPosts, profile, favoritesCount] = await Promise.all([
     prisma.order.findMany({
       where: { OR: [{ userId: user.id }, { email: user.email }] },
       include: { items: true },
@@ -25,7 +25,8 @@ exports.dashboard = async (req, res) => {
       take: 3,
       include: { blogCategory: true }
     }),
-    prisma.user.findUnique({ where: { id: user.id } })
+    prisma.user.findUnique({ where: { id: user.id } }),
+    prisma.favorite.count({ where: { userId: user.id } })
   ]);
 
   const statusMap = {};
@@ -47,6 +48,7 @@ exports.dashboard = async (req, res) => {
 
   res.locals.setMeta({ title: 'Личный кабинет' });
   res.render('account/dashboard', {
+    favoritesCount,
     orders,
     statusMap,
     loyaltyInfo,

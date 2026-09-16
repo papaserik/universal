@@ -1,0 +1,47 @@
+<div class="cabinet">
+  <h1>❤️ Избранное</h1>
+
+  <%- include('partials/tabs', { activeTab: 'favorites' }) %>
+
+  <% if (!products || !products.length) { %>
+    <div class="account-empty">
+      <div class="account-empty-icon">💔</div>
+      <h2>В избранном пока пусто</h2>
+      <p>Нажимайте ♡ на товарах, которые хотите сохранить на будущее.</p>
+      <a href="/catalog" class="btn">Перейти в каталог</a>
+    </div>
+  <% } else { %>
+    <div class="favorites-head">
+      <div class="favorites-count">Сохранено: <strong><%= products.length %></strong></div>
+      <button type="button" class="btn-link" id="clear-favorites">Очистить всё</button>
+    </div>
+
+    <div class="products-grid">
+      <% products.forEach(p => { %>
+        <%- include('../shop/partials/product-card', { p: p, marketplaces: marketplaces }) %>
+      <% }) %>
+    </div>
+  <% } %>
+</div>
+
+<script>
+(function () {
+  var btn = document.getElementById('clear-favorites');
+  if (!btn) return;
+  btn.addEventListener('click', function () {
+    if (!confirm('Удалить все товары из избранного?')) return;
+    var ids = Array.from(document.querySelectorAll('.fav-btn[data-fav-id]'))
+      .map(function (b) { return Number(b.dataset.favId); });
+
+    Promise.all(ids.map(function (id) {
+      return fetch('/api/favorites/toggle', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ productId: id })
+      });
+    })).then(function () {
+      location.reload();
+    });
+  });
+})();
+</script>

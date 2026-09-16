@@ -48,6 +48,15 @@ app.use(async (req, res, next) => {
   res.locals.userAvatar = req.session.avatar || null;
   res.locals.cartCount = (req.session.cart || []).reduce((s, i) => s + i.qty, 0);
 
+  // Счётчик избранного
+  res.locals.favoritesCount = 0;
+  if (req.session.user) {
+    try {
+      const { prisma } = require('./config/db');
+      res.locals.favoritesCount = await prisma.favorite.count({ where: { userId: req.session.user.id } });
+    } catch (e) {}
+  }
+
   // Баллы и уровень пользователя
   res.locals.userLoyalty = null;
   if (req.session.user) {

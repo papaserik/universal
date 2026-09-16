@@ -4160,3 +4160,60 @@ body:has(.mobile-menu:not([hidden])) { overflow: hidden; }
   .review-form-row-v2 { grid-template-columns: 1fr; }
   .product-spec-row { font-size: 13.5px; }
 }
+
+/* Кнопка Избранное в шапке — SVG */
+.header-icon-btn svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+.header-icon-btn {
+  gap: 5px;
+}
+
+/* Бейдж избранного в мобильном меню */
+.mm-item-fav .mm-cart-count {
+  background: #ef4444 !important;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  font-size: 11px;
+  border-radius: 10px;
+}
+
+/* Заголовок страницы избранного */
+.favorites-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 12px 16px;
+  background: #fff;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+}
+.favorites-count { font-size: 14.5px; color: #4b5563; }
+.favorites-count strong { color: #111; font-size: 16px; }
+
+/* Бейдж в табе */
+.cabinet-tab-badge {
+  display: inline-block;
+  background: #ef4444;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 10px;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+.cabinet-tab.active .cabinet-tab-badge {
+  background: rgba(255,255,255,.9);
+  color: #0f172a;
+}
+
+/* Счётчик избранного — скрываем, если 0 */
+.header-icon-count[hidden],
+.mm-cart-count[hidden] {
+  display: none !important;
+}
