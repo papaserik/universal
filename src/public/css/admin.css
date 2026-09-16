@@ -383,3 +383,126 @@ form .btn,
   align-items: center;
   gap: 8px;
 }
+
+/* Drag&drop сортировка */
+.drag-handle-cell {
+  width: 36px;
+  padding: 8px 4px !important;
+  text-align: center;
+  user-select: none;
+}
+.drag-handle {
+  display: inline-block;
+  cursor: grab;
+  color: #cbd5e1;
+  font-size: 16px;
+  letter-spacing: -2px;
+  line-height: 1;
+  padding: 4px 6px;
+  border-radius: 4px;
+  transition: background .15s, color .15s;
+}
+.drag-handle:hover {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+.drag-handle:active {
+  cursor: grabbing;
+}
+tr[draggable="true"] {
+  opacity: .5;
+  background: #eff6ff;
+}
+tr.dragging {
+  opacity: .4;
+  background: #dbeafe;
+}
+.admin-table tbody tr[data-id] {
+  transition: background .15s;
+}
+.admin-table tbody tr[data-id]:hover {
+  background: #fafbfc;
+}
+
+.sort-saved {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: #16a34a;
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: 0 4px 16px rgba(22, 163, 74, .4);
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity .2s, transform .2s;
+  z-index: 999;
+  pointer-events: none;
+}
+.sort-saved.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Статусы заказов и шаблоны писем */
+.admin-form fieldset legend { font-weight: 600; padding: 0 6px; font-size: 13px; color: #374151; }
+.admin-form fieldset { border: 1px solid #e5e7eb; padding: 14px 16px; border-radius: 8px; margin-top: 8px; }
+
+/* Счётчики статусов на дашборде */
+.status-counters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+}
+.status-counter {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  text-decoration: none;
+  color: inherit;
+  transition: all .15s;
+}
+.status-counter:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 2px 8px rgba(0,0,0,.05);
+  transform: translateY(-1px);
+}
+.status-counter-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex: 0 0 auto;
+}
+.status-counter-body { display: flex; flex-direction: column; gap: 2px; }
+.status-counter-name { font-size: 12.5px; color: #6b7280; }
+.status-counter-count { font-size: 18px; font-weight: 700; color: #111; }
+
+.status-pill {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.notify-info {
+  margin-top: 12px;
+  padding: 10px 14px;
+  background: #eff6ff;
+  border-left: 3px solid #3b82f6;
+  border-radius: 6px;
+  font-size: 13.5px;
+  color: #1e40af;
+  line-height: 1.5;
+}

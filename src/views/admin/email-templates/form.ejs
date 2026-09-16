@@ -1,0 +1,49 @@
+<div class="admin-header">
+  <h1><%= item.name %></h1>
+  <div style="display:flex;gap:8px">
+    <form method="post" action="/admin/email-templates/<%= item.id %>/reset" onsubmit="return confirm('Сбросить шаблон к заводскому?')" style="display:inline">
+      <button class="btn btn-sm">↺ Сбросить к заводскому</button>
+    </form>
+    <a href="/admin/email-templates" class="btn btn-sm">← К списку</a>
+  </div>
+</div>
+
+<% if (saved) { %><div class="admin-alert admin-alert-ok">Сохранено</div><% } %>
+
+<p class="admin-hint">
+  Ключ шаблона: <code><%= item.key %></code>. <%= item.description || '' %>
+</p>
+
+<form method="post" action="/admin/email-templates/<%= item.id %>" class="admin-form">
+  <label>Тема письма <input type="text" name="subject" value="<%= item.subject %>" required></label>
+
+  <label>HTML-содержимое письма
+    <textarea name="body" id="tpl-editor" rows="20"><%= item.body %></textarea>
+  </label>
+
+  <label class="checkbox-label"><input type="checkbox" name="active" <%= item.active ? 'checked' : '' %>> Шаблон активен (используется при отправке)</label>
+
+  <div class="form-actions"><button class="btn">Сохранить</button></div>
+</form>
+
+<p style="font-size:13px;color:#6b7280;max-width:800px">
+  <strong>Доступные переменные:</strong>
+  <code>{{order.number}}</code>, <code>{{order.name}}</code>, <code>{{order.email}}</code>, <code>{{order.phone}}</code>,
+  <code>{{order.total}}</code>, <code>{{order.subtotal}}</code>, <code>{{order.delivery_fee}}</code>,
+  <code>{{order.items_table}}</code> (готовая HTML-таблица),
+  <code>{{order.address_row}}</code>, <code>{{order.payment_name}}</code>, <code>{{order.delivery_name}}</code>,
+  <code>{{order.date}}</code>, <code>{{site_name}}</code>, <code>{{site_email}}</code>
+</p>
+
+<script src="https://cdn.jsdelivr.net/npm/tinymce@7.4.1/tinymce.min.js" referrerpolicy="origin"></script>
+<script>
+tinymce.init({
+  selector: '#tpl-editor',
+  language: 'ru',
+  language_url: 'https://cdn.jsdelivr.net/npm/tinymce-i18n@24.10.22/langs7/ru.js',
+  height: 520, menubar: true,
+  plugins: 'lists link image table code fullscreen preview media codesample autoresize',
+  toolbar: 'undo redo | styles h1 h2 h3 | bold italic underline | bullist numlist | link image table | blockquote codesample | alignleft aligncenter alignright | code fullscreen preview',
+  branding: false, promotion: false, convert_urls: false
+});
+</script>

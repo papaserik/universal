@@ -3,11 +3,11 @@
   <a href="/admin/categories/new" class="btn">+ Добавить</a>
 </div>
 
-<table class="admin-table">
+<table class="admin-table" data-sortable="categories">
   <thead><tr><th>ID</th><th>Название</th><th>Slug</th><th>Товаров</th><th>Сортировка</th><th></th></tr></thead>
   <tbody>
     <% categories.forEach(c => { %>
-      <tr>
+      <tr data-id="<%= c.id %>">
         <td><%= c.id %></td>
         <td><%= c.name %></td>
         <td>/catalog/<%= c.slug %></td>

@@ -25,6 +25,8 @@ const sales      = require('../controllers/admin/sales');
 const abandoned  = require('../controllers/admin/abandoned');
 const marketplaces = require('../controllers/admin/marketplaces');
 const marketing  = require('../controllers/admin/marketing');
+const orderStatuses = require('../controllers/admin/orderStatuses');
+const emailTemplates = require('../controllers/admin/emailTemplates');
 const payment    = require('../controllers/admin/payment');
 const ordersExport = require('../controllers/admin/ordersExport');
 
@@ -147,5 +149,50 @@ router.post('/marketing/newsletters', marketing.newsletterSave);
 router.post('/marketing/newsletters/:id', marketing.newsletterSave);
 router.post('/marketing/newsletters/:id/delete', marketing.newsletterRemove);
 router.post('/marketing/newsletters/:id/send', marketing.newsletterSend);
+
+// ─── Drag&drop сортировка ───
+router.post('/reorder/:type', async (req, res) => {
+  try {
+    const { type } = req.params;
+    const { ids } = req.body;
+    if (!Array.isArray(ids)) return res.json({ ok: false, error: 'ids must be array' });
+
+    const { prisma } = require('../config/db');
+
+    const models = {
+      products: prisma.product,
+      categories: prisma.category,
+      blogCategories: prisma.blogCategory,
+      marketplaces: prisma.marketplace,
+      delivery: prisma.deliveryMethod,
+      payment: prisma.paymentMethod
+    };
+    const model = models[type];
+    if (!model) return res.json({ ok: false, error: 'unknown type' });
+
+    for (let i = 0; i < ids.length; i++) {
+      await model.update({
+        where: { id: Number(ids[i]) },
+        data: { sort: (i + 1) * 10 }
+      });
+    }
+    res.json({ ok: true, count: ids.length });
+  } catch (e) {
+    console.error('reorder error:', e);
+    res.json({ ok: false, error: e.message });
+  }
+});
+
+router.get('/order-statuses', orderStatuses.list);
+router.get('/order-statuses/new', orderStatuses.form);
+router.get('/order-statuses/:id', orderStatuses.form);
+router.post('/order-statuses', orderStatuses.save);
+router.post('/order-statuses/:id', orderStatuses.save);
+router.post('/order-statuses/:id/delete', orderStatuses.remove);
+
+router.get('/email-templates', emailTemplates.list);
+router.get('/email-templates/:id', emailTemplates.form);
+router.post('/email-templates/:id', emailTemplates.save);
+router.post('/email-templates/:id/reset', emailTemplates.reset);
 
 module.exports = router;

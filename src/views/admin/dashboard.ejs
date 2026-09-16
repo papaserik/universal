@@ -1,36 +1,74 @@
 <div class="admin-header">
   <h1>Дашборд</h1>
-  <p>Привет, <%= user.name || user.email %></p>
+  <div style="color:#6b7280;font-size:14px">Привет, <strong><%= user.name || user.email %></strong></div>
 </div>
 
 <div class="stat-grid">
   <div class="stat-card"><span class="stat-num"><%= stats.products %></span><span>Товаров</span></div>
-  <div class="stat-card"><span class="stat-num"><%= stats.orders %></span><span>Заказов</span></div>
-  <div class="stat-card"><span class="stat-num"><%= stats.newOrders %></span><span>Новых заказов</span></div>
+  <div class="stat-card"><span class="stat-num"><%= stats.orders %></span><span>Заказов всего</span></div>
+  <div class="stat-card" style="<%= stats.newOrders > 0 ? 'border-color:#3b82f6' : '' %>">
+    <span class="stat-num"><%= stats.newOrders %></span><span>Новых (требуют внимания)</span>
+  </div>
   <div class="stat-card"><span class="stat-num"><%= stats.users %></span><span>Пользователей</span></div>
   <div class="stat-card"><span class="stat-num"><%= stats.posts %></span><span>Постов</span></div>
   <div class="stat-card"><span class="stat-num"><%= stats.pages %></span><span>Страниц</span></div>
-  <div class="stat-card stat-card-wide"><span class="stat-num"><%= stats.revenue %> ₽</span><span>Выручка (без отменённых)</span></div>
+  <div class="stat-card stat-card-wide">
+    <span class="stat-num"><%= stats.revenue.toLocaleString('ru-RU') %> ₽</span>
+    <span>Выручка (без отменённых)</span>
+  </div>
   <a href="/admin/sales/abandoned" class="stat-card" style="text-decoration:none;color:inherit;<%= stats.abandonedCount > 0 ? 'border-color:#f59e0b' : '' %>">
     <span class="stat-num"><%= stats.abandonedCount %></span>
     <span>🛒 Брошенных корзин</span>
   </a>
 </div>
 
-<h2>Последние заказы</h2>
-<table class="admin-table">
-  <thead><tr><th>Номер</th><th>Клиент</th><th>Сумма</th><th>Статус</th><th>Дата</th><th></th></tr></thead>
-  <tbody>
-    <% recent.forEach(o => { %>
-      <tr>
-        <td><%= o.number %></td>
-        <td><%= o.name %><br><small><%= o.email %></small></td>
-        <td><%= o.total %> ₽</td>
-        <td><span class="badge badge-<%= o.status.toLowerCase() %>"><%= o.status %></span></td>
-        <td><%= o.createdAt.toLocaleString('ru-RU') %></td>
-        <td><a href="/admin/orders/<%= o.id %>" class="btn btn-sm">Открыть</a></td>
-      </tr>
+<section class="sales-block">
+  <h2>Заказы по статусам (30 дней)</h2>
+  <div class="status-counters">
+    <% statuses.forEach(s => { %>
+      <a href="/admin/orders?status=<%= s.code %>" class="status-counter">
+        <span class="status-counter-icon" style="background:<%= s.color %>1a;color:<%= s.color %>">
+          <%= s.icon || '●' %>
+        </span>
+        <span class="status-counter-body">
+          <span class="status-counter-name"><%= s.name %></span>
+          <span class="status-counter-count"><%= statusCounts[s.code] || 0 %></span>
+        </span>
+      </a>
     <% }) %>
-    <% if (!recent.length) { %><tr><td colspan="6">Пока нет заказов</td></tr><% } %>
-  </tbody>
-</table>
+  </div>
+</section>
+
+<section class="sales-block">
+  <h2>Последние 10 заказов</h2>
+  <table class="admin-table">
+    <thead><tr>
+      <th>Номер</th><th>Дата</th><th>Клиент</th>
+      <th>Позиций</th><th>Сумма</th><th>Статус</th><th></th>
+    </tr></thead>
+    <tbody>
+      <% recent.forEach(o => {
+           const st = statusMap[o.status] || { name: o.status, color: '#6b7280', icon: '' };
+      %>
+        <tr>
+          <td><strong><%= o.number %></strong></td>
+          <td><%= o.createdAt.toLocaleString('ru-RU') %></td>
+          <td><%= o.name %><br><small style="color:#6b7280"><%= o.email %></small></td>
+          <td><%= o.items.length %></td>
+          <td><strong><%= o.total.toLocaleString('ru-RU') %> ₽</strong></td>
+          <td>
+            <span class="status-pill" style="background:<%= st.color %>1a;color:<%= st.color %>">
+              <%= st.icon || '' %> <%= st.name %>
+            </span>
+          </td>
+          <td><a href="/admin/orders/<%= o.id %>" class="btn btn-sm">Открыть</a></td>
+        </tr>
+      <% }) %>
+      <% if (!recent.length) { %>
+        <tr><td colspan="7" style="text-align:center;color:#9ca3af;padding:30px">
+          Заказов пока нет. Сделайте первый заказ на сайте, чтобы увидеть статистику.
+        </td></tr>
+      <% } %>
+    </tbody>
+  </table>
+</section>

@@ -3,11 +3,11 @@
   <a href="/admin/blog-categories/new" class="btn">+ Добавить категорию</a>
 </div>
 <p class="admin-hint">Категории группируют посты блога. Можно создавать подкатегории, выбирая родителя.</p>
-<table class="admin-table">
+<table class="admin-table" data-sortable="blogCategories">
   <thead><tr><th>ID</th><th>Название</th><th>Slug</th><th>Постов</th><th>Сортировка</th><th></th></tr></thead>
   <tbody>
     <% cats.forEach(c => { %>
-      <tr>
+      <tr data-id="<%= c.id %>">
         <td><%= c.id %></td>
         <td><%= c.name %></td>
         <td>/blog/category/<%= c.slug %></td>

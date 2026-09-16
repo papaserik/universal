@@ -4,7 +4,7 @@
 </div>
 <p class="admin-hint">Созданные маркетплейсы появятся в форме товара — можно привязать ссылку на товар на этом маркетплейсе.</p>
 
-<table class="admin-table">
+<table class="admin-table" data-sortable="marketplaces">
   <thead><tr>
     <th style="width:60px">Иконка</th>
     <th>Название</th>
@@ -16,7 +16,7 @@
   </tr></thead>
   <tbody>
     <% items.forEach(m => { %>
-      <tr>
+      <tr data-id="<%= m.id %>">
         <td>
           <% if (m.iconUrl && (m.iconUrl.startsWith('/uploads/') || m.iconUrl.startsWith('http'))) { %>
             <img src="<%= m.iconUrl %>" alt="" style="width:36px;height:36px;object-fit:contain;border-radius:6px;background:#f3f4f6;padding:3px">

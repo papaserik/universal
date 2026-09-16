@@ -1,0 +1,15 @@
+<% if (typeof breadcrumbs !== 'undefined' && breadcrumbs && breadcrumbs.length > 1) { %>
+  <nav class="breadcrumbs" aria-label="Хлебные крошки">
+    <ol>
+      <% breadcrumbs.forEach((bc, i) => { %>
+        <li>
+          <% if (i < breadcrumbs.length - 1) { %>
+            <a href="<%= bc.url %>"><%= bc.name %></a>
+          <% } else { %>
+            <span aria-current="page"><%= bc.name %></span>
+          <% } %>
+        </li>
+      <% }) %>
+    </ol>
+  </nav>
+<% } %>

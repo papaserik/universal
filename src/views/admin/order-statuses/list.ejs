@@ -1,0 +1,59 @@
+<div class="admin-header">
+  <h1>🏷️ Статусы заказов</h1>
+  <a href="/admin/order-statuses/new" class="btn">+ Добавить статус</a>
+</div>
+<p class="admin-hint">
+  Статусы показываются в заказах и в админке. Для каждого можно включить автоматическое письмо клиенту при смене статуса.
+</p>
+
+<% if (req.query.error === 'default') { %>
+  <div class="admin-alert" style="background:#fee2e2;color:#991b1b">Нельзя удалить статус по умолчанию</div>
+<% } %>
+
+<table class="admin-table">
+  <thead><tr>
+    <th style="width:50px">Иконка</th>
+    <th>Название</th>
+    <th>Код</th>
+    <th>Заказов</th>
+    <th>Уведомления</th>
+    <th>Сортировка</th>
+    <th>Статус</th>
+    <th></th>
+  </tr></thead>
+  <tbody>
+    <% items.forEach(s => { %>
+      <tr data-id="<%= s.id %>">
+        <td style="font-size:22px"><%= s.icon || '—' %></td>
+        <td>
+          <span style="display:inline-block;padding:3px 10px;border-radius:12px;background:<%= s.color %>;color:#fff;font-size:12px;font-weight:600">
+            <%= s.name %>
+          </span>
+          <% if (s.isDefault) { %><small style="color:#6b7280"> · по умолчанию</small><% } %>
+          <% if (s.isFinal) { %><small style="color:#6b7280"> · финальный</small><% } %>
+        </td>
+        <td><code><%= s.code %></code></td>
+        <td><%= counts[s.code] || 0 %></td>
+        <td>
+          <% if (s.notifyClient) { %><span class="badge badge-paid">✉ Клиенту</span><% } %>
+          <% if (s.notifyAdmin) { %><span class="badge badge-new">📨 Админу</span><% } %>
+          <% if (!s.notifyClient && !s.notifyAdmin) { %><em style="color:#9ca3af">—</em><% } %>
+        </td>
+        <td><%= s.sort %></td>
+        <td>
+          <% if (s.active) { %><span class="badge badge-paid">✓ Активен</span>
+          <% } else { %><span class="badge">Отключён</span><% } %>
+        </td>
+        <td class="row-actions">
+          <a href="/admin/order-statuses/<%= s.id %>" class="btn btn-sm">Изменить</a>
+          <% if (!s.isDefault) { %>
+            <form method="post" action="/admin/order-statuses/<%= s.id %>/delete" onsubmit="return confirm('Удалить статус <%= s.name %>?')">
+              <button class="btn btn-sm btn-danger">×</button>
+            </form>
+          <% } %>
+        </td>
+      </tr>
+    <% }) %>
+    <% if (!items.length) { %><tr><td colspan="8">Статусов нет</td></tr><% } %>
+  </tbody>
+</table>

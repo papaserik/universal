@@ -1,13 +1,142 @@
-<h1>Заказ оформлен!</h1>
-<% if (order) { %>
-  <p>Номер заказа: <strong><%= order.number %></strong></p>
-  <p>Сумма: <strong><%= order.total %> ₽</strong></p>
-  <ul>
-    <% order.items.forEach(i => { %>
-      <li><%= i.name %> × <%= i.qty %> = <%= i.price * i.qty %> ₽</li>
-    <% }) %>
-  </ul>
-<% } else { %>
-  <p>Спасибо за заказ!</p>
-<% } %>
-<p><a href="/" class="btn">На главную</a></p>
+<div class="success-page">
+  <% if (!order) { %>
+    <div class="success-hero">
+      <div class="success-icon">✓</div>
+      <h1>Спасибо за заказ!</h1>
+      <p>Мы уже начали обработку. Скоро свяжемся с вами.</p>
+    </div>
+    <div class="success-actions">
+      <a href="/catalog" class="btn">В каталог</a>
+      <a href="/" class="btn btn-outline">На главную</a>
+    </div>
+  <% } else { %>
+    <div class="success-hero">
+      <div class="success-icon">✓</div>
+      <h1>Заказ оформлен!</h1>
+      <p class="success-subtitle">
+        Спасибо за покупку. Мы отправили детали заказа на <strong><%= order.email %></strong>.
+      </p>
+    </div>
+
+    <div class="success-card">
+      <div class="success-card-header">
+        <div>
+          <div class="success-label">Номер заказа</div>
+          <div class="success-number"><%= order.number %></div>
+        </div>
+        <div class="success-card-right">
+          <div class="success-label">Сумма</div>
+          <div class="success-total"><%= order.total.toLocaleString('ru-RU') %> ₽</div>
+        </div>
+      </div>
+
+      <ul class="success-items">
+        <% order.items.forEach(i => { %>
+          <li>
+            <span class="success-item-name"><%= i.name %></span>
+            <span class="success-item-qty">× <%= i.qty %></span>
+            <span class="success-item-price"><%= (i.price * i.qty).toLocaleString('ru-RU') %> ₽</span>
+          </li>
+        <% }) %>
+      </ul>
+
+      <div class="success-rows">
+        <div class="success-row">
+          <span>Товары</span>
+          <span><%= order.subtotal.toLocaleString('ru-RU') %> ₽</span>
+        </div>
+        <div class="success-row">
+          <span>Доставка</span>
+          <span><%= order.deliveryFee > 0 ? order.deliveryFee.toLocaleString('ru-RU') + ' ₽' : 'бесплатно' %></span>
+        </div>
+        <div class="success-row success-row-total">
+          <span>Итого</span>
+          <span><%= order.total.toLocaleString('ru-RU') %> ₽</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="success-info">
+      <div class="success-info-icon">📧</div>
+      <div>
+        <strong>Письмо с деталями и счётом уже у вас на почте.</strong>
+        <p>Мы свяжемся с вами для подтверждения заказа. Проверьте папку «Спам», если письмо не пришло в течение 5 минут.</p>
+      </div>
+    </div>
+
+    <% if (couponCode && couponPercent) { %>
+      <div class="success-coupon">
+        <div class="success-coupon-badge">
+          <span class="success-coupon-percent"><%= couponPercent %>%</span>
+          <span>скидка</span>
+        </div>
+        <div class="success-coupon-body">
+          <h3>Скидка на следующий заказ</h3>
+          <p>Используйте промокод при оформлении — скидка <strong><%= couponPercent %>%</strong> на весь заказ.</p>
+          <div class="success-coupon-code">
+            <code><%= couponCode %></code>
+            <button type="button" class="success-coupon-copy" data-code="<%= couponCode %>">Копировать</button>
+          </div>
+        </div>
+      </div>
+    <% } %>
+
+    <div class="success-actions">
+      <a href="/catalog" class="btn">Продолжить покупки</a>
+      <% if (user) { %>
+        <a href="/account/orders" class="btn btn-outline">Мои заказы</a>
+      <% } else { %>
+        <a href="/" class="btn btn-outline">На главную</a>
+      <% } %>
+    </div>
+
+    <% if (recommendations && recommendations.length) { %>
+      <section class="success-recommendations">
+        <h2>Посмотрите ещё</h2>
+        <div class="products-grid">
+          <% recommendations.forEach(p => { const imgs = JSON.parse(p.images || '[]'); %>
+            <article class="product-card">
+              <a href="/product/<%= p.slug %>" class="product-image">
+                <% if (imgs.length) { %>
+                  <img src="<%= imgs[0] %>" alt="<%= p.name %>" loading="lazy">
+                <% } else { %>
+                  <div class="no-image">Нет фото</div>
+                <% } %>
+                <% if (p.oldPrice && p.oldPrice > p.price) { %>
+                  <span class="badge-discount">-<%= Math.round((1 - p.price / p.oldPrice) * 100) %>%</span>
+                <% } %>
+              </a>
+              <a href="/product/<%= p.slug %>"><h3><%= p.name %></h3></a>
+              <div class="price-row">
+                <% if (p.oldPrice && p.oldPrice > p.price) { %>
+                  <s class="old"><%= p.oldPrice %> ₽</s>
+                  <span class="new"><%= p.price %> ₽</span>
+                <% } else { %>
+                  <span class="price"><%= p.price %> ₽</span>
+                <% } %>
+              </div>
+              <form class="add-form" data-product="<%= p.id %>">
+                <button type="submit" class="btn-card btn-card-primary">В корзину</button>
+              </form>
+            </article>
+          <% }) %>
+        </div>
+      </section>
+    <% } %>
+  <% } %>
+</div>
+
+<script>
+(function () {
+  document.querySelectorAll('.success-coupon-copy').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var code = btn.dataset.code;
+      navigator.clipboard.writeText(code).then(function () {
+        var old = btn.textContent;
+        btn.textContent = '✓ Скопировано';
+        setTimeout(function () { btn.textContent = old; }, 1500);
+      });
+    });
+  });
+})();
+</script>

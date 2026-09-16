@@ -40,11 +40,29 @@
   <form method="post" action="/admin/orders/<%= order.id %>/status" class="form-row">
     <label>Изменить статус
       <select name="status">
-        <% ['NEW','PAID','SHIPPED','DONE','CANCELLED'].forEach(s => { %>
-          <option value="<%= s %>" <%= order.status === s ? 'selected' : '' %>><%= s %></option>
+        <% statuses.forEach(s => { %>
+          <option value="<%= s.code %>" <%= order.status === s.code ? 'selected' : '' %>>
+            <%= s.icon ? s.icon + ' ' : '' %><%= s.name %>
+          </option>
         <% }) %>
       </select>
     </label>
     <div style="display:flex;align-items:flex-end"><button class="btn">Сохранить</button></div>
   </form>
+
+  <div class="notify-info">
+    <% if (currentStatus && currentStatus.notifyClient) { %>
+      ✉️ При смене статуса <strong><%= currentStatus.name %></strong> клиенту уйдёт письмо на <%= order.email %>
+    <% } %>
+    <% if (currentStatus && currentStatus.notifyAdmin) { %>
+      <br>📨 Админу уйдёт уведомление в Telegram/MAX
+    <% } %>
+    <% if (currentStatus && !currentStatus.notifyClient && !currentStatus.notifyAdmin) { %>
+      <span style="color:#9ca3af">Уведомления для этого статуса отключены</span>
+    <% } %>
+  </div>
+
+  <% if (changed) { %>
+    <div class="admin-alert admin-alert-ok">✓ Статус обновлён, уведомления отправлены</div>
+  <% } %>
 </div>

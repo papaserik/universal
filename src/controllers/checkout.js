@@ -110,5 +110,27 @@ exports.success = async (req, res) => {
     where: { number: req.query.order || '' },
     include: { items: true }
   });
-  res.render('shop/success', { order });
+
+  // Рекомендации: случайные товары, которых нет в заказе
+  let recommendations = [];
+  try {
+    const orderedIds = order ? order.items.map(i => i.productId).filter(Boolean) : [];
+    recommendations = await prisma.product.findMany({
+      where: {
+        published: true,
+        stock: { gt: 0 },
+        id: orderedIds.length ? { notIn: orderedIds } : undefined
+      },
+      include: { category: true },
+      take: 4,
+      orderBy: { createdAt: 'desc' }
+    });
+  } catch (e) { /* ignore */ }
+
+  // Промокод — из настроек (если есть)
+  const { getSetting } = require('../services/settings');
+  const couponCode = await getSetting('coupon_welcome', '');
+  const couponPercent = await getSetting('coupon_welcome_percent', '');
+
+  res.render('shop/success', { order, recommendations, couponCode, couponPercent });
 };

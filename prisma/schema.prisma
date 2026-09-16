@@ -300,3 +300,32 @@ model NewsletterLog {
   sentAt       DateTime @default(now())
   @@index([newsletterId])
 }
+
+model OrderStatus {
+  id            Int      @id @default(autoincrement())
+  code          String   @unique
+  name          String
+  color         String   @default("#6b7280")
+  icon          String?
+  sort          Int      @default(0)
+  active        Boolean  @default(true)
+  isDefault     Boolean  @default(false)
+  isFinal       Boolean  @default(false)
+  notifyClient  Boolean  @default(false)
+  notifyAdmin   Boolean  @default(false)
+  emailSubject  String?
+  emailBody     String?
+  createdAt     DateTime @default(now())
+}
+
+model EmailTemplate {
+  id          Int      @id @default(autoincrement())
+  key         String   @unique
+  name        String
+  description String?
+  subject     String
+  body        String
+  active      Boolean  @default(true)
+  updatedAt   DateTime @updatedAt
+  createdAt   DateTime @default(now())
+}

@@ -1,4 +1,5 @@
 const { prisma } = require('../config/db');
+const bc = require('../services/breadcrumbs');
 
 exports.list = async (req, res) => {
   const cats = await prisma.blogCategory.findMany({
@@ -11,7 +12,8 @@ exports.list = async (req, res) => {
     include: { blogCategory: true }
   });
   res.locals.setMeta({ title: 'Блог' });
-  res.render('blog/list', { posts, cats, currentCat: null });
+  const breadcrumbs = bc.crumbs([{ name: 'Блог', url: '/blog' }]);
+  res.render('blog/list', { posts, cats, currentCat: null, breadcrumbs });
 };
 
 exports.category = async (req, res) => {
@@ -42,7 +44,15 @@ exports.category = async (req, res) => {
   });
 
   res.locals.setMeta({ title: cat.name + ' — блог', description: 'Статьи в категории ' + cat.name });
-  res.render('blog/list', { posts, cats, currentCat: cat });
+
+  const breadcrumbs = bc.crumbs([
+    { name: 'Блог', url: '/blog' },
+    { name: cat.name, url: '/blog/category/' + cat.slug }
+  ]);
+  const baseUrl = process.env.SITE_URL || (req.protocol + '://' + req.get('host'));
+  res.locals.addJsonLd(bc.jsonLd(breadcrumbs, baseUrl));
+
+  res.render('blog/list', { posts, cats, currentCat: cat, breadcrumbs });
 };
 
 exports.post = async (req, res) => {
@@ -57,5 +67,10 @@ exports.post = async (req, res) => {
     '@context': 'https://schema.org', '@type': 'Article',
     headline: post.title, datePublished: post.createdAt.toISOString()
   });
-  res.render('blog/post', { post });
+
+  const breadcrumbs = await bc.forBlogPost(post);
+  const baseUrl = process.env.SITE_URL || (req.protocol + '://' + req.get('host'));
+  res.locals.addJsonLd(bc.jsonLd(breadcrumbs, baseUrl));
+
+  res.render('blog/post', { post, breadcrumbs });
 };

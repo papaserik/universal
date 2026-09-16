@@ -8,14 +8,14 @@
   <button class="btn btn-sm">Найти</button>
 </form>
 
-<table class="admin-table">
+<table class="admin-table" data-sortable="products">
   <thead><tr>
     <th>ID</th><th>Название</th><th>SKU</th><th>Категория</th>
     <th>Цена</th><th>Остаток</th><th>Статус</th><th></th>
   </tr></thead>
   <tbody>
     <% products.forEach(p => { %>
-      <tr>
+      <tr data-id="<%= p.id %>">
         <td><%= p.id %></td>
         <td><%= p.name %><br><small>/product/<%= p.slug %></small></td>
         <td><%= p.sku || '—' %></td>

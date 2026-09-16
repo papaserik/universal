@@ -1,4 +1,5 @@
 const { prisma } = require('../config/db');
+const bc = require('../services/breadcrumbs');
 
 async function getMarketplaceBySlug(slug) {
   if (!slug) return null;
@@ -39,7 +40,15 @@ exports.catalog = async (req, res) => {
     prisma.category.findMany({ orderBy: { sort: 'asc' } })
   ]);
   res.locals.setMeta({ title: 'Каталог' });
-  res.render('shop/catalog', { products, options, categories });
+
+  const breadcrumbs = [
+    { name: 'Главная', url: '/' },
+    { name: 'Каталог', url: '/catalog' }
+  ];
+  const baseUrl = process.env.SITE_URL || (req.protocol + '://' + req.get('host'));
+  res.locals.addJsonLd(bc.jsonLd(breadcrumbs, baseUrl));
+
+  res.render('shop/catalog', { products, options, categories, breadcrumbs });
 };
 
 exports.category = async (req, res) => {
@@ -77,7 +86,13 @@ exports.product = async (req, res) => {
     where: { categoryId: p.categoryId, id: { not: p.id }, published: true }, take: 4
   });
   const marketplace = p.marketplace ? await getMarketplaceBySlug(p.marketplace) : null;
-  res.render('shop/product', { p, related, marketplace });
+
+  // Хлебные крошки + микроразметка
+  const breadcrumbs = await bc.forProduct(p);
+  const baseUrl = process.env.SITE_URL || (req.protocol + '://' + req.get('host'));
+  res.locals.addJsonLd(bc.jsonLd(breadcrumbs, baseUrl));
+
+  res.render('shop/product', { p, related, marketplace, breadcrumbs });
 };
 
 exports.sitemap = async (req, res) => {

@@ -1,0 +1,35 @@
+<div class="admin-header">
+  <h1>✉️ Шаблоны писем</h1>
+</div>
+<p class="admin-hint">
+  Шаблоны писем, которые отправляются клиентам и админам. Можно редактировать текст, тему и переменные.
+</p>
+
+<table class="admin-table">
+  <thead><tr>
+    <th>Ключ</th>
+    <th>Название</th>
+    <th>Описание</th>
+    <th>Обновлён</th>
+    <th>Статус</th>
+    <th></th>
+  </tr></thead>
+  <tbody>
+    <% items.forEach(t => { %>
+      <tr>
+        <td><code><%= t.key %></code></td>
+        <td><%= t.name %></td>
+        <td><small style="color:#6b7280"><%= t.description || '—' %></small></td>
+        <td><%= t.updatedAt.toLocaleDateString('ru-RU') %></td>
+        <td>
+          <% if (t.active) { %><span class="badge badge-paid">✓ Активен</span>
+          <% } else { %><span class="badge">Отключён</span><% } %>
+        </td>
+        <td class="row-actions">
+          <a href="/admin/email-templates/<%= t.id %>" class="btn btn-sm">Изменить</a>
+        </td>
+      </tr>
+    <% }) %>
+    <% if (!items.length) { %><tr><td colspan="6">Шаблонов нет</td></tr><% } %>
+  </tbody>
+</table>

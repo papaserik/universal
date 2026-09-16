@@ -1,3 +1,4 @@
+<%- include('../partials/breadcrumbs') %>
 <h1><%= cat.name %></h1>
 <div class="products-grid">
   <% cat.products.forEach(p => { const imgs = JSON.parse(p.images || '[]'); %>

@@ -3,12 +3,12 @@
   <a href="/admin/payment/new" class="btn">+ Добавить способ</a>
 </div>
 <p class="admin-hint">Активные способы показываются покупателю при оформлении заказа.</p>
-<table class="admin-table">
+<table class="admin-table" data-sortable="payment">
   <thead><tr><th style="width:40px"></th><th style="width:50px">Сорт.</th><th>Название</th><th>Тип</th><th>Код</th><th>Статус</th><th></th></tr></thead>
   <tbody>
   <% methods.forEach(m => { %>
-    <tr>
-      <td style="font-size:20px"><%= m.icon || '—' %></td>
+    <tr data-id="<%= m.id %>">
+        <td style="font-size:20px"><%= m.icon || '—' %></td>
       <td><%= m.sort %></td>
       <td><%= m.name %><% if (m.description) { %><br><small style="color:#6b7280"><%= m.description %></small><% } %></td>
       <td><span class="badge"><%= m.type %></span></td>

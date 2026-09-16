@@ -1,0 +1,65 @@
+<div class="admin-header">
+  <h1><%= item ? 'Изменить статус' : 'Новый статус' %></h1>
+  <a href="/admin/order-statuses" class="btn btn-sm">← К списку</a>
+</div>
+
+<form method="post" action="<%= item ? '/admin/order-statuses/' + item.id : '/admin/order-statuses' %>" class="admin-form">
+  <div class="form-row">
+    <label>Название для покупателя * <input type="text" name="name" value="<%= item ? item.name : '' %>" placeholder="Оплачен" required></label>
+    <label>Код (латиница) * <input type="text" name="code" value="<%= item ? item.code : '' %>" placeholder="PAID" required></label>
+  </div>
+
+  <div class="form-row">
+    <label>Иконка (эмодзи) <input type="text" name="icon" maxlength="4" value="<%= item && item.icon ? item.icon : '' %>" placeholder="💰"></label>
+    <label>Цвет
+      <div style="display:flex;gap:8px;align-items:center">
+        <input type="color" name="color" value="<%= item ? item.color : '#6b7280' %>" style="width:60px;height:38px;padding:2px">
+      </div>
+    </label>
+    <label>Сортировка <input type="number" name="sort" value="<%= item ? item.sort : 0 %>"></label>
+  </div>
+
+  <div class="form-row">
+    <label class="checkbox-label"><input type="checkbox" name="active" <%= !item || item.active ? 'checked' : '' %>> Активен</label>
+    <label class="checkbox-label"><input type="checkbox" name="isDefault" <%= item && item.isDefault ? 'checked' : '' %>> По умолчанию (присваивается новому заказу)</label>
+    <label class="checkbox-label"><input type="checkbox" name="isFinal" <%= item && item.isFinal ? 'checked' : '' %>> Финальный (завершающий)</label>
+  </div>
+
+  <fieldset class="full">
+    <legend>Уведомления при смене на этот статус</legend>
+
+    <div class="form-row">
+      <label class="checkbox-label"><input type="checkbox" name="notifyClient" <%= item && item.notifyClient ? 'checked' : '' %>> ✉ Уведомлять клиента по email</label>
+      <label class="checkbox-label"><input type="checkbox" name="notifyAdmin" <%= item && item.notifyAdmin ? 'checked' : '' %>> 📨 Уведомлять админа (Telegram, WhatsApp, MAX, email)</label>
+    </div>
+
+    <p style="font-size:13px;color:#6b7280;margin:14px 0 6px">
+      Доступные переменные: <code>{{order.number}}</code>, <code>{{order.name}}</code>, <code>{{order.email}}</code>,
+      <code>{{order.total}}</code>, <code>{{order.items_table}}</code>, <code>{{order.subtotal}}</code>,
+      <code>{{order.delivery_fee}}</code>, <code>{{order.payment_name}}</code>, <code>{{order.delivery_name}}</code>,
+      <code>{{order.delivery_info}}</code>, <code>{{order.address_row}}</code>,
+      <code>{{site_name}}</code>, <code>{{site_email}}</code>
+    </p>
+
+    <label>Тема письма <input type="text" name="emailSubject" value="<%= item && item.emailSubject ? item.emailSubject : '' %>" placeholder="Оплата по заказу {{order.number}} получена"></label>
+
+    <label>Содержимое письма (HTML)
+      <textarea name="emailBody" id="status-editor" rows="14"><%= item && item.emailBody ? item.emailBody : '' %></textarea>
+    </label>
+  </fieldset>
+
+  <div class="form-actions"><button class="btn">Сохранить</button></div>
+</form>
+
+<script src="https://cdn.jsdelivr.net/npm/tinymce@7.4.1/tinymce.min.js" referrerpolicy="origin"></script>
+<script>
+tinymce.init({
+  selector: '#status-editor',
+  language: 'ru',
+  language_url: 'https://cdn.jsdelivr.net/npm/tinymce-i18n@24.10.22/langs7/ru.js',
+  height: 400, menubar: false,
+  plugins: 'lists link code preview autoresize',
+  toolbar: 'undo redo | h2 h3 | bold italic underline | bullist numlist | link | code preview',
+  branding: false, promotion: false, convert_urls: false
+});
+</script>
