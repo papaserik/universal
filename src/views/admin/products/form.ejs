@@ -3,7 +3,7 @@
   <a href="/admin/products" class="btn btn-sm">← К списку</a>
 </div>
 
-<form method="post" action="<%= product ? '/admin/products/' + product.id : '/admin/products' %>" class="admin-form">
+<form method="post" action="<%= product ? '/admin/products/' + product.id : '/admin/products' %>" class="admin-form" id="product-form">
   <div class="form-row">
     <label class="full">Название <input type="text" name="name" value="<%= product ? product.name : '' %>" required></label>
   </div>
@@ -42,9 +42,28 @@
     <textarea name="description" rows="6"><%= product ? product.description : '' %></textarea>
   </label>
 
-  <label class="full">Изображения (по одному URL на строку)
-    <textarea name="images" rows="3" placeholder="/uploads/..."><%= product ? JSON.parse(product.images || '[]').join('\n') : '' %></textarea>
-  </label>
+  <fieldset class="full">
+    <legend>Изображения</legend>
+    <div class="upload-zone" id="upload-zone">
+      <p>Перетащите файлы сюда или <label class="upload-label">выберите<input type="file" id="file-input" multiple accept="image/*" hidden></label></p>
+    </div>
+
+    <label>URL картинок (по одному на строку)
+      <textarea name="images" id="images-textarea" rows="4" placeholder="/uploads/..."><%= product ? JSON.parse(product.images || '[]').join('\n') : '' %></textarea>
+    </label>
+
+    <details style="margin-top:8px">
+      <summary>Библиотека загруженных файлов (<%= library.length %>)</summary>
+      <div class="image-library">
+        <% library.forEach(url => { %>
+          <img src="<%= url %>" data-url="<%= url %>" title="Клик — добавить в товар">
+        <% }) %>
+        <% if (!library.length) { %><em>Файлов пока нет</em><% } %>
+      </div>
+    </details>
+
+    <div class="image-preview" id="preview"></div>
+  </fieldset>
 
   <% if (options.length) { %>
     <fieldset class="full">
@@ -73,5 +92,54 @@
 
   <div class="form-actions">
     <button type="submit" class="btn">Сохранить</button>
+    <% if (product) { %><a href="/product/<%= product.slug %>" target="_blank" class="btn btn-sm">↗ Открыть на сайте</a><% } %>
   </div>
 </form>
+
+<script>
+(function(){
+  const zone = document.getElementById('upload-zone');
+  const input = document.getElementById('file-input');
+  const textarea = document.getElementById('images-textarea');
+  const preview = document.getElementById('preview');
+
+  async function uploadFiles(files) {
+    if (!files.length) return;
+    const fd = new FormData();
+    for (const f of files) fd.append('files', f);
+    const res = await fetch('/admin/products/upload-images', { method: 'POST', body: fd });
+    const data = await res.json();
+    if (!data.ok) return alert('Ошибка загрузки');
+    const existing = textarea.value.split('\n').map(s => s.trim()).filter(Boolean);
+    textarea.value = existing.concat(data.urls).join('\n');
+    renderPreview();
+  }
+
+  function renderPreview() {
+    const urls = textarea.value.split('\n').map(s => s.trim()).filter(Boolean);
+    preview.innerHTML = urls.map(u => '<img src="' + u + '">').join('');
+  }
+
+  input.addEventListener('change', e => uploadFiles(e.target.files));
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('drag'));
+  zone.addEventListener('drop', e => {
+    e.preventDefault(); zone.classList.remove('drag');
+    uploadFiles(e.dataTransfer.files);
+  });
+  textarea.addEventListener('input', renderPreview);
+
+  document.querySelectorAll('.image-library img').forEach(img => {
+    img.addEventListener('click', () => {
+      const url = img.dataset.url;
+      const existing = textarea.value.split('\n').map(s => s.trim()).filter(Boolean);
+      if (!existing.includes(url)) {
+        textarea.value = existing.concat(url).join('\n');
+        renderPreview();
+      }
+    });
+  });
+
+  renderPreview();
+})();
+</script>

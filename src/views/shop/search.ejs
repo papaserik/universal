@@ -1,0 +1,73 @@
+<h1>Поиск</h1>
+
+<form method="get" action="/search" class="search-form">
+  <input type="text" name="q" value="<%= q %>" placeholder="Что искать?" autofocus>
+  <button type="submit" class="btn">Найти</button>
+</form>
+
+<% if (q) { %>
+  <p class="search-summary">
+    <% const total = products.length + categories.length + posts.length; %>
+    <% if (total) { %>
+      Найдено: <strong><%= total %></strong> результатов
+    <% } else { %>
+      Ничего не найдено по запросу «<%= q %>»
+    <% } %>
+  </p>
+
+  <% if (categories.length) { %>
+    <section>
+      <h2>Категории</h2>
+      <ul class="search-list">
+        <% categories.forEach(c => { %>
+          <li><a href="/catalog/<%= c.slug %>"><%= c.name %></a></li>
+        <% }) %>
+      </ul>
+    </section>
+  <% } %>
+
+  <% if (products.length) { %>
+    <section>
+      <h2>Товары (<%= products.length %>)</h2>
+      <div class="products-grid">
+        <% products.forEach(p => { const imgs = JSON.parse(p.images || '[]'); %>
+          <article class="product-card">
+            <a href="/product/<%= p.slug %>" class="product-image">
+              <% if (imgs.length) { %>
+                <img src="<%= imgs[0] %>" alt="<%= p.name %>" loading="lazy">
+              <% } else { %>
+                <div class="no-image">Нет фото</div>
+              <% } %>
+            </a>
+            <a href="/product/<%= p.slug %>"><h3><%= p.name %></h3></a>
+            <div class="price-row">
+              <% if (p.oldPrice && p.oldPrice > p.price) { %>
+                <s class="old"><%= p.oldPrice %> ₽</s>
+                <span class="new"><%= p.price %> ₽</span>
+              <% } else { %>
+                <span class="price"><%= p.price %> ₽</span>
+              <% } %>
+            </div>
+            <form class="add-form" data-product="<%= p.id %>">
+              <button type="submit" class="btn btn-sm">В корзину</button>
+            </form>
+          </article>
+        <% }) %>
+      </div>
+    </section>
+  <% } %>
+
+  <% if (posts.length) { %>
+    <section>
+      <h2>Из блога</h2>
+      <ul class="posts-list">
+        <% posts.forEach(post => { %>
+          <li>
+            <a href="/blog/<%= post.slug %>"><h3><%= post.title %></h3></a>
+            <% if (post.excerpt) { %><p><%= post.excerpt %></p><% } %>
+          </li>
+        <% }) %>
+      </ul>
+    </section>
+  <% } %>
+<% } %>

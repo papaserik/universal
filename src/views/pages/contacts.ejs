@@ -1,0 +1,37 @@
+<h1>Контакты</h1>
+
+<div class="contacts-layout">
+  <div class="contacts-info">
+    <p><strong>Телефон:</strong> <a href="tel:<%= settings.phone %>"><%= settings.phone %></a></p>
+    <p><strong>Email:</strong> <a href="mailto:<%= settings.email %>"><%= settings.email %></a></p>
+    <p><strong>Адрес:</strong> <%= settings.address %></p>
+  </div>
+
+  <div class="contacts-form-wrap">
+    <% if (sent) { %>
+      <div class="admin-alert admin-alert-ok">Спасибо! Мы свяжемся с вами в ближайшее время.</div>
+    <% } %>
+    <% if (error) { %>
+      <div class="error"><%= error %></div>
+    <% } %>
+
+    <form method="post" action="/contacts" class="checkout-form">
+      <label>Имя * <input type="text" name="name" required></label>
+      <label>Email * <input type="email" name="email" required></label>
+      <label>Телефон <input type="tel" name="phone"></label>
+      <label>Сообщение *
+        <textarea name="message" rows="6" required></textarea>
+      </label>
+
+      <!-- honeypot -->
+      <input type="text" name="website" style="position:absolute;left:-9999px" tabindex="-1" autocomplete="off">
+
+      <label class="checkbox-label" style="flex-direction:row!important;align-items:center;gap:8px">
+        <input type="checkbox" name="agree" required>
+        <span>Согласен на обработку персональных данных</span>
+      </label>
+
+      <button type="submit" class="btn">Отправить</button>
+    </form>
+  </div>
+</div>

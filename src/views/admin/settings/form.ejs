@@ -3,29 +3,67 @@
 </div>
 
 <form method="post" action="/admin/settings" class="admin-form" style="max-width:760px">
-  <% groups.forEach(g => { %>
-    <fieldset>
-      <legend><%= g.title %></legend>
-      <% g.fields.forEach(f => { %>
-        <label style="margin-top:10px">
-          <%= f.label %>
-          <% if (f.type === 'textarea') { %>
-            <textarea name="<%= f.key %>" rows="4"><%= values[f.key] || '' %></textarea>
-          <% } else if (f.type === 'theme') { %>
-            <select name="<%= f.key %>">
-              <% themes.forEach(t => { %>
-                <option value="<%= t %>" <%= values[f.key] === t ? 'selected' : '' %>><%= t %></option>
-              <% }) %>
-            </select>
-          <% } else if (f.type === 'password') { %>
-            <input type="password" name="<%= f.key %>" value="<%= values[f.key] || '' %>">
-          <% } else { %>
-            <input type="text" name="<%= f.key %>" value="<%= values[f.key] || '' %>">
-          <% } %>
-        </label>
-      <% }) %>
-    </fieldset>
-  <% }) %>
+  <fieldset>
+    <legend>Общие</legend>
+    <label>Название сайта <input type="text" name="site_name" value="<%= values.site_name || '' %>"></label>
+    <label>Телефон <input type="text" name="phone" value="<%= values.phone || '' %>"></label>
+    <label>Email <input type="text" name="email" value="<%= values.email || '' %>"></label>
+    <label>Адрес <input type="text" name="address" value="<%= values.address || '' %>"></label>
+    <label>Email для уведомлений о заказах
+      <input type="text" name="order_notify_email" value="<%= values.order_notify_email || '' %>" placeholder="пусто — использовать общий Email">
+    </label>
+  </fieldset>
+
+  <fieldset>
+    <legend>Оформление</legend>
+    <label>Активная тема
+      <select name="active_theme">
+        <% themes.forEach(t => { %>
+          <option value="<%= t %>" <%= values.active_theme === t ? 'selected' : '' %>><%= t %></option>
+        <% }) %>
+      </select>
+    </label>
+  </fieldset>
+
+  <fieldset>
+    <legend>Доставка</legend>
+    <label>Фиксированная стоимость доставки, ₽ <input type="text" name="delivery_flat_cost" value="<%= values.delivery_flat_cost || '' %>"></label>
+    <label>Бесплатная доставка от, ₽ <input type="text" name="delivery_free_from" value="<%= values.delivery_free_from || '' %>"></label>
+    <label>Цена за кг, ₽ <input type="text" name="delivery_per_kg" value="<%= values.delivery_per_kg || '' %>"></label>
+  </fieldset>
+
+  <fieldset>
+    <legend>Почта (SMTP)</legend>
+    <label>SMTP-хост <input type="text" name="smtp_host" value="<%= values.smtp_host || '' %>" placeholder="smtp.yandex.ru"></label>
+    <label>SMTP-порт <input type="text" name="smtp_port" value="<%= values.smtp_port || '587' %>"></label>
+    <label>SMTP-логин <input type="text" name="smtp_user" value="<%= values.smtp_user || '' %>"></label>
+    <label>SMTP-пароль <input type="password" name="smtp_pass" value="<%= values.smtp_pass || '' %>"></label>
+    <label>Адрес отправителя <input type="text" name="smtp_from" value="<%= values.smtp_from || '' %>" placeholder="Магазин &lt;shop@example.com&gt;"></label>
+    <label class="checkbox-label"><input type="checkbox" name="smtp_secure" value="1" <%= values.smtp_secure === '1' ? 'checked' : '' %>> SSL (true для порта 465)</label>
+  </fieldset>
+
+  <fieldset>
+    <legend>Оплата — Stripe</legend>
+    <label>Stripe Secret Key <input type="password" name="stripe_secret" value="<%= values.stripe_secret || '' %>"></label>
+  </fieldset>
+
+  <fieldset>
+    <legend>Оплата — ЮKassa</legend>
+    <label>Shop ID <input type="text" name="yookassa_shop_id" value="<%= values.yookassa_shop_id || '' %>"></label>
+    <label>Secret Key <input type="password" name="yookassa_secret" value="<%= values.yookassa_secret || '' %>"></label>
+  </fieldset>
+
+  <fieldset>
+    <legend>Аналитика и счётчики</legend>
+    <label>Google Analytics ID (G-XXXX) <input type="text" name="ga_id" value="<%= values.ga_id || '' %>"></label>
+    <label>Яндекс.Метрика ID <input type="text" name="metrika_id" value="<%= values.metrika_id || '' %>"></label>
+  </fieldset>
+
+  <fieldset>
+    <legend>Произвольный код на всех страницах</legend>
+    <label>HTML в &lt;head&gt; <textarea name="custom_head" rows="4"><%= values.custom_head || '' %></textarea></label>
+    <label>HTML перед &lt;/body&gt; <textarea name="custom_body" rows="4"><%= values.custom_body || '' %></textarea></label>
+  </fieldset>
 
   <div class="form-actions"><button class="btn">Сохранить всё</button></div>
 </form>

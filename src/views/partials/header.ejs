@@ -1,8 +1,15 @@
 <header class="site-header"><div class="container header-inner">
   <a href="/" class="logo"><%= settings.siteName %></a>
+
+  <form class="header-search" method="get" action="/search">
+    <input type="text" name="q" placeholder="Поиск товаров…" value="<%= (req.query && req.query.q) || '' %>">
+    <button type="submit" aria-label="Найти">🔍</button>
+  </form>
+
   <nav class="nav">
     <a href="/catalog">Каталог</a>
     <a href="/blog">Блог</a>
+    <a href="/contacts">Контакты</a>
     <a href="/cart">Корзина (<%= cartCount %>)</a>
     <% if (user) { %>
       <% if (user.role !== 'USER') { %><a href="/admin">Админка</a><% } %>

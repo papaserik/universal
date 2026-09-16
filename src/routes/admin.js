@@ -19,6 +19,7 @@ const blog       = require('../controllers/admin/blog');
 const pages      = require('../controllers/admin/pages');
 const settings   = require('../controllers/admin/settings');
 const importer   = require('../controllers/admin/import');
+const ordersExport = require('../controllers/admin/ordersExport');
 
 router.get('/', dashboard.index);
 
@@ -44,6 +45,8 @@ router.post('/products/:id/delete', products.remove);
 router.post('/products/upload-images', imageUpload.array('files', 10), products.uploadImages);
 
 router.get('/orders', orders.list);
+router.get('/orders/export/csv', ordersExport.export);
+
 router.get('/orders/:id', orders.view);
 router.post('/orders/:id/status', orders.updateStatus);
 

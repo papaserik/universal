@@ -1,40 +1,86 @@
+<% const imgs = JSON.parse(p.images || '[]'); %>
 <article class="product-page">
-  <h1><%= p.name %></h1>
-  <div class="price-row price-row-lg">
-    <% if (p.oldPrice && p.oldPrice > p.price) { %>
-      <s class="old"><%= p.oldPrice %> ₽</s>
-      <span class="new"><%= p.price %> ₽</span>
-      <span class="discount">-<%= Math.round((1 - p.price / p.oldPrice) * 100) %>%</span>
-    <% } else { %>
-      <span class="price"><%= p.price %> ₽</span>
-    <% } %>
-  </div>
-
-  <% if (p.options && p.options.length) { %>
-    <div class="product-options">
-      <% const grouped = {}; p.options.forEach(o => { (grouped[o.option.name] = grouped[o.option.name] || []).push(o.value); }); %>
-      <% Object.entries(grouped).forEach(([name, values]) => { %>
-        <div class="opt-group">
-          <strong><%= name %>:</strong>
-          <% values.forEach(v => { %><span class="opt"><%= v.value %></span><% }) %>
+  <div class="product-layout">
+    <div class="product-gallery">
+      <% if (imgs.length) { %>
+        <div class="main-image" id="main-image">
+          <img src="<%= imgs[0] %>" alt="<%= p.name %>">
         </div>
-      <% }) %>
+        <% if (imgs.length > 1) { %>
+          <div class="thumbs">
+            <% imgs.forEach((url, i) => { %>
+              <img src="<%= url %>" alt="<%= p.name %> <%= i + 1 %>"
+                   data-src="<%= url %>" class="<%= i === 0 ? 'active' : '' %>">
+            <% }) %>
+          </div>
+        <% } %>
+      <% } else { %>
+        <div class="main-image no-image">Нет фото</div>
+      <% } %>
     </div>
-  <% } %>
 
-  <div class="description"><%- p.description || '' %></div>
+    <div class="product-info">
+      <h1><%= p.name %></h1>
 
-  <form class="add-form" data-product="<%= p.id %>">
-    <input type="number" name="qty" value="1" min="1" class="qty">
-    <button type="submit" class="btn">Добавить в корзину</button>
-  </form>
+      <div class="price-row price-row-lg">
+        <% if (p.oldPrice && p.oldPrice > p.price) { %>
+          <s class="old"><%= p.oldPrice %> ₽</s>
+          <span class="new"><%= p.price %> ₽</span>
+          <span class="discount">-<%= Math.round((1 - p.price / p.oldPrice) * 100) %>%</span>
+        <% } else { %>
+          <span class="price"><%= p.price %> ₽</span>
+        <% } %>
+      </div>
+
+      <div class="stock-info">
+        <% if (p.stock > 0) { %>
+          <span class="in-stock">✓ В наличии (<%= p.stock %> шт.)</span>
+        <% } else { %>
+          <span class="out-stock">Нет в наличии</span>
+        <% } %>
+      </div>
+
+      <% if (p.options && p.options.length) { %>
+        <div class="product-options">
+          <% const grouped = {}; p.options.forEach(o => { (grouped[o.option.name] = grouped[o.option.name] || []).push(o.value); }); %>
+          <% Object.entries(grouped).forEach(([name, values]) => { %>
+            <div class="opt-group">
+              <strong><%= name %>:</strong>
+              <% values.forEach(v => { %><span class="opt"><%= v.value %></span><% }) %>
+            </div>
+          <% }) %>
+        </div>
+      <% } %>
+
+      <form class="add-form add-form-lg" data-product="<%= p.id %>">
+        <input type="number" name="qty" value="1" min="1" class="qty" <%= p.stock === 0 ? 'disabled' : '' %>>
+        <button type="submit" class="btn" <%= p.stock === 0 ? 'disabled' : '' %>>
+          <%= p.stock === 0 ? 'Нет в наличии' : 'Добавить в корзину' %>
+        </button>
+      </form>
+
+      <% if (p.description) { %>
+        <div class="description">
+          <h3>Описание</h3>
+          <%- p.description %>
+        </div>
+      <% } %>
+    </div>
+  </div>
 
   <% if (related.length) { %>
     <section>
       <h2>Похожие товары</h2>
       <div class="products-grid">
-        <% related.forEach(r => { %>
+        <% related.forEach(r => { const rImgs = JSON.parse(r.images || '[]'); %>
           <article class="product-card">
+            <a href="/product/<%= r.slug %>" class="product-image">
+              <% if (rImgs.length) { %>
+                <img src="<%= rImgs[0] %>" alt="<%= r.name %>" loading="lazy">
+              <% } else { %>
+                <div class="no-image">Нет фото</div>
+              <% } %>
+            </a>
             <a href="/product/<%= r.slug %>"><h3><%= r.name %></h3></a>
             <span class="price"><%= r.price %> ₽</span>
           </article>
@@ -43,3 +89,17 @@
     </section>
   <% } %>
 </article>
+
+<script>
+(function(){
+  const main = document.querySelector('#main-image img');
+  if (!main) return;
+  document.querySelectorAll('.thumbs img').forEach(t => {
+    t.addEventListener('click', () => {
+      main.src = t.dataset.src;
+      document.querySelectorAll('.thumbs img').forEach(x => x.classList.remove('active'));
+      t.classList.add('active');
+    });
+  });
+})();
+</script>

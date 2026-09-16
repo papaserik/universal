@@ -1,4 +1,7 @@
-<div class="admin-header"><h1>Заказы</h1></div>
+<div class="admin-header">
+  <h1>Заказы</h1>
+  <a href="/admin/orders/export/csv<%= status ? '?status=' + status : '' %>" class="btn btn-sm">📥 Экспорт CSV</a>
+</div>
 
 <form method="get" class="admin-search">
   <select name="status" onchange="this.form.submit()" style="padding:8px 12px;border:1px solid #d1d5db;border-radius:6px">

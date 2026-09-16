@@ -1,0 +1,23 @@
+<header class="c-header">
+  <div class="container c-header-inner">
+    <a href="/" class="c-logo"><%= settings.siteName %></a>
+
+    <form class="c-search" method="get" action="/search">
+      <input type="text" name="q" placeholder="Поиск…" value="<%= (req.query && req.query.q) || '' %>">
+      <button type="submit" aria-label="Найти">→</button>
+    </form>
+
+    <nav class="c-nav">
+      <a href="/catalog">Каталог</a>
+      <a href="/blog">Блог</a>
+      <a href="/contacts">Контакты</a>
+      <a href="/cart" class="c-cart">🛒 <span><%= cartCount %></span></a>
+      <% if (user) { %>
+        <% if (user.role !== 'USER') { %><a href="/admin">Админка</a><% } %>
+        <a href="/logout">Выйти</a>
+      <% } else { %>
+        <a href="/login">Войти</a>
+      <% } %>
+    </nav>
+  </div>
+</header>

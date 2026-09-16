@@ -41,6 +41,11 @@ exports.submit = async (req, res) => {
     include: { items: true }
   });
   const pay = await payment.createPayment(order, order.payment);
+  try {
+    const mailer = require('../services/orderMailer');
+    await mailer.notifyAdmin(order);
+    await mailer.notifyClient(order);
+  } catch (e) { console.error('mail error', e); }
   req.session.cart = [];
   res.redirect(pay.redirect);
 };

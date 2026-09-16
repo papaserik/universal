@@ -1,0 +1,140 @@
+/* Compact theme — минималистичная, тёмная шапка, плотная сетка */
+
+.theme-compact {
+  background: #fafafa;
+  color: #18181b;
+}
+
+/* Container уже 960px вместо 1180px */
+.theme-compact .container { max-width: 960px; }
+
+/* Шапка */
+.c-header {
+  background: #0f172a;
+  color: #e2e8f0;
+  padding: 10px 0;
+  position: sticky; top: 0; z-index: 20;
+  box-shadow: 0 1px 3px rgba(0,0,0,.15);
+}
+.c-header-inner {
+  display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+}
+.c-logo {
+  font-weight: 700; font-size: 17px; letter-spacing: .3px;
+  color: #fff; text-decoration: none;
+}
+.c-search {
+  flex: 1; max-width: 360px; display: flex; align-items: center;
+  background: #1e293b; border-radius: 6px; padding: 0 10px;
+}
+.c-search input {
+  flex: 1; background: transparent; border: 0; outline: 0;
+  color: #e2e8f0; padding: 8px 0; font: inherit; font-size: 14px;
+}
+.c-search input::placeholder { color: #94a3b8; }
+.c-search button {
+  background: transparent; border: 0; color: #94a3b8; cursor: pointer;
+  font-size: 16px; padding: 0 4px;
+}
+.c-search button:hover { color: #fff; }
+
+.c-nav { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+.c-nav a {
+  color: #cbd5e1; text-decoration: none; font-size: 14px;
+  transition: color .15s;
+}
+.c-nav a:hover { color: #fff; }
+.c-cart { display: inline-flex; align-items: center; gap: 4px; }
+.c-cart span {
+  background: #38bdf8; color: #0f172a; font-size: 11px;
+  padding: 2px 6px; border-radius: 10px; font-weight: 700;
+}
+
+/* Заголовки */
+.theme-compact h1 { font-size: 26px; margin: 0 0 16px; font-weight: 700; letter-spacing: -.5px; }
+.theme-compact h2 { font-size: 18px; margin: 24px 0 12px; font-weight: 700; }
+.theme-compact main.container { padding: 24px 16px; }
+
+/* Герой — компактный */
+.theme-compact .hero {
+  text-align: left; padding: 24px 0 16px;
+  border-bottom: 1px solid #e4e4e7; margin-bottom: 24px;
+}
+.theme-compact .hero h1 { font-size: 32px; margin-bottom: 6px; }
+.theme-compact .hero p { color: #71717a; margin: 0 0 14px; }
+
+/* Кнопки */
+.theme-compact .btn {
+  background: #0f172a; border-radius: 4px; padding: 9px 18px; font-size: 14px;
+}
+.theme-compact .btn:hover { background: #1e293b; }
+.theme-compact .btn-sm { padding: 5px 10px; font-size: 13px; }
+
+/* Плотная сетка товаров */
+.theme-compact .products-grid {
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 14px;
+}
+.theme-compact .product-card {
+  border-radius: 6px; padding: 10px; gap: 6px;
+  border-color: #e4e4e7;
+}
+.theme-compact .product-card:hover { box-shadow: 0 2px 10px rgba(0,0,0,.08); }
+.theme-compact .product-card h3 { font-size: 14px; font-weight: 600; }
+.theme-compact .price-row { gap: 6px; }
+.theme-compact .price { font-size: 15px; font-weight: 700; }
+.theme-compact .new { font-size: 15px; }
+.theme-compact .old { font-size: 13px; }
+.theme-compact .discount { font-size: 11px; padding: 1px 5px; }
+
+/* Фильтры — плотнее */
+.theme-compact .catalog-layout { grid-template-columns: 200px 1fr; gap: 20px; }
+.theme-compact .filters fieldset { padding: 8px 10px; margin-bottom: 10px; border-radius: 4px; }
+.theme-compact .filters legend { font-size: 13px; }
+
+/* Карточка товара */
+.theme-compact .product-layout { grid-template-columns: minmax(240px, 340px) 1fr; gap: 24px; }
+.theme-compact .product-info h1 { font-size: 22px; }
+.theme-compact .price-row-lg { font-size: 20px; margin: 10px 0; }
+
+/* Формы */
+.theme-compact .checkout-form,
+.theme-compact .auth-form {
+  border-radius: 6px; padding: 20px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.04);
+}
+.theme-compact .checkout-form input,
+.theme-compact .checkout-form textarea,
+.theme-compact .auth-form input {
+  border-radius: 4px; padding: 9px 11px;
+}
+
+/* Футер */
+.c-footer {
+  background: #0f172a; color: #94a3b8;
+  padding: 32px 0 16px; margin-top: 48px;
+  font-size: 14px;
+}
+.c-footer strong { color: #fff; display: block; margin-bottom: 6px; font-size: 14px; }
+.c-footer p { margin: 0; line-height: 1.7; }
+.c-footer a { color: #cbd5e1; text-decoration: none; }
+.c-footer a:hover { color: #fff; }
+.c-footer-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 24px; margin-bottom: 24px;
+}
+.c-copy {
+  border-top: 1px solid #1e293b; padding-top: 14px; margin: 0;
+  color: #64748b; font-size: 12px;
+}
+
+/* Cookie-баннер — компактнее */
+.theme-compact .cookie-banner {
+  background: #0f172a; font-size: 13px; padding: 10px 16px;
+}
+
+@media (max-width: 720px) {
+  .theme-compact .catalog-layout { grid-template-columns: 1fr; }
+  .theme-compact .product-layout { grid-template-columns: 1fr; }
+  .c-search { order: 3; flex: 1 0 100%; max-width: none; margin-top: 8px; }
+}

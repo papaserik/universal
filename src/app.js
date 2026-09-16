@@ -30,10 +30,9 @@ app.use(session({
 
 app.set('view engine', 'ejs');
 app.use(expressLayouts);
-app.set('layout extractScripts', true);
-app.set('layout extractStyles', true);
+// extractScripts отключён — inline-скрипты работают на месте
+// extractStyles отключён — inline-стили работают на месте
 
-// Тема
 app.use(async (req, res, next) => {
   const theme = await loadTheme();
   app.set('views', viewPaths(theme));
@@ -41,11 +40,11 @@ app.use(async (req, res, next) => {
   next();
 });
 
-// Глобальные locals
 app.use(async (req, res, next) => {
+  res.locals.req = req;
   res.locals.user = req.session.user || null;
   res.locals.cartCount = (req.session.cart || []).reduce((s, i) => s + i.qty, 0);
-  res.locals.cookieAccepted = req.cookies?.cookie_ok === '1';
+  res.locals.cookieAccepted = req.cookies && req.cookies.cookie_ok === '1';
   res.locals.settings = {
     siteName:   await getSetting('site_name', 'My Shop'),
     phone:      await getSetting('phone'),
@@ -69,9 +68,8 @@ app.use(async (req, res, next) => {
   next();
 });
 
-// Определяем layout по секции
 app.use((req, res, next) => {
-  if (req.path.startsWith('/admin') && !req.path.startsWith('/admin/login')) {
+  if (req.path.startsWith('/admin')) {
     res.locals.layout = 'admin/layouts/admin';
     res.locals.saved  = req.query.saved === '1';
   } else if (!res.locals.layout) {

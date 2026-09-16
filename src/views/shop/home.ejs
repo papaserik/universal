@@ -8,8 +8,15 @@
 <section>
   <h2>Новинки</h2>
   <div class="products-grid">
-    <% products.forEach(p => { %>
+    <% products.forEach(p => { const imgs = JSON.parse(p.images || '[]'); %>
       <article class="product-card">
+        <a href="/product/<%= p.slug %>" class="product-image">
+          <% if (imgs.length) { %>
+            <img src="<%= imgs[0] %>" alt="<%= p.name %>" loading="lazy">
+          <% } else { %>
+            <div class="no-image">Нет фото</div>
+          <% } %>
+        </a>
         <a href="/product/<%= p.slug %>"><h3><%= p.name %></h3></a>
         <div class="price-row">
           <% if (p.oldPrice && p.oldPrice > p.price) { %>

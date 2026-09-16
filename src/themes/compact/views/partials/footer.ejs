@@ -1,0 +1,23 @@
+<footer class="c-footer">
+  <div class="container">
+    <div class="c-footer-grid">
+      <div>
+        <strong><%= settings.siteName %></strong>
+        <p><%= settings.address %></p>
+      </div>
+      <div>
+        <strong>Контакты</strong>
+        <p><%= settings.phone %><br><%= settings.email %></p>
+      </div>
+      <div>
+        <strong>Документы</strong>
+        <p>
+          <a href="/contacts">Обратная связь</a><br>
+          <a href="/page/privacy-policy">Конфиденциальность</a><br>
+          <a href="/page/terms">Соглашение</a>
+        </p>
+      </div>
+    </div>
+    <p class="c-copy">© <%= new Date().getFullYear() %> <%= settings.siteName %></p>
+  </div>
+</footer>
