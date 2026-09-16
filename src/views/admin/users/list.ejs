@@ -1,0 +1,28 @@
+<div class="admin-header">
+  <h1>Пользователи</h1>
+  <a href="/admin/users/new" class="btn">+ Добавить</a>
+</div>
+
+<table class="admin-table">
+  <thead><tr><th>ID</th><th>Email</th><th>Имя</th><th>Роль</th><th>Заказов</th><th>Активен</th><th></th></tr></thead>
+  <tbody>
+    <% users.forEach(u => { %>
+      <tr>
+        <td><%= u.id %></td>
+        <td><%= u.email %></td>
+        <td><%= u.name || '—' %></td>
+        <td><span class="badge"><%= u.role %></span></td>
+        <td><%= u._count.orders %></td>
+        <td><%= u.active ? '✓' : '✗' %></td>
+        <td class="row-actions">
+          <a href="/admin/users/<%= u.id %>" class="btn btn-sm">Изменить</a>
+          <% if (u.email !== 'admin@shop.local') { %>
+            <form method="post" action="/admin/users/<%= u.id %>/delete" onsubmit="return confirm('Удалить пользователя?')">
+              <button class="btn btn-sm btn-danger">×</button>
+            </form>
+          <% } %>
+        </td>
+      </tr>
+    <% }) %>
+  </tbody>
+</table>

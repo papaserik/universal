@@ -1,0 +1,26 @@
+<div class="admin-header">
+  <h1>Категории</h1>
+  <a href="/admin/categories/new" class="btn">+ Добавить</a>
+</div>
+
+<table class="admin-table">
+  <thead><tr><th>ID</th><th>Название</th><th>Slug</th><th>Товаров</th><th>Сортировка</th><th></th></tr></thead>
+  <tbody>
+    <% categories.forEach(c => { %>
+      <tr>
+        <td><%= c.id %></td>
+        <td><%= c.name %></td>
+        <td>/catalog/<%= c.slug %></td>
+        <td><%= c._count.products %></td>
+        <td><%= c.sort %></td>
+        <td class="row-actions">
+          <a href="/admin/categories/<%= c.id %>" class="btn btn-sm">Изменить</a>
+          <form method="post" action="/admin/categories/<%= c.id %>/delete" onsubmit="return confirm('Удалить категорию?')">
+            <button class="btn btn-sm btn-danger">×</button>
+          </form>
+        </td>
+      </tr>
+    <% }) %>
+    <% if (!categories.length) { %><tr><td colspan="6">Нет категорий</td></tr><% } %>
+  </tbody>
+</table>

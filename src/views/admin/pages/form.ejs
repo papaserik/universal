@@ -1,0 +1,17 @@
+<div class="admin-header">
+  <h1><%= page ? 'Страница' : 'Новая страница' %></h1>
+  <a href="/admin/pages" class="btn btn-sm">← К списку</a>
+</div>
+
+<form method="post" action="<%= page ? '/admin/pages/' + page.id : '/admin/pages' %>" class="admin-form">
+  <label>Заголовок <input type="text" name="title" value="<%= page ? page.title : '' %>" required></label>
+  <label>Slug <input type="text" name="slug" value="<%= page ? page.slug : '' %>" placeholder="privacy-policy"></label>
+  <label>Контент (HTML) <textarea name="content" rows="12" required><%= page ? page.content : '' %></textarea></label>
+  <label class="checkbox-label">
+    <input type="checkbox" name="published" <%= !page || page.published ? 'checked' : '' %>>
+    Опубликована
+  </label>
+  <label>SEO Title <input type="text" name="seoTitle" value="<%= page && page.seoTitle ? page.seoTitle : '' %>"></label>
+  <label>SEO Description <input type="text" name="seoDesc" value="<%= page && page.seoDesc ? page.seoDesc : '' %>"></label>
+  <div class="form-actions"><button class="btn">Сохранить</button></div>
+</form>

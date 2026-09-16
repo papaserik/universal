@@ -1,0 +1,50 @@
+<div class="admin-header">
+  <h1>Заказ <%= order.number %></h1>
+  <a href="/admin/orders" class="btn btn-sm">← К списку</a>
+</div>
+
+<div class="admin-form" style="max-width:800px">
+  <div class="form-row">
+    <div><strong>Дата:</strong><br><%= order.createdAt.toLocaleString('ru-RU') %></div>
+    <div><strong>Клиент:</strong><br><%= order.name %></div>
+  </div>
+  <div class="form-row">
+    <div><strong>Email:</strong><br><%= order.email %></div>
+    <div><strong>Телефон:</strong><br><%= order.phone %></div>
+  </div>
+  <div><strong>Адрес:</strong><br><%= order.address || '—' %></div>
+  <% if (order.comment) { %><div><strong>Комментарий:</strong><br><%= order.comment %></div><% } %>
+
+  <table class="admin-table" style="margin-top:12px">
+    <thead><tr><th>Товар</th><th>Цена</th><th>Кол-во</th><th>Сумма</th></tr></thead>
+    <tbody>
+      <% order.items.forEach(i => { %>
+        <tr>
+          <td><%= i.name %></td>
+          <td><%= i.price %> ₽</td>
+          <td><%= i.qty %></td>
+          <td><%= i.price * i.qty %> ₽</td>
+        </tr>
+      <% }) %>
+    </tbody>
+    <tfoot>
+      <tr><td colspan="3">Товары</td><td><%= order.subtotal %> ₽</td></tr>
+      <tr><td colspan="3">Доставка</td><td><%= order.deliveryFee %> ₽</td></tr>
+      <tr><td colspan="3"><strong>Итого</strong></td><td><strong><%= order.total %> ₽</strong></td></tr>
+    </tfoot>
+  </table>
+
+  <div><strong>Способ оплаты:</strong> <%= order.payment %></div>
+  <div><strong>Способ доставки:</strong> <%= order.delivery %></div>
+
+  <form method="post" action="/admin/orders/<%= order.id %>/status" class="form-row">
+    <label>Изменить статус
+      <select name="status">
+        <% ['NEW','PAID','SHIPPED','DONE','CANCELLED'].forEach(s => { %>
+          <option value="<%= s %>" <%= order.status === s ? 'selected' : '' %>><%= s %></option>
+        <% }) %>
+      </select>
+    </label>
+    <div style="display:flex;align-items:flex-end"><button class="btn">Сохранить</button></div>
+  </form>
+</div>

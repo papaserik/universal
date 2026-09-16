@@ -1,0 +1,19 @@
+<div class="admin-header">
+  <h1><%= post ? 'Пост' : 'Новый пост' %></h1>
+  <a href="/admin/blog" class="btn btn-sm">← К списку</a>
+</div>
+
+<form method="post" action="<%= post ? '/admin/blog/' + post.id : '/admin/blog' %>" class="admin-form">
+  <label>Заголовок <input type="text" name="title" value="<%= post ? post.title : '' %>" required></label>
+  <label>Slug <input type="text" name="slug" value="<%= post ? post.slug : '' %>" placeholder="автогенерация"></label>
+  <label>Краткое описание <textarea name="excerpt" rows="2"><%= post && post.excerpt ? post.excerpt : '' %></textarea></label>
+  <label>Контент (HTML) <textarea name="content" rows="12" required><%= post ? post.content : '' %></textarea></label>
+  <label>Обложка (URL) <input type="text" name="cover" value="<%= post && post.cover ? post.cover : '' %>"></label>
+  <label class="checkbox-label">
+    <input type="checkbox" name="published" <%= !post || post.published ? 'checked' : '' %>>
+    Опубликован
+  </label>
+  <label>SEO Title <input type="text" name="seoTitle" value="<%= post && post.seoTitle ? post.seoTitle : '' %>"></label>
+  <label>SEO Description <input type="text" name="seoDesc" value="<%= post && post.seoDesc ? post.seoDesc : '' %>"></label>
+  <div class="form-actions"><button class="btn">Сохранить</button></div>
+</form>

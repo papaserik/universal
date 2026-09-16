@@ -1,0 +1,50 @@
+<div class="admin-header">
+  <h1>Товары</h1>
+  <a href="/admin/products/new" class="btn">+ Добавить товар</a>
+</div>
+
+<form method="get" class="admin-search">
+  <input type="text" name="q" value="<%= q %>" placeholder="Поиск по названию или SKU">
+  <button class="btn btn-sm">Найти</button>
+</form>
+
+<table class="admin-table">
+  <thead><tr>
+    <th>ID</th><th>Название</th><th>SKU</th><th>Категория</th>
+    <th>Цена</th><th>Остаток</th><th>Статус</th><th></th>
+  </tr></thead>
+  <tbody>
+    <% products.forEach(p => { %>
+      <tr>
+        <td><%= p.id %></td>
+        <td><%= p.name %><br><small>/product/<%= p.slug %></small></td>
+        <td><%= p.sku || '—' %></td>
+        <td><%= p.category ? p.category.name : '—' %></td>
+        <td>
+          <%= p.price %> ₽
+          <% if (p.oldPrice) { %><br><small><s><%= p.oldPrice %> ₽</s></small><% } %>
+        </td>
+        <td><%= p.stock %></td>
+        <td>
+          <% if (p.published) { %><span class="badge badge-published">Опубликован</span>
+          <% } else { %><span class="badge">Черновик</span><% } %>
+        </td>
+        <td class="row-actions">
+          <a href="/admin/products/<%= p.id %>" class="btn btn-sm">Изменить</a>
+          <form method="post" action="/admin/products/<%= p.id %>/delete" onsubmit="return confirm('Удалить товар?')">
+            <button class="btn btn-sm btn-danger">×</button>
+          </form>
+        </td>
+      </tr>
+    <% }) %>
+    <% if (!products.length) { %><tr><td colspan="8">Нет товаров</td></tr><% } %>
+  </tbody>
+</table>
+
+<% if (pages > 1) { %>
+  <div class="pagination">
+    <% for (let i = 1; i <= pages; i++) { %>
+      <a href="?page=<%= i %><%= q ? '&q=' + q : '' %>" class="<%= i === page ? 'active' : '' %>"><%= i %></a>
+    <% } %>
+  </div>
+<% } %>

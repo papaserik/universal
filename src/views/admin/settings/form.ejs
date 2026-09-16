@@ -1,0 +1,31 @@
+<div class="admin-header">
+  <h1>Настройки</h1>
+</div>
+
+<form method="post" action="/admin/settings" class="admin-form" style="max-width:760px">
+  <% groups.forEach(g => { %>
+    <fieldset>
+      <legend><%= g.title %></legend>
+      <% g.fields.forEach(f => { %>
+        <label style="margin-top:10px">
+          <%= f.label %>
+          <% if (f.type === 'textarea') { %>
+            <textarea name="<%= f.key %>" rows="4"><%= values[f.key] || '' %></textarea>
+          <% } else if (f.type === 'theme') { %>
+            <select name="<%= f.key %>">
+              <% themes.forEach(t => { %>
+                <option value="<%= t %>" <%= values[f.key] === t ? 'selected' : '' %>><%= t %></option>
+              <% }) %>
+            </select>
+          <% } else if (f.type === 'password') { %>
+            <input type="password" name="<%= f.key %>" value="<%= values[f.key] || '' %>">
+          <% } else { %>
+            <input type="text" name="<%= f.key %>" value="<%= values[f.key] || '' %>">
+          <% } %>
+        </label>
+      <% }) %>
+    </fieldset>
+  <% }) %>
+
+  <div class="form-actions"><button class="btn">Сохранить всё</button></div>
+</form>

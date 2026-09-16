@@ -1,0 +1,40 @@
+<div class="admin-header"><h1>Опции</h1></div>
+
+<form method="post" action="/admin/options" class="admin-form" style="margin-bottom:24px">
+  <div class="form-row">
+    <label>Название новой опции (например: Цвет)
+      <input type="text" name="name" required>
+    </label>
+    <div style="display:flex;align-items:flex-end"><button class="btn">Создать опцию</button></div>
+  </div>
+</form>
+
+<% options.forEach(o => { %>
+  <div class="admin-form" style="margin-bottom:16px">
+    <div class="admin-header" style="margin:0">
+      <h2 style="margin:0"><%= o.name %> <small style="color:#6b7280;font-size:13px">/ <%= o.slug %></small></h2>
+      <form method="post" action="/admin/options/<%= o.id %>/delete" onsubmit="return confirm('Удалить опцию и все её значения?')">
+        <button class="btn btn-sm btn-danger">Удалить опцию</button>
+      </form>
+    </div>
+    <div>
+      <% o.values.forEach(v => { %>
+        <span class="badge" style="display:inline-flex;gap:8px;align-items:center;padding:4px 10px;margin:4px 4px 4px 0">
+          <%= v.value %>
+          <form method="post" action="/admin/options/value/<%= v.id %>/delete" style="display:inline">
+            <button style="background:none;border:0;color:#991b1b;cursor:pointer;font-size:14px">×</button>
+          </form>
+        </span>
+      <% }) %>
+      <% if (!o.values.length) { %><em style="color:#999">Нет значений</em><% } %>
+    </div>
+    <form method="post" action="/admin/options/value" class="form-row" style="margin-top:8px">
+      <input type="hidden" name="optionId" value="<%= o.id %>">
+      <label>Добавить значение
+        <input type="text" name="value" required>
+      </label>
+      <div style="display:flex;align-items:flex-end"><button class="btn btn-sm">+ Добавить</button></div>
+    </form>
+  </div>
+<% }) %>
+<% if (!options.length) { %><p>Пока нет опций. Создайте первую выше.</p><% } %>

@@ -1,0 +1,28 @@
+<div class="admin-header">
+  <h1><%= user ? 'Пользователь' : 'Новый пользователь' %></h1>
+  <a href="/admin/users" class="btn btn-sm">← К списку</a>
+</div>
+
+<form method="post" action="<%= user ? '/admin/users/' + user.id : '/admin/users' %>" class="admin-form">
+  <div class="form-row">
+    <label>Email <input type="email" name="email" value="<%= user ? user.email : '' %>" required></label>
+    <label>Имя <input type="text" name="name" value="<%= user && user.name ? user.name : '' %>"></label>
+  </div>
+  <div class="form-row">
+    <label>Роль
+      <select name="role">
+        <% ['USER','MANAGER','ADMIN'].forEach(r => { %>
+          <option value="<%= r %>" <%= user && user.role === r ? 'selected' : '' %>><%= r %></option>
+        <% }) %>
+      </select>
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" name="active" <%= !user || user.active ? 'checked' : '' %>>
+      Активен
+    </label>
+  </div>
+  <label>Пароль <%= user ? '(оставьте пустым, чтобы не менять)' : '' %>
+    <input type="password" name="password" <%= user ? '' : 'required' %>>
+  </label>
+  <div class="form-actions"><button class="btn">Сохранить</button></div>
+</form>

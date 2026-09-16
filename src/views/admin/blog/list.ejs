@@ -1,0 +1,28 @@
+<div class="admin-header">
+  <h1>Блог</h1>
+  <a href="/admin/blog/new" class="btn">+ Новый пост</a>
+</div>
+
+<table class="admin-table">
+  <thead><tr><th>ID</th><th>Заголовок</th><th>Slug</th><th>Автор</th><th>Просм.</th><th>Опубл.</th><th>Дата</th><th></th></tr></thead>
+  <tbody>
+    <% posts.forEach(p => { %>
+      <tr>
+        <td><%= p.id %></td>
+        <td><%= p.title %></td>
+        <td>/blog/<%= p.slug %></td>
+        <td><%= p.author ? (p.author.name || p.author.email) : '—' %></td>
+        <td><%= p.views %></td>
+        <td><%= p.published ? '✓' : '—' %></td>
+        <td><%= p.createdAt.toLocaleDateString('ru-RU') %></td>
+        <td class="row-actions">
+          <a href="/admin/blog/<%= p.id %>" class="btn btn-sm">Изменить</a>
+          <form method="post" action="/admin/blog/<%= p.id %>/delete" onsubmit="return confirm('Удалить пост?')">
+            <button class="btn btn-sm btn-danger">×</button>
+          </form>
+        </td>
+      </tr>
+    <% }) %>
+    <% if (!posts.length) { %><tr><td colspan="8">Нет постов</td></tr><% } %>
+  </tbody>
+</table>

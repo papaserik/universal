@@ -5,10 +5,12 @@ const SQLiteStore = require('connect-sqlite3')(session);
 const cookieParser = require('cookie-parser');
 const helmet = require('helmet');
 const compression = require('compression');
+const expressLayouts = require('express-ejs-layouts');
 const { getSetting } = require('./services/settings');
 const { loadTheme, viewPaths } = require('./services/theme');
 
 const app = express();
+
 app.use(helmet({ contentSecurityPolicy: false }));
 app.use(compression());
 app.use(express.urlencoded({ extended: true, limit: '5mb' }));
@@ -17,14 +19,21 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public'), { maxAge: '7d' }));
 app.use('/uploads', express.static(path.join(__dirname, '..', 'data', 'uploads')));
 app.use('/theme',    express.static(path.join(__dirname, 'themes')));
+
 app.use(session({
   store: new SQLiteStore({ db: 'sessions.db', dir: 'data' }),
   secret: process.env.SESSION_SECRET || 'dev-secret',
-  resave: false, saveUninitialized: false,
+  resave: false,
+  saveUninitialized: false,
   cookie: { httpOnly: true, maxAge: 1000 * 60 * 60 * 24 * 30, sameSite: 'lax' }
 }));
-app.set('view engine', 'ejs');
 
+app.set('view engine', 'ejs');
+app.use(expressLayouts);
+app.set('layout extractScripts', true);
+app.set('layout extractStyles', true);
+
+// Тема
 app.use(async (req, res, next) => {
   const theme = await loadTheme();
   app.set('views', viewPaths(theme));
@@ -32,6 +41,7 @@ app.use(async (req, res, next) => {
   next();
 });
 
+// Глобальные locals
 app.use(async (req, res, next) => {
   res.locals.user = req.session.user || null;
   res.locals.cartCount = (req.session.cart || []).reduce((s, i) => s + i.qty, 0);
@@ -47,8 +57,11 @@ app.use(async (req, res, next) => {
     customBody: await getSetting('custom_body')
   };
   res.locals.meta = {
-    title: res.locals.settings.siteName, description: '', keywords: '',
-    canonical: req.protocol + '://' + req.get('host') + req.originalUrl, og: {}
+    title: res.locals.settings.siteName,
+    description: '',
+    keywords: '',
+    canonical: req.protocol + '://' + req.get('host') + req.originalUrl,
+    og: {}
   };
   res.locals.jsonLd = [];
   res.locals.setMeta = (m) => Object.assign(res.locals.meta, m);
@@ -56,9 +69,25 @@ app.use(async (req, res, next) => {
   next();
 });
 
+// Определяем layout по секции
+app.use((req, res, next) => {
+  if (req.path.startsWith('/admin') && !req.path.startsWith('/admin/login')) {
+    res.locals.layout = 'admin/layouts/admin';
+    res.locals.saved  = req.query.saved === '1';
+  } else if (!res.locals.layout) {
+    res.locals.layout = 'layouts/main';
+  }
+  next();
+});
+
 app.use('/', require('./routes/shop'));
 app.use('/admin', require('./routes/admin'));
 app.use('/api', require('./routes/api'));
+
 app.use((req, res) => res.status(404).render('errors/404'));
-app.use((err, req, res, next) => { console.error(err); res.status(500).render('errors/500', { error: err.message }); });
+app.use((err, req, res, next) => {
+  console.error(err);
+  res.status(500).render('errors/500', { error: err.message });
+});
+
 module.exports = app;

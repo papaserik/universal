@@ -1,0 +1,25 @@
+<div class="admin-header">
+  <h1>Страницы</h1>
+  <a href="/admin/pages/new" class="btn">+ Новая страница</a>
+</div>
+
+<table class="admin-table">
+  <thead><tr><th>ID</th><th>Заголовок</th><th>Slug</th><th>Опубл.</th><th>Дата</th><th></th></tr></thead>
+  <tbody>
+    <% pages.forEach(p => { %>
+      <tr>
+        <td><%= p.id %></td>
+        <td><%= p.title %></td>
+        <td>/page/<%= p.slug %></td>
+        <td><%= p.published ? '✓' : '—' %></td>
+        <td><%= p.createdAt.toLocaleDateString('ru-RU') %></td>
+        <td class="row-actions">
+          <a href="/admin/pages/<%= p.id %>" class="btn btn-sm">Изменить</a>
+          <form method="post" action="/admin/pages/<%= p.id %>/delete" onsubmit="return confirm('Удалить страницу?')">
+            <button class="btn btn-sm btn-danger">×</button>
+          </form>
+        </td>
+      </tr>
+    <% }) %>
+  </tbody>
+</table>

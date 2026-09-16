@@ -1,0 +1,28 @@
+<div class="admin-header"><h1>Заказы</h1></div>
+
+<form method="get" class="admin-search">
+  <select name="status" onchange="this.form.submit()" style="padding:8px 12px;border:1px solid #d1d5db;border-radius:6px">
+    <option value="">Все статусы</option>
+    <% ['NEW','PAID','SHIPPED','DONE','CANCELLED'].forEach(s => { %>
+      <option value="<%= s %>" <%= status === s ? 'selected' : '' %>><%= s %></option>
+    <% }) %>
+  </select>
+</form>
+
+<table class="admin-table">
+  <thead><tr><th>Номер</th><th>Дата</th><th>Клиент</th><th>Товаров</th><th>Сумма</th><th>Статус</th><th></th></tr></thead>
+  <tbody>
+    <% orders.forEach(o => { %>
+      <tr>
+        <td><%= o.number %></td>
+        <td><%= o.createdAt.toLocaleString('ru-RU') %></td>
+        <td><%= o.name %><br><small><%= o.email %></small></td>
+        <td><%= o.items.length %></td>
+        <td><%= o.total %> ₽</td>
+        <td><span class="badge badge-<%= o.status.toLowerCase() %>"><%= o.status %></span></td>
+        <td><a href="/admin/orders/<%= o.id %>" class="btn btn-sm">Открыть</a></td>
+      </tr>
+    <% }) %>
+    <% if (!orders.length) { %><tr><td colspan="7">Заказов нет</td></tr><% } %>
+  </tbody>
+</table>

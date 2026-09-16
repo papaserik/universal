@@ -1,2 +1,32 @@
-<h1>Админ-панель</h1>
-<p>Привет, <%= user.name || user.email %>!</p>
+<div class="admin-header">
+  <h1>Дашборд</h1>
+  <p>Привет, <%= user.name || user.email %></p>
+</div>
+
+<div class="stat-grid">
+  <div class="stat-card"><span class="stat-num"><%= stats.products %></span><span>Товаров</span></div>
+  <div class="stat-card"><span class="stat-num"><%= stats.orders %></span><span>Заказов</span></div>
+  <div class="stat-card"><span class="stat-num"><%= stats.newOrders %></span><span>Новых заказов</span></div>
+  <div class="stat-card"><span class="stat-num"><%= stats.users %></span><span>Пользователей</span></div>
+  <div class="stat-card"><span class="stat-num"><%= stats.posts %></span><span>Постов</span></div>
+  <div class="stat-card"><span class="stat-num"><%= stats.pages %></span><span>Страниц</span></div>
+  <div class="stat-card stat-card-wide"><span class="stat-num"><%= stats.revenue %> ₽</span><span>Выручка (без отменённых)</span></div>
+</div>
+
+<h2>Последние заказы</h2>
+<table class="admin-table">
+  <thead><tr><th>Номер</th><th>Клиент</th><th>Сумма</th><th>Статус</th><th>Дата</th><th></th></tr></thead>
+  <tbody>
+    <% recent.forEach(o => { %>
+      <tr>
+        <td><%= o.number %></td>
+        <td><%= o.name %><br><small><%= o.email %></small></td>
+        <td><%= o.total %> ₽</td>
+        <td><span class="badge badge-<%= o.status.toLowerCase() %>"><%= o.status %></span></td>
+        <td><%= o.createdAt.toLocaleString('ru-RU') %></td>
+        <td><a href="/admin/orders/<%= o.id %>" class="btn btn-sm">Открыть</a></td>
+      </tr>
+    <% }) %>
+    <% if (!recent.length) { %><tr><td colspan="6">Пока нет заказов</td></tr><% } %>
+  </tbody>
+</table>

@@ -1,0 +1,29 @@
+<div class="admin-header">
+  <h1>Импорт товаров</h1>
+</div>
+
+<div class="admin-form" style="max-width:700px">
+  <p>Поддерживаются форматы: <strong>.xlsx</strong>, <strong>.xls</strong>, <strong>.yml</strong> (Yandex Market), <strong>.xml</strong>.</p>
+  <p><small>Для Excel: колонки <code>name</code>, <code>price</code>, <code>old_price</code>, <code>sku</code>, <code>stock</code>, <code>description</code>, <code>images</code> (через запятую), <code>category</code>, <code>slug</code>, <code>seo_title</code>, <code>seo_desc</code>, <code>seo_keywords</code>.</small></p>
+
+  <form method="post" action="/admin/import" enctype="multipart/form-data">
+    <input type="file" name="file" accept=".xlsx,.xls,.yml,.yaml,.xml" required>
+    <div class="form-actions" style="margin-top:14px">
+      <button class="btn">Загрузить и импортировать</button>
+    </div>
+  </form>
+
+  <% if (error) { %>
+    <div class="admin-alert" style="background:#fee2e2;color:#991b1b;margin-top:16px"><%= error %></div>
+  <% } %>
+
+  <% if (result) { %>
+    <div class="admin-alert admin-alert-ok" style="margin-top:16px">
+      <strong>Готово:</strong>
+      создано <%= result.created %>, обновлено <%= result.updated %>, пропущено <%= result.skipped %>
+      <% if (result.errors && result.errors.length) { %>
+        <br><small>Ошибок: <%= result.errors.length %></small>
+      <% } %>
+    </div>
+  <% } %>
+</div>
