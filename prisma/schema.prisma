@@ -28,6 +28,7 @@ model User {
   posts     BlogPost[]
   loyalty   LoyaltyTransaction[]
   favorites Favorite[]
+  pushSubscriptions PushSubscription[]
 }
 
 model Category {
@@ -538,4 +539,21 @@ model MarketplaceSyncLog {
 
   @@index([marketplace, startedAt])
   @@index([integrationId])
+}
+
+model PushSubscription {
+  id         Int      @id @default(autoincrement())
+  userId     Int?
+  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  endpoint   String   @unique
+  p256dh     String
+  auth       String
+  userAgent  String?
+  active     Boolean  @default(true)
+  lastSentAt DateTime?
+  failCount  Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([userId, active])
 }

@@ -155,3 +155,85 @@ self.addEventListener('fetch', (event) => {
 self.addEventListener('message', (event) => {
   if (event.data === 'SKIP_WAITING') self.skipWaiting();
 });
+
+// ═══════════════════════════════════════════════
+// PUSH-УВЕДОМЛЕНИЯ
+// ═══════════════════════════════════════════════
+
+// Приём push-сообщения
+self.addEventListener('push', (event) => {
+  let data = {
+    title: 'Universal Shop',
+    body: 'Новое уведомление',
+    icon: '/icons/icon-192.png',
+    badge: '/icons/icon-192.png',
+    url: '/',
+    tag: 'default'
+  };
+
+  try {
+    if (event.data) {
+      const payload = event.data.json();
+      data = Object.assign(data, payload);
+    }
+  } catch (e) {
+    if (event.data) data.body = event.data.text();
+  }
+
+  const options = {
+    body: data.body,
+    icon: data.icon,
+    badge: data.badge,
+    tag: data.tag,
+    data: { url: data.url },
+    vibrate: [200, 100, 200],
+    requireInteraction: false,
+    silent: false
+  };
+
+  // Действия (кнопки)
+  if (data.actions && Array.isArray(data.actions)) {
+    options.actions = data.actions;
+  }
+
+  event.waitUntil(
+    self.registration.showNotification(data.title, options)
+  );
+});
+
+// Клик по уведомлению
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+
+  const url = (event.notification.data && event.notification.data.url) || '/';
+  const action = event.action;
+
+  // Обработка действий
+  let targetUrl = url;
+  if (action === 'open_cart') targetUrl = '/cart';
+  if (action === 'open_orders') targetUrl = '/account/orders';
+  if (action === 'open_catalog') targetUrl = '/catalog';
+
+  event.waitUntil(
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true })
+      .then((clients) => {
+        // Если есть открытая вкладка нашего сайта — фокусируемся
+        for (const client of clients) {
+          if (client.url.indexOf(self.location.origin) === 0 && 'focus' in client) {
+            client.navigate(targetUrl);
+            return client.focus();
+          }
+        }
+        // Иначе открываем новую
+        if (self.clients.openWindow) {
+          return self.clients.openWindow(targetUrl);
+        }
+      })
+  );
+});
+
+// Закрытие уведомления
+self.addEventListener('notificationclose', (event) => {
+  // Можно отправить аналитику
+  console.log('[SW] Уведомление закрыто:', event.notification.tag);
+});

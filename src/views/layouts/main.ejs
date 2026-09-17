@@ -32,6 +32,7 @@
 <%- include('../partials/cookie') %>
 <%- settings.customBody || '' %>
 <script src="/js/info-tips.js"></script>
-<script src="/js/pwa.js"></script>
+<% if (moduleEnabled('pwa')) { %><script src="/js/pwa.js"></script><% } %>
+<% if (moduleEnabled('pwa_push')) { %><script src="/js/push.js"></script><% } %>
 </body>
 </html>

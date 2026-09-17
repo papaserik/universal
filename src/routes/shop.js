@@ -48,6 +48,7 @@ const favorites = require('../controllers/favorites');
 router.post('/api/favorites/toggle', requireModule('favorites'), favorites.toggle);
 router.get('/api/favorites/ids', requireModule('favorites'), favorites.listIds);
 router.get('/favorites', requireModule('favorites'), favorites.page);
+router.get('/account/favorites', requireModule('favorites'), require('../controllers/account').requireAuth, favorites.page);
 const account = require('../controllers/account');
 const { imageUpload } = require('../services/upload');
 
