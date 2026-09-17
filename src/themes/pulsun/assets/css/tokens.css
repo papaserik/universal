@@ -1,0 +1,101 @@
+/* ============================================================
+   PULSUN — дизайн-токены
+   Палитра, типографика, отступы, радиусы, тени
+   ============================================================ */
+:root {
+  /* ── Фон ─────────────────────────────────────── */
+  --bg-cream:       #FAF4EB;
+  --bg-cream-2:     #F4ECDF;
+  --bg-cream-3:     #EFE4D2;
+  --bg-card:        #FFFFFF;
+  --bg-dark:        #2A1A0F;
+
+  /* ── Текст ───────────────────────────────────── */
+  --text-primary:   #2A1A0F;
+  --text-secondary: #6B5847;
+  --text-muted:     #9A8775;
+  --text-inverse:   #FAF4EB;
+
+  /* ── Акцент (кнопки, ссылки, hover) ──────────── */
+  --accent:         #3A2519;
+  --accent-hover:   #523626;
+  --accent-soft:    #E8DCC8;
+  --accent-cream:   #D9C7A8;
+
+  /* ── Границы ─────────────────────────────────── */
+  --border:         #E6DBC8;
+  --border-soft:    #F0E8DB;
+
+  /* ── Семантика ───────────────────────────────── */
+  --success:        #4A7C3A;
+  --danger:         #B23A2C;
+
+  /* ── Типографика ─────────────────────────────── */
+  --font-heading: 'Montserrat', 'Inter', system-ui, sans-serif;
+  --font-body:    'Inter', 'Roboto', system-ui, sans-serif;
+  --font-accent:  'Caveat', cursive;
+
+  --fs-h1:   clamp(32px, 5vw, 64px);
+  --fs-h2:   clamp(24px, 3.5vw, 40px);
+  --fs-h3:   clamp(18px, 2vw, 22px);
+  --fs-h4:   18px;
+  --fs-body: 16px;
+  --fs-sm:   14px;
+  --fs-xs:   12px;
+
+  --fw-black:  900;
+  --fw-bold:   700;
+  --fw-medium: 500;
+  --fw-reg:    400;
+
+  --lh-tight:  1.05;
+  --lh-snug:   1.25;
+  --lh-normal: 1.5;
+
+  --ls-tight:  -0.02em;
+  --ls-wide:   0.08em;
+
+  /* ── Отступы ─────────────────────────────────── */
+  --sp-1:  4px;
+  --sp-2:  8px;
+  --sp-3:  12px;
+  --sp-4:  16px;
+  --sp-5:  20px;
+  --sp-6:  24px;
+  --sp-8:  32px;
+  --sp-10: 40px;
+  --sp-12: 48px;
+  --sp-16: 64px;
+  --sp-20: 80px;
+  --sp-24: 96px;
+
+  /* ── Радиусы ─────────────────────────────────── */
+  --r-sm:   8px;
+  --r-md:   14px;
+  --r-lg:   20px;
+  --r-xl:   28px;
+  --r-pill: 999px;
+
+  /* ── Сетка ───────────────────────────────────── */
+  --container: 1240px;
+  --container-narrow: 980px;
+
+  /* ── Тени ────────────────────────────────────── */
+  --shadow-xs:   0 1px 3px rgba(58, 37, 25, 0.06);
+  --shadow-card: 0 4px 24px rgba(58, 37, 25, 0.08);
+  --shadow-btn:  0 4px 14px rgba(58, 37, 25, 0.18);
+  --shadow-lg:   0 12px 40px rgba(58, 37, 25, 0.12);
+
+  /* ── Переходы ────────────────────────────────── */
+  --tr-fast:   0.15s ease;
+  --tr-normal: 0.25s ease;
+  --tr-slow:   0.4s ease;
+}
+
+/* ============================================================
+   Breakpoints (справочник — сами медиа пишутся по месту)
+   1200  tablet-wide
+   900   tablet
+   600   phone
+   480   phone-small
+   ============================================================ */
