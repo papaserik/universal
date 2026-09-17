@@ -1,7 +1,7 @@
 <%
   var bg = (typeof banners !== 'undefined' && banners.length) ? banners[0] : null;
   var bgImg = bg && bg.imageUrl ? bg.imageUrl : null;
-  var title = bg && bg.title ? bg.title : 'Сиропы PULSUN с коллагеном';
+  var title = bg && bg.title ? bg.title : 'Сиропы PULSUN<br>с коллагеном';
   var subtitle = bg && bg.subtitle ? bg.subtitle : 'Без сахара. 8 вкусов. На каждый день.';
   var desc = bg && bg.body ? bg.body : 'Сиропы без сахара с коллагеном для кофе, десертов и повседневных рецептов. 8 вкусов, приятный вкус и удобное применение каждый день.';
   var ctaText = bg && bg.ctaText ? bg.ctaText : 'Выбрать вкус';
@@ -14,32 +14,36 @@
   <div class="container hero__inner">
     <div class="hero__content">
       <p class="eyebrow">Больше, чем просто вкус</p>
-
       <h1 class="hero__title"><%- title %></h1>
-
       <p class="hero__subtitle"><%= subtitle %></p>
-
       <p class="hero__desc"><%= desc %></p>
 
       <div class="hero__actions">
         <a href="<%= ctaUrl %>" class="btn btn--primary"><%= ctaText %> →</a>
-        <a href="/blog?tag=recipe" class="btn btn--ghost">
-          <span class="hero__play">▶</span> Смотреть рецепты
+        <a href="/blog?tag=recipe"
+           style="display:inline-flex;align-items:center;gap:10px;padding:15px 28px;border-radius:999px;background:rgba(250,244,235,0.9);color:#2A1A0F;border:1.5px solid #2A1A0F;font-size:15px;font-weight:500;text-decoration:none;font-family:inherit;line-height:1;transition:all .15s ease;"
+           onmouseover="this.style.background='#2A1A0F';this.style.color='#FAF4EB';this.querySelector('span').style.borderColor='#FAF4EB';this.querySelector('span').style.color='#FAF4EB';"
+           onmouseout="this.style.background='rgba(250,244,235,0.9)';this.style.color='#2A1A0F';this.querySelector('span').style.borderColor='#2A1A0F';this.querySelector('span').style.color='#2A1A0F';">
+          <span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;min-width:24px;border-radius:50%;border:1.5px solid #2A1A0F;color:#2A1A0F;font-size:10px;line-height:1;padding-left:3px;box-sizing:border-box;">&#9654;</span>
+          <span>Смотреть рецепты</span>
         </a>
       </div>
     </div>
-
-    <div class="hero__stamp handwritten">
-      Возьмите<br>на заметку
-      <span class="hero__stamp-heart">♡</span>
-    </div>
-
-    <div class="hero__badge">
-      <span class="hero__badge-top">КОЛЛАГЕН</span>
-      <span class="hero__badge-leaf">🌿</span>
-      <span class="hero__badge-bottom">для красоты жизни</span>
-    </div>
   </div>
 
-  <%- include('benefits') %>
+  <%# Декор — вне hero__inner, чтобы позиционировался от .hero %>
+  <div class="hero__stamp handwritten">
+    Возьмите<br>на заметку
+    <span class="hero__stamp-heart">♡</span>
+  </div>
+
+  <div class="hero__badge">
+    <span class="hero__badge-top">КОЛЛАГЕН</span>
+    <span class="hero__badge-leaf">🌿</span>
+    <span class="hero__badge-bottom">для красоты жизни</span>
+  </div>
+
+  <div class="hero__benefits-wrap container">
+    <%- include('benefits') %>
+  </div>
 </section>

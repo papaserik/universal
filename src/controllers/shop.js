@@ -72,7 +72,7 @@ exports.home = async (req, res) => {
 
     // Сиропы — для секции «Наши вкусы»
     prisma.product.findMany({
-      where: { published: true },
+      where: { published: true, category: { slug: 'siropy' } },
       orderBy: { id: 'asc' },
       take: 8,
     }),
