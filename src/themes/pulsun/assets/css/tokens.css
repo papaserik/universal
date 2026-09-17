@@ -17,10 +17,10 @@
   --text-inverse:   #FAF4EB;
 
   /* ── Акцент (кнопки, ссылки, hover) ──────────── */
-  --accent:         #3A2519;
-  --accent-hover:   #523626;
-  --accent-soft:    #E8DCC8;
-  --accent-cream:   #D9C7A8;
+  --accent:         #B8935A;
+  --accent-hover:   #9F7A47;
+  --accent-soft:    #E8D9BE;
+  --accent-cream:   #D4C0A0;
 
   /* ── Границы ─────────────────────────────────── */
   --border:         #E6DBC8;
@@ -31,7 +31,7 @@
   --danger:         #B23A2C;
 
   /* ── Типографика ─────────────────────────────── */
-  --font-heading: 'Montserrat', 'Inter', system-ui, sans-serif;
+  --font-heading: 'Playfair Display', Georgia, serif;
   --font-body:    'Inter', 'Roboto', system-ui, sans-serif;
   --font-accent:  'Caveat', cursive;
 

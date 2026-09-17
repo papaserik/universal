@@ -1,0 +1,50 @@
+<div class="page-head">
+  <div class="container">
+    <h1 class="page-head__title">
+      <% if (typeof cat !== 'undefined' && cat) { %>
+        <%= cat.name %>
+      <% } else { %>
+        Продукты
+      <% } %>
+    </h1>
+    <% if (typeof breadcrumbs !== 'undefined' && breadcrumbs.length) { %>
+      <nav class="breadcrumbs" aria-label="Хлебные крошки">
+        <% breadcrumbs.forEach(function (b, i) { %>
+          <% if (i > 0) { %><span class="breadcrumbs__sep">·</span><% } %>
+          <% if (b.url && i < breadcrumbs.length - 1) { %>
+            <a href="<%= b.url %>"><%= b.title %></a>
+          <% } else { %>
+            <span><%= b.title %></span>
+          <% } %>
+        <% }); %>
+      </nav>
+    <% } %>
+  </div>
+</div>
+
+<section class="catalog-section">
+  <div class="container catalog-layout">
+
+    <aside class="catalog-filters">
+      <div class="catalog-filters__title">Фильтры</div>
+      <%# Здесь можно раскомментировать после реализации фильтров %>
+    </aside>
+
+    <div class="catalog-main">
+      <% if (products && products.length) { %>
+        <div class="catalog-grid">
+          <% products.forEach(function (p) { %>
+            <%- include('partials/product-card', { p: p }) %>
+          <% }); %>
+        </div>
+      <% } else { %>
+        <div class="catalog-empty">
+          <div class="catalog-empty__icon">🌿</div>
+          <p>В этой категории пока нет товаров.</p>
+          <a href="/catalog" class="btn btn--primary">Все продукты →</a>
+        </div>
+      <% } %>
+    </div>
+
+  </div>
+</section>

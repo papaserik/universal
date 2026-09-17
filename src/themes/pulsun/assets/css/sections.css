@@ -2,251 +2,207 @@
    PULSUN — Секции лендинга
    ============================================================ */
 
-/* ── HERO ──────────────────────────────────────────── */
+/* ── HERO (фото-фон) ───────────────────────────────── */
 .hero {
-  padding: var(--sp-12) 0 var(--sp-16);
-  background:
-    radial-gradient(ellipse at 20% 0%, rgba(232, 220, 200, 0.5) 0%, transparent 55%),
-    radial-gradient(ellipse at 100% 100%, rgba(217, 199, 168, 0.35) 0%, transparent 60%),
-    var(--bg-cream);
+  position: relative;
+  min-height: 640px;
+  padding: 120px 0 60px;
+  background-size: cover;
+  background-position: center right;
+  background-repeat: no-repeat;
+  background-color: var(--bg-cream);
+  overflow: hidden;
+}
+.hero__overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(90deg,
+    rgba(250, 244, 235, 0.94) 0%,
+    rgba(250, 244, 235, 0.85) 38%,
+    rgba(250, 244, 235, 0.35) 62%,
+    rgba(250, 244, 235, 0) 100%);
+  pointer-events: none;
 }
 .hero__inner {
+  position: relative;
   display: grid;
-  grid-template-columns: 1.05fr 1fr;
-  gap: var(--sp-12);
-  align-items: center;
+  grid-template-columns: 1fr;
+  max-width: 640px;
 }
 
-.hero__content { max-width: 560px; }
-
 .hero__title {
-  font-size: var(--fs-h1);
-  font-weight: var(--fw-black);
-  line-height: var(--lh-tight);
-  letter-spacing: var(--ls-tight);
-  margin: var(--sp-3) 0 var(--sp-4);
+  font-family: var(--font-heading);
+  font-size: clamp(44px, 6vw, 76px);
+  font-weight: 900;
+  line-height: 1.02;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  margin: var(--sp-4) 0 var(--sp-4);
   color: var(--text-primary);
 }
 
 .hero__subtitle {
-  font-size: 20px;
-  font-weight: var(--fw-medium);
+  font-family: var(--font-heading);
+  font-size: clamp(20px, 2.2vw, 30px);
+  font-weight: 500;
+  line-height: 1.2;
   color: var(--text-primary);
-  margin: 0 0 var(--sp-4);
-  line-height: 1.4;
+  margin: 0 0 var(--sp-5);
 }
 
 .hero__desc {
+  font-family: var(--font-body);
   font-size: 15px;
   color: var(--text-secondary);
-  line-height: 1.6;
+  line-height: 1.65;
   margin: 0 0 var(--sp-8);
-  max-width: 480px;
+  max-width: 520px;
+}
+
+.hero .eyebrow {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: #A88B5C;
+  margin: 0;
 }
 
 .hero__actions {
   display: flex;
   gap: var(--sp-3);
   flex-wrap: wrap;
+  align-items: center;
 }
+.hero__actions .btn--primary { padding: 16px 32px; font-size: 15px; }
+.hero__actions .btn--ghost   { padding: 15px 26px; font-size: 14px; background: rgba(250, 244, 235, 0.7); }
 .hero__play {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 22px; height: 22px;
-  border-radius: 50%;
-  background: var(--accent);
-  color: var(--text-inverse);
-  font-size: 9px;
-  padding-left: 2px;
-}
-.btn--ghost:hover .hero__play {
-  background: var(--text-inverse);
-  color: var(--accent);
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 22px; height: 22px; border-radius: 50%;
+  border: 1.5px solid currentColor;
+  font-size: 8px; padding-left: 2px;
 }
 
-/* ── Hero визуал ──────────────────────────────────── */
-.hero__visual {
-  position: relative;
-  min-height: 520px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.hero__bottle {
-  width: 200px;
-  height: 480px;
-  border-radius: 100px 100px 24px 24px;
-  background: linear-gradient(180deg, #F5DEB3 0%, #D9A55D 45%, #8B5A2B 100%);
-  box-shadow:
-    inset -20px 0 40px rgba(0,0,0,0.15),
-    inset 20px 0 40px rgba(255,255,255,0.25),
-    0 30px 60px rgba(58, 37, 25, 0.25);
-  position: relative;
-  transform: rotate(-3deg);
-}
-.hero__bottle::before {
-  content: "";
+/* ── Рукописный штамп ──────────────────────────────── */
+.hero__stamp {
   position: absolute;
-  top: -60px; left: 50%;
-  transform: translateX(-50%);
-  width: 60px; height: 60px;
-  background: #3A2519;
-  border-radius: 8px 8px 0 0;
-}
-.hero__bottle-label {
-  position: absolute;
-  top: 45%; left: 50%;
-  transform: translate(-50%, -50%) rotate(3deg);
-  background: rgba(250, 244, 235, 0.94);
-  border-radius: var(--r-sm);
-  padding: 14px 20px;
-  text-align: center;
-  font-family: var(--font-heading);
-  font-weight: var(--fw-black);
-  font-size: 16px;
-  letter-spacing: 0.05em;
+  top: 140px; right: 60px;
+  font-family: var(--font-accent);
+  font-size: 32px;
+  line-height: 1;
   color: var(--text-primary);
-  box-shadow: var(--shadow-xs);
+  text-align: center;
+  transform: rotate(-7deg);
+  opacity: 0.85;
 }
-.hero__bottle-label small {
+.hero__stamp-heart {
   display: block;
-  font-size: 11px;
-  font-weight: var(--fw-medium);
-  letter-spacing: 0;
+  font-size: 18px;
   margin-top: 4px;
-  color: var(--text-secondary);
+  opacity: 0.7;
 }
 
-.hero__sticker {
+/* ── Круглый бейдж "КОЛЛАГЕН" ─────────────────────── */
+.hero__badge {
   position: absolute;
-  top: 40px; right: 0;
-  width: 140px; height: 140px;
+  top: 320px; right: 160px;
+  width: 130px; height: 130px;
+  border: 1px solid var(--text-primary);
   border-radius: 50%;
-  background: var(--bg-cream-2);
-  border: 2px dashed var(--accent-cream);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4px;
-  text-align: center;
-  animation: sticker-float 4s ease-in-out infinite;
+  gap: 2px;
+  font-family: var(--font-heading);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  background: rgba(250, 244, 235, 0.5);
 }
-@keyframes sticker-float {
-  0%, 100% { transform: translateY(0) rotate(-8deg); }
-  50%      { transform: translateY(-8px) rotate(-8deg); }
-}
-.hero__sticker-line {
-  width: 40px; height: 1px;
-  background: var(--accent-cream);
-}
-.hero__sticker-leaf { font-size: 20px; }
+.hero__badge-leaf { font-size: 22px; margin: 2px 0; }
+.hero__badge-top, .hero__badge-bottom { font-size: 9px; }
 
-/* ── BENEFITS ─────────────────────────────────────── */
+/* ── BENEFITS — тонкие иконки ─────────────────────── */
 .benefits {
-  padding: var(--sp-12) 0;
-  background: var(--bg-cream-2);
-  border-top: 1px solid var(--border-soft);
-  border-bottom: 1px solid var(--border-soft);
+  padding: var(--sp-8) 0 var(--sp-2);
+  background: transparent;
+  border: 0;
+  position: relative;
 }
 .benefits__list {
-  list-style: none;
-  padding: 0; margin: 0;
+  list-style: none; padding: 0; margin: 0;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: var(--sp-6);
+  gap: var(--sp-5);
+  max-width: 720px;
 }
 .benefit {
   display: flex;
-  flex-direction: column;
   align-items: center;
   gap: var(--sp-3);
-  text-align: center;
 }
 .benefit__icon {
-  width: 64px; height: 64px;
+  width: 52px; height: 52px;
   border-radius: 50%;
-  background: var(--bg-card);
-  border: 1px solid var(--border-soft);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 26px;
-  box-shadow: var(--shadow-xs);
+  background: rgba(250, 244, 235, 0.5);
+  border: 1px solid var(--text-primary);
+  display: flex; align-items: center; justify-content: center;
+  flex: 0 0 auto;
+  color: var(--text-primary);
+}
+.benefit__icon svg {
+  width: 22px; height: 22px;
+  stroke: currentColor;
+  stroke-width: 1.2;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 .benefit__label {
-  font-size: 13px;
-  font-weight: var(--fw-medium);
-  color: var(--text-secondary);
-  line-height: 1.4;
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--text-primary);
+  line-height: 1.3;
 }
 
-/* ── АДАПТИВ ──────────────────────────────────────── */
+/* ── Адаптив hero ─────────────────────────────────── */
+@media (max-width: 1100px) {
+  .hero__stamp { right: 20px; font-size: 26px; }
+  .hero__badge { right: 40px; top: 300px; width: 110px; height: 110px; }
+  .benefits__list { grid-template-columns: repeat(4, 1fr); max-width: 100%; }
+}
 @media (max-width: 900px) {
-  .hero { padding: var(--sp-8) 0 var(--sp-10); }
-  .hero__inner {
-    grid-template-columns: 1fr;
-    gap: var(--sp-8);
-    text-align: center;
+  .hero {
+    min-height: auto;
+    padding: 100px 0 40px;
+    background-position: 70% center;
   }
-  .hero__content { max-width: 100%; margin: 0 auto; }
-  .hero__actions { justify-content: center; }
-  .hero__visual { min-height: 400px; order: -1; }
-  .hero__bottle { width: 150px; height: 360px; }
-  .hero__sticker { width: 110px; height: 110px; top: 10px; right: 10px; }
-  .hero__sticker .handwritten { font-size: 18px; }
-
-  .benefits__list { grid-template-columns: repeat(2, 1fr); gap: var(--sp-5); }
-  .benefit__icon { width: 56px; height: 56px; font-size: 22px; }
+  .hero__overlay {
+    background: linear-gradient(180deg,
+      rgba(250, 244, 235, 0.92) 0%,
+      rgba(250, 244, 235, 0.85) 55%,
+      rgba(250, 244, 235, 0.7) 100%);
+  }
+  .hero__title { font-size: 42px; }
+  .hero__subtitle { font-size: 22px; }
+  .hero__stamp { display: none; }
+  .hero__badge { display: none; }
+  .benefits__list { grid-template-columns: repeat(2, 1fr); }
 }
-
-@media (max-width: 480px) {
-  .hero__title { font-size: 30px; }
-  .hero__subtitle { font-size: 17px; }
-  .hero__visual { min-height: 320px; }
-  .hero__bottle { width: 120px; height: 300px; }
-  .hero__sticker { width: 90px; height: 90px; }
-  .hero__sticker .handwritten { font-size: 15px; }
-  .hero__actions .btn { width: 100%; justify-content: center; }
-
+@media (max-width: 600px) {
+  .hero { padding: 80px 0 30px; }
+  .hero__title { font-size: 34px; }
+  .hero__subtitle { font-size: 18px; }
+  .hero__actions .btn { width: 100%; }
   .benefits__list { gap: var(--sp-4); }
-  .benefit__icon { width: 48px; height: 48px; font-size: 20px; }
-  .benefit__label { font-size: 12px; }
+  .benefit__icon { width: 44px; height: 44px; }
+  .benefit__icon svg { width: 18px; height: 18px; }
+  .benefit__label { font-size: 11.5px; }
 }
-
-/* ── SECTION HEAD (общая шапка для секций) ────────── */
-.section-head {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: var(--sp-6);
-  margin-bottom: var(--sp-8);
-}
-.section-head__title {
-  font-size: var(--fs-h2);
-  font-weight: var(--fw-black);
-  margin: 0 0 var(--sp-2);
-  color: var(--text-primary);
-}
-.section-head__desc {
-  font-size: 15px;
-  color: var(--text-secondary);
-  margin: 0;
-  max-width: 460px;
-  line-height: 1.5;
-}
-.section-head__link {
-  font-size: 14px;
-  font-weight: var(--fw-medium);
-  color: var(--text-primary);
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  white-space: nowrap;
-  transition: gap var(--tr-fast);
-}
-.section-head__link:hover { gap: 10px; color: var(--accent-hover); }
 
 /* ── FLAVORS ──────────────────────────────────────── */
 .flavors { padding: var(--sp-20) 0; }

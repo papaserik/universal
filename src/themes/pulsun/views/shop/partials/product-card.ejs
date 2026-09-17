@@ -1,0 +1,32 @@
+<article class="product-card">
+  <a href="/product/<%= p.slug %>" class="product-card__img">
+    <% if (p.image) { %>
+      <img src="<%= p.image %>" alt="<%= p.name %>" loading="lazy">
+    <% } else { %>
+      <div class="product-card__placeholder">🌿</div>
+    <% } %>
+    <% if (p.oldPrice && p.oldPrice > p.price) { %>
+      <span class="product-card__badge">−<%= Math.round((1 - p.price / p.oldPrice) * 100) %>%</span>
+    <% } %>
+  </a>
+
+  <div class="product-card__body">
+    <h3 class="product-card__title">
+      <a href="/product/<%= p.slug %>"><%= p.name %></a>
+    </h3>
+
+    <div class="product-card__price">
+      <span class="product-card__price-current"><%= p.price %> ₽</span>
+      <% if (p.oldPrice && p.oldPrice > p.price) { %>
+        <span class="product-card__price-old"><%= p.oldPrice %> ₽</span>
+      <% } %>
+    </div>
+
+    <form method="post" action="/cart/add" class="product-card__actions">
+      <input type="hidden" name="productId" value="<%= p.id %>">
+      <button type="submit" class="btn btn--primary btn--sm">
+        В корзину
+      </button>
+    </form>
+  </div>
+</article>

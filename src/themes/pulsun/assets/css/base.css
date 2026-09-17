@@ -71,12 +71,14 @@ p  { margin: 0 0 var(--sp-4); color: var(--text-secondary); }
 .btn {
   display: inline-flex;
   align-items: center;
-  gap: var(--sp-2);
-  padding: 14px 26px;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 28px;
   border-radius: var(--r-pill);
-  font-family: var(--font-heading);
-  font-weight: var(--fw-bold);
-  font-size: 15px;
+  font-family: var(--font-body);
+  font-weight: var(--fw-semibold);
+  font-size: 14px;
+  letter-spacing: 0.01em;
   border: 0;
   cursor: pointer;
   transition: all var(--tr-fast);
@@ -85,22 +87,23 @@ p  { margin: 0 0 var(--sp-4); color: var(--text-secondary); }
 }
 .btn--primary {
   background: var(--accent);
-  color: var(--text-inverse);
-  box-shadow: var(--shadow-btn);
+  color: var(--text-primary);
+  box-shadow: 0 4px 16px rgba(184, 147, 90, 0.25);
 }
 .btn--primary:hover {
   background: var(--accent-hover);
-  color: var(--text-inverse);
+  color: var(--text-primary);
   transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(184, 147, 90, 0.35);
 }
 .btn--ghost {
   background: transparent;
-  color: var(--accent);
-  border: 1.5px solid var(--accent);
+  color: var(--text-primary);
+  border: 1px solid var(--text-primary);
 }
 .btn--ghost:hover {
-  background: var(--accent);
-  color: var(--text-inverse);
+  background: var(--text-primary);
+  color: var(--bg-cream);
 }
 .btn--icon {
   width: 40px; height: 40px;

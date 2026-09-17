@@ -63,6 +63,14 @@ exports.toggle = async (req, res) => {
 };
 
 exports.uploadImage = async (req, res) => {
-  if (!req.file) return res.json({ ok: false });
-  res.json({ ok: true, url: '/uploads/' + req.file.filename });
+  // imageUpload.array() кладёт файлы в req.files, а не в req.file
+  const file = (req.files && req.files[0]) || req.file;
+  if (!file) return res.json({ ok: false });
+
+  // processUploaded мог создать WebP-версию — предпочитаем её
+  const url = file.webpUrl
+           || file.thumbUrl
+           || ('/uploads/' + (file.filename || file.path.split('/').pop()));
+
+  res.json({ ok: true, url });
 };
