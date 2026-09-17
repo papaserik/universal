@@ -45,6 +45,51 @@
       </form>
     </section>
 
+    <% if (order.source && order.source !== 'own') { %>
+    <section class="order-block order-source-block">
+      <header class="order-block-head">
+        <h2>
+          <%= order.source === 'ozon' ? '🔵' : order.source === 'wildberries' ? '🟣' : order.source === 'yandex' ? '🔴' : order.source === 'sbermarket' ? '🟢' : '🏪' %>
+          Заказ с маркетплейса
+        </h2>
+        <small><%= order.source %></small>
+      </header>
+      <div class="order-meta">
+        <div class="order-meta-row">
+          <span>Источник</span>
+          <strong><%= order.source %></strong>
+        </div>
+        <% if (order.externalId) { %>
+          <div class="order-meta-row">
+            <span>Внешний ID</span>
+            <strong style="font-family:monospace"><%= order.externalId %></strong>
+          </div>
+        <% } %>
+        <% if (order.externalNumber) { %>
+          <div class="order-meta-row">
+            <span>Номер на МП</span>
+            <strong style="font-family:monospace"><%= order.externalNumber %></strong>
+          </div>
+        <% } %>
+        <div class="order-meta-row">
+          <span>Комиссия</span>
+          <strong style="color:#dc2626">
+            <%= order.commissionPercent || 0 %>% (−<%= Math.round(order.commissionAmount || 0).toLocaleString('ru-RU') %> ₽)
+          </strong>
+        </div>
+        <div class="order-meta-row" style="border-top:1px solid #eef0f3;padding-top:10px;margin-top:6px">
+          <span style="color:#16a34a">
+            Прибыль
+            <i class="info-tip info-tip-left" data-tip="Что останется вам после удержания комиссии маркетплейса. Знак «~» — прогнозное значение, точное придёт от API при синхронизации."></i>
+          </span>
+          <strong style="color:#16a34a;font-size:17px">
+            <%= Math.round(order.netProfit || order.total).toLocaleString('ru-RU') %> ₽
+          </strong>
+        </div>
+      </div>
+    </section>
+    <% } %>
+
     <% if (order.isGift) { %>
     <section class="order-block order-gift-block">
       <header class="order-block-head">
@@ -206,6 +251,12 @@
         <h2>Оплата и доставка</h2>
       </header>
       <div class="order-meta">
+        <div class="order-meta-row">
+          <span>Источник</span>
+          <strong>
+            <%= order.source === 'own' ? '🏠 Свой магазин' : (order.source === 'ozon' ? '🔵 Ozon' : order.source === 'wildberries' ? '🟣 WB' : order.source === 'yandex' ? '🔴 Яндекс' : order.source === 'sbermarket' ? '🟢 Сбермаркет' : order.source) %>
+          </strong>
+        </div>
         <div class="order-meta-row">
           <span>Способ оплаты</span>
           <strong><%= order.payment %></strong>

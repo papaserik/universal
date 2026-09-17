@@ -128,9 +128,28 @@ exports.submit = async (req, res) => {
   // Адрес заказа: если подарок — берём адрес получателя
   const shippingAddress = isGift ? recipientAddress : (req.body.address || '');
 
+  // ─── Источник заказа ───
+  // Со своего сайта = 'own'. Заказы с маркетплейсов создаются через отдельный сервис.
+  const orderSource = req.body.source || 'own';
+
+  // Комиссия (для своего сайта = 0)
+  let commissionPercent = 0;
+  if (orderSource !== 'own') {
+    const integration = await prisma.marketplaceIntegration.findUnique({
+      where: { slug: orderSource }
+    });
+    if (integration) commissionPercent = integration.commissionPercent || 0;
+  }
+  const commissionAmount = Math.round(total * commissionPercent / 100 * 100) / 100;
+  const netProfit = total - commissionAmount;
+
   const order = await prisma.order.create({
     data: {
       number,
+      source: orderSource,
+      commissionPercent,
+      commissionAmount,
+      netProfit,
       userId: user ? user.id : null,
       email: req.body.email,
       phone: req.body.phone,

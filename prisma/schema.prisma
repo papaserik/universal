@@ -114,6 +114,13 @@ model ProductOption {
 model Order {
   id          Int         @id @default(autoincrement())
   number      String      @unique
+  source      String      @default("own")
+  externalId  String?
+  externalNumber String?
+  commissionPercent Float  @default(0)
+  commissionAmount  Float  @default(0)
+  netProfit   Float       @default(0)
+  commissionStatus String @default("calculated")
   userId      Int?
   user        User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
   email       String
@@ -500,6 +507,11 @@ model MarketplaceIntegration {
   direction   String   @default("both")
   strategy    String   @default("merge")
   config      String   @default("{}")
+  commissionPercent Float @default(0)
+  syncOrders  Boolean  @default(true)
+  syncStock   Boolean  @default(true)
+  syncPrice   Boolean  @default(false)
+  syncInterval String  @default("manual")
   lastSyncAt  DateTime?
   lastSyncStatus String?
   createdAt   DateTime @default(now())

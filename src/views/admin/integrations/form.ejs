@@ -18,7 +18,11 @@
       </label>
 
       <div class="form-row" style="margin-top:16px">
-        <label>Направление синхронизации
+        <label>
+          <span>
+            Направление синхронизации
+            <i class="info-tip" data-tip="Импорт: забираем товары/заказы с маркетплейса. Экспорт: отправляем ваш каталог на маркетплейс. Двусторонняя: и то, и другое."></i>
+          </span>
           <select name="direction">
             <option value="both"     <%= integration.direction === 'both'     ? 'selected' : '' %>>Двусторонняя (импорт + экспорт)</option>
             <option value="import"   <%= integration.direction === 'import'   ? 'selected' : '' %>>Только импорт (забрать с МП)</option>
@@ -27,7 +31,11 @@
         </label>
       </div>
 
-      <label>Стратегия при конфликте (товар с таким SKU уже есть)
+      <label>
+        <span>
+          Стратегия при конфликте (товар с таким SKU уже есть)
+          <i class="info-tip" data-tip="При «Обновить»: существующие товары обновляются, новые добавляются, лишние не трогаются. При «Перезаписать»: полная замена — старые данные могут быть потеряны. При «Пропустить»: только новые, существующие не меняются."></i>
+        </span>
         <select name="strategy">
           <option value="merge"      <%= integration.strategy === 'merge'      ? 'selected' : '' %>>Обновить существующие, добавить новые</option>
           <option value="overwrite"  <%= integration.strategy === 'overwrite'  ? 'selected' : '' %>>Перезаписать всё (может удалить лишнее)</option>

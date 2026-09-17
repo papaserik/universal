@@ -3,20 +3,40 @@ const orderNotifications = require('../../services/orderNotifications');
 
 exports.list = async (req, res) => {
   const status = req.query.status || '';
-  const where = status ? { status } : {};
-  const orders = await prisma.order.findMany({
-    where,
-    include: { items: true },
-    orderBy: { createdAt: 'desc' },
-    take: 100
-  });
-  const statuses = await prisma.orderStatus.findMany({
-    where: { active: true },
-    orderBy: [{ sort: 'asc' }, { id: 'asc' }]
-  });
+  const source = req.query.source || '';
+
+  const where = {};
+  if (status) where.status = status;
+  if (source) where.source = source;
+
+  const [orders, statuses, integrations] = await Promise.all([
+    prisma.order.findMany({
+      where,
+      include: { items: true },
+      orderBy: { createdAt: 'desc' },
+      take: 200
+    }),
+    prisma.orderStatus.findMany({
+      where: { active: true },
+      orderBy: [{ sort: 'asc' }, { id: 'asc' }]
+    }),
+    prisma.marketplaceIntegration.findMany({ orderBy: { name: 'asc' } })
+  ]);
+
   const statusMap = {};
   statuses.forEach(s => { statusMap[s.code] = s; });
-  res.render('admin/orders/list', { orders, status, statuses, statusMap });
+
+  // Статистика по текущей выборке
+  const stats = {
+    total: orders.length,
+    totalSum: orders.reduce((acc, o) => acc + (o.total || 0), 0),
+    totalCommission: orders.reduce((acc, o) => acc + (o.commissionAmount || 0), 0),
+    totalProfit: orders.reduce((acc, o) => acc + (o.netProfit || 0), 0)
+  };
+
+  res.render('admin/orders/list', {
+    orders, status, source, statuses, statusMap, integrations, stats
+  });
 };
 
 exports.view = async (req, res) => {

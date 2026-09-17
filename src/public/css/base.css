@@ -4840,3 +4840,165 @@ body:has(.mobile-menu:not([hidden])) { overflow: hidden; }
   }
   .club-stat-num { font-size: 26px; }
 }
+
+/* Глобальный тултип на витрине */
+.global-info-tip {
+  position: absolute;
+  z-index: 99999;
+  background: #0f172a;
+  color: #fff;
+  padding: 12px 16px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.55;
+  max-width: 340px;
+  min-width: 200px;
+  box-shadow: 0 12px 36px rgba(0,0,0,.3);
+  pointer-events: none;
+  animation: tipFadeIn .15s ease-out;
+}
+@keyframes tipFadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.global-info-tip.global-info-tip-top::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 8px solid transparent;
+  border-top-color: #0f172a;
+}
+.global-info-tip.global-info-tip-bottom::after {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 8px solid transparent;
+  border-bottom-color: #0f172a;
+}
+@media (max-width: 600px) {
+  .global-info-tip {
+    max-width: calc(100vw - 24px);
+    min-width: 0;
+    font-size: 13.5px;
+    padding: 14px 18px;
+    line-height: 1.6;
+  }
+}
+
+
+
+/* ═══════════════════════════════════════════════
+   ИНФО-КРУЖОК и ТУЛТИП (чистая версия)
+   ═══════════════════════════════════════════════ */
+.info-tip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  min-width: 18px;
+  border-radius: 50%;
+  background: #4f46e5;
+  color: #fff;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 12px;
+  font-weight: 700;
+  font-style: italic;
+  line-height: 1;
+  cursor: pointer;
+  margin-left: 6px;
+  vertical-align: middle;
+  flex-shrink: 0;
+  user-select: none;
+  position: relative;
+  padding: 0;
+  box-sizing: border-box;
+  transition: background .15s, transform .15s;
+}
+.info-tip::before {
+  content: 'i';
+  display: block;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  font-style: inherit;
+  line-height: inherit;
+  color: inherit;
+}
+.info-tip:hover { background: #4338ca; transform: scale(1.12); }
+.info-tip:active { transform: scale(0.95); }
+.info-tip::after { display: none !important; }
+
+.global-info-tip {
+  position: fixed;
+  z-index: 99999;
+  background: #0f172a;
+  color: #fff;
+  padding: 12px 16px;
+  border-radius: 10px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.55;
+  max-width: 340px;
+  min-width: 200px;
+  text-align: left;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.25), 0 4px 12px rgba(0, 0, 0, 0.15);
+  pointer-events: none;
+  animation: infoTipFade .15s ease-out;
+}
+@keyframes infoTipFade {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 600px) {
+  .global-info-tip {
+    max-width: calc(100vw - 20px);
+    min-width: 0;
+    font-size: 13.5px;
+    padding: 14px 18px;
+    line-height: 1.6;
+  }
+}
+
+/* Компактный кружок на витрине */
+.info-tip::before {
+  content: 'i' !important;
+  font-size: 10px !important;
+  font-weight: 600 !important;
+  line-height: 1 !important;
+  margin-top: -1px;
+}
+.info-tip {
+  width: 16px !important;
+  height: 16px !important;
+  min-width: 16px !important;
+}
+
+/* То же на витрине */
+.info-tip::before {
+  content: 'i' !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  font-style: normal !important;
+  line-height: 1 !important;
+  margin-top: -1px;
+  text-transform: lowercase !important;
+}
+
+/* То же на витрине */
+.info-tip {
+  width: 18px !important;
+  height: 18px !important;
+  min-width: 18px !important;
+}
+.info-tip::before {
+  font-size: 11px !important;
+}
