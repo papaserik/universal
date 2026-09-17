@@ -1,0 +1,165 @@
+<div class="admin-header">
+  <h1>📥 Импорт с маркетплейса</h1>
+  <a href="/admin/integrations" class="btn btn-sm">← К интеграциям</a>
+</div>
+
+<% if (error) { %>
+  <div class="admin-alert" style="background:#fee2e2;color:#991b1b"><%= error %></div>
+<% } %>
+
+<% if (result) { %>
+  <div class="import-result">
+    <div class="import-result-head">
+      <div class="import-result-icon">✓</div>
+      <h2>Импорт завершён</h2>
+      <p class="import-result-sub">
+        Файл: <strong><%= result.format.toUpperCase() %></strong> ·
+        Маркетплейс: <strong><%= result.marketplace %></strong> ·
+        Стратегия: <strong><%= result.strategy %></strong>
+      </p>
+    </div>
+
+    <div class="import-stats">
+      <div class="import-stat import-stat-total">
+        <div class="import-stat-num"><%= result.total %></div>
+        <div class="import-stat-label">Всего в файле</div>
+      </div>
+      <div class="import-stat import-stat-created">
+        <div class="import-stat-num">+<%= result.created %></div>
+        <div class="import-stat-label">Создано новых</div>
+      </div>
+      <div class="import-stat import-stat-updated">
+        <div class="import-stat-num"><%= result.updated %></div>
+        <div class="import-stat-label">Обновлено</div>
+      </div>
+      <div class="import-stat import-stat-skipped">
+        <div class="import-stat-num"><%= result.skipped %></div>
+        <div class="import-stat-label">Пропущено</div>
+      </div>
+      <div class="import-stat import-stat-errors">
+        <div class="import-stat-num"><%= result.errors %></div>
+        <div class="import-stat-label">Ошибок</div>
+      </div>
+    </div>
+
+    <% if (result.details && result.details.length) { %>
+      <details class="import-details">
+        <summary>Показать детали импорта (<%= result.details.length %> позиций)</summary>
+        <div class="admin-table-wrap" style="margin-top:12px">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Название</th>
+                <th>SKU</th>
+                <th style="width:130px;text-align:center">Действие</th>
+                <th style="width:280px">Ошибка</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% result.details.slice(0, 300).forEach(d => { %>
+                <tr>
+                  <td><%= d.name %></td>
+                  <td><code class="cell-code"><%= d.sku || '—' %></code></td>
+                  <td style="text-align:center">
+                    <% if (d.action === 'created') { %><span class="badge badge-paid">Создан</span>
+                    <% } else if (d.action === 'updated') { %><span class="badge badge-new">Обновлён</span>
+                    <% } else if (d.action === 'skipped') { %><span class="badge">Пропущен</span>
+                    <% } else { %><span class="badge badge-cancelled">Ошибка</span><% } %>
+                  </td>
+                  <td style="font-size:12.5px;color:#dc2626"><%= d.error || '' %></td>
+                </tr>
+              <% }) %>
+              <% if (result.details.length > 300) { %>
+                <tr><td colspan="4" style="text-align:center;color:#9ca3af;padding:12px">
+                  Показаны первые 300. Всего: <%= result.details.length %>
+                </td></tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </details>
+    <% } %>
+
+    <div class="import-actions">
+      <a href="/admin/products" class="btn">Перейти к товарам</a>
+      <a href="/admin/integrations/import" class="btn btn-outline">Загрузить ещё</a>
+    </div>
+  </div>
+<% } %>
+
+<% if (!result) { %>
+  <form method="post" action="/admin/integrations/import" enctype="multipart/form-data" class="admin-form" style="max-width:720px">
+    <fieldset class="full">
+      <legend>Файл с товарами</legend>
+      <p style="font-size:13px;color:#6b7280;margin:0 0 12px">
+        Поддерживаются <strong>YML</strong> (выгрузка из ЛК Ozon/WB/Яндекс/Сбермаркет),
+        <strong>XLSX/XLS</strong> (таблица Excel), <strong>CSV</strong>.
+      </p>
+
+      <label>
+        <span>Выберите файл *</span>
+        <input type="file" name="file" accept=".yml,.yaml,.xml,.xlsx,.xls,.csv" required>
+      </label>
+    </fieldset>
+
+    <fieldset class="full">
+      <legend>Параметры импорта</legend>
+
+      <div class="form-row">
+        <label>Источник
+          <select name="marketplace">
+            <% integrations.forEach(i => { %>
+              <option value="<%= i.slug %>"><%= i.name %></option>
+            <% }) %>
+            <option value="generic">Другой источник (без привязки)</option>
+          </select>
+        </label>
+
+        <label>Стратегия
+          <select name="strategy">
+            <option value="merge">🔄 Обновить + добавить новые</option>
+            <option value="skip">⏭ Только новые (существующие пропустить)</option>
+            <option value="overwrite">⚠️ Перезаписать всё полностью</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="import-hint">
+        <div class="import-hint-icon">💡</div>
+        <div>
+          <strong>Как работает смешанный импорт:</strong>
+          <ul style="margin:8px 0 0;padding-left:20px;font-size:13px;line-height:1.6;color:#374151">
+            <li>Товар ищется по <b>SKU</b> или <b>External ID</b></li>
+            <li>Если найден — <b>обновляется</b> (стратегия «merge»/«overwrite»)</li>
+            <li>Если не найден — <b>создаётся</b> как новый</li>
+            <li>Товары, которых нет в файле, <b>не трогаются</b></li>
+          </ul>
+        </div>
+      </div>
+    </fieldset>
+
+    <div class="form-actions">
+      <button type="submit" class="btn" style="background:#16a34a">📥 Импортировать</button>
+      <a href="/admin/integrations" class="btn btn-outline">Отмена</a>
+    </div>
+  </form>
+
+  <section class="sales-block" style="margin-top:24px;max-width:720px">
+    <h2>📋 Требования к файлу</h2>
+    <div style="font-size:14px;line-height:1.7;color:#4b5563">
+      <p><strong>YML</strong> — стандартный формат выгрузки маркетплейсов. Автоматически распознаются категории, бренды, изображения, цены, остатки.</p>
+      <p><strong>Excel/CSV</strong> — колонки:
+        <code>name</code> / <code>Наименование</code>,
+        <code>price</code> / <code>Цена</code>,
+        <code>old_price</code>,
+        <code>stock</code> / <code>Остаток</code>,
+        <code>sku</code> / <code>Артикул</code>,
+        <code>description</code> / <code>Описание</code>,
+        <code>brand</code> / <code>Бренд</code>,
+        <code>category</code> / <code>Категория</code>,
+        <code>images</code> / <code>Изображения</code> (через запятую),
+        <code>weight</code> / <code>Вес</code>.
+      </p>
+    </div>
+  </section>
+<% } %>
