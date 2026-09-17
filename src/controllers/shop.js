@@ -19,7 +19,7 @@ exports.home = async (req, res) => {
     newProducts,
     hitProducts,
     categories,
-    posts,
+    recipes,
     totalProducts,
     flavors,
   ] = await Promise.all([
@@ -61,11 +61,11 @@ exports.home = async (req, res) => {
       take: 8,
     }),
 
-    // Посты блога
+    // Рецепты (посты блога)
     prisma.blogPost.findMany({
       where: { published: true },
       orderBy: { createdAt: 'desc' },
-      take: 3,
+      take: 4,
     }),
 
     prisma.product.count({ where: { published: true } }),
@@ -93,7 +93,7 @@ exports.home = async (req, res) => {
     newProducts,
     hitProducts,
     categories,
-    posts,
+    recipes,
     totalProducts,
   });
 };

@@ -1,0 +1,38 @@
+<section class="recipes">
+  <div class="container">
+
+    <header class="section-head">
+      <div>
+        <h2 class="section-head__title">Рецепты с PULSUN</h2>
+        <p class="section-head__desc">
+          Простые и вкусные идеи для напитков. С PULSUN любые рецепты становятся особенными.
+        </p>
+      </div>
+      <a href="/blog?tag=recipe" class="section-head__link">
+        Все рецепты <span aria-hidden="true">→</span>
+      </a>
+    </header>
+
+    <div class="recipes__grid">
+      <% (typeof recipes !== 'undefined' ? recipes : []).forEach(function (r) { %>
+        <article class="recipe-card">
+          <a href="/blog/<%= r.slug %>" class="recipe-card__img">
+            <% if (r.image) { %>
+              <img src="<%= r.image %>" alt="<%= r.title %>" loading="lazy">
+            <% } else { %>
+              <div class="recipe-card__placeholder">☕</div>
+            <% } %>
+          </a>
+          <h3 class="recipe-card__title">
+            <a href="/blog/<%= r.slug %>"><%= r.title %></a>
+          </h3>
+          <p class="recipe-card__desc"><%= r.excerpt || '' %></p>
+          <a href="/blog/<%= r.slug %>" class="recipe-card__link">
+            Смотреть рецепт <span aria-hidden="true">→</span>
+          </a>
+        </article>
+      <% }); %>
+    </div>
+
+  </div>
+</section>
