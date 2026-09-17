@@ -29,7 +29,8 @@ const MODULES = [
   // Система
   { code: 'image_optimize', name: 'Оптимизация изображений', desc: 'Автосжатие, WebP, миниатюры при загрузке',               group: 'system',  icon: '🖼' },
   { code: 'pwa',            name: 'PWA (установка на телефон)', desc: 'Установка магазина как приложения: манифест, offline-режим, кеш, кнопка установки', group: 'system', icon: '📲' },
-  { code: 'pwa_push',       name: 'Push-уведомления',      desc: 'Уведомления о заказах, статусах, скидках прямо в браузер (требует HTTPS, работает с установленного PWA)', group: 'system', icon: '🔔' }
+  { code: 'pwa_push',       name: 'Push-уведомления',      desc: 'Уведомления о заказах, статусах, скидках прямо в браузер (требует HTTPS, работает с установленного PWA)', group: 'system', icon: '🔔' },
+  { code: 'cache',          name: 'Кеширование',          desc: 'Ускорение сайта в 5-10 раз: HTML-кеш публичных страниц, cache busting CSS/JS, кеш настроек и категорий', group: 'system', icon: '⚡' }
 ];
 
 const CACHE_TTL = 30 * 1000; // 30 секунд

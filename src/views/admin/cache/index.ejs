@@ -1,0 +1,109 @@
+<div class="admin-header">
+  <h1>⚡ Кеширование</h1>
+</div>
+
+<% if (saved) { %><div class="admin-alert admin-alert-ok">✓ Настройки сохранены</div><% } %>
+<% if (cleared) { %><div class="admin-alert admin-alert-ok">✓ Кеш очищен</div><% } %>
+
+<p class="admin-hint">
+  Кеширование ускоряет загрузку страниц в 5-10 раз. Статические файлы (CSS/JS) отдаются мгновенно благодаря версионированию. Публичные HTML-страницы кешируются в память и отдаются без обращения к БД.
+</p>
+
+<%# ═══ Статистика ═══ %>
+<div class="sales-stats" style="grid-template-columns:repeat(auto-fit,minmax(160px,1fr))">
+  <div class="sales-stat">
+    <div class="sales-stat-label">Записей в кеше</div>
+    <div class="sales-stat-value"><%= stats.size %></div>
+  </div>
+  <div class="sales-stat" style="background:#f0fdf4;border-color:#bbf7d0">
+    <div class="sales-stat-label">Попаданий (hits)</div>
+    <div class="sales-stat-value" style="color:#16a34a"><%= stats.hits %></div>
+  </div>
+  <div class="sales-stat" style="background:#fef3c7;border-color:#fcd34d">
+    <div class="sales-stat-label">Промахов (misses)</div>
+    <div class="sales-stat-value" style="color:#92400e"><%= stats.misses %></div>
+  </div>
+  <div class="sales-stat">
+    <div class="sales-stat-label">Записано в кеш</div>
+    <div class="sales-stat-value"><%= stats.sets %></div>
+  </div>
+</div>
+
+<%# ═══ Настройки ═══ %>
+<section class="sales-block">
+  <h2>⚙️ Настройки кеширования</h2>
+
+  <form method="post" action="/admin/cache/save" class="admin-form" style="max-width:760px">
+    <label class="checkbox-label" style="font-size:15px;padding:12px 14px;background:#f0fdf4;border-radius:8px;border:1px solid #bbf7d0">
+      <input type="checkbox" name="cache_pages_enabled" <%= values.cache_pages_enabled === '1' ? 'checked' : '' %>>
+      <strong>HTML-кеш публичных страниц</strong>
+    </label>
+
+    <label class="checkbox-label" style="font-size:15px;padding:12px 14px;background:#f0fdf4;border-radius:8px;border:1px solid #bbf7d0">
+      <input type="checkbox" name="cache_busting_enabled" <%= values.cache_busting_enabled === '1' ? 'checked' : '' %>>
+      <strong>Cache busting для CSS/JS</strong>
+      <small style="display:block;color:#6b7280;margin-top:4px;font-weight:400">
+        Автоматически добавляет версию к файлам — клиенты получают свежие стили мгновенно после обновления
+      </small>
+    </label>
+
+    <fieldset class="full">
+      <legend>Время жизни кеша</legend>
+      <div class="form-row">
+        <label>HTML-страницы (секунды)
+          <input type="number" name="cache_pages_ttl" value="<%= values.cache_pages_ttl || '300' %>" min="30" max="86400">
+          <small style="color:#6b7280;font-size:12px">300 = 5 минут</small>
+        </label>
+        <label>Настройки и категории (секунды)
+          <input type="number" name="cache_settings_ttl" value="<%= values.cache_settings_ttl || '60' %>" min="10" max="3600">
+          <small style="color:#6b7280;font-size:12px">60 = 1 минута</small>
+        </label>
+      </div>
+    </fieldset>
+
+    <div class="form-actions">
+      <button type="submit" class="btn">💾 Сохранить</button>
+    </div>
+  </form>
+</section>
+
+<%# ═══ Управление ═══ %>
+<section class="sales-block">
+  <h2>🗑 Управление кешем</h2>
+  <p style="color:#6b7280;font-size:14px;margin:0 0 16px">
+    Очистка кеша не удаляет данные — только сбрасывает временные копии. При следующем заходе на страницу они создадутся заново.
+  </p>
+
+  <form method="post" action="/admin/cache/clear" style="display:inline">
+    <button type="submit" class="btn" style="background:#dc2626"
+            onclick="return confirm('Очистить весь кеш?')">
+      🗑 Очистить весь кеш
+    </button>
+  </form>
+
+  <p style="color:#9ca3af;font-size:12.5px;margin-top:16px">
+    <strong>Автоочистка:</strong> кеш страниц сбрасывается автоматически при сохранении товара, категории, страницы, поста или баннера.
+  </p>
+</section>
+
+<%# ═══ Как это работает ═══ %>
+<section class="sales-block" style="background:#fffbeb;border-color:#fcd34d">
+  <h2 style="color:#78350f">💡 Как работает кеш</h2>
+  <div style="font-size:14px;line-height:1.7;color:#78350f">
+    <p><strong>1. Cache busting (CSS/JS)</strong><br>
+    К файлам добавляется версия <code>?v=1700000000</code> — при изменении файла версия меняется, браузер скачивает свежую копию. Никаких «обновите Cmd+Shift+R».</p>
+
+    <p><strong>2. HTML-кеш</strong><br>
+    Первый посетитель «согревает» страницу (MISS), сохраняется в память на 5 минут. Следующие 1000 заходов отдаются из кеша мгновенно (HIT), без запросов к БД.</p>
+
+    <p><strong>3. Кеш настроек и категорий</strong><br>
+    Редко изменяемые данные хранятся в памяти 60 секунд. Меньше нагрузки на БД.</p>
+
+    <p><strong>Автосброс</strong><br>
+    Сохранили товар — весь кеш страниц очистился. Клиенты сразу видят изменения.</p>
+
+    <p style="font-size:13px;color:#a16207;margin-top:16px">
+      ⚠️ Кеш не затрагивает: корзину, личный кабинет, админку, checkout, авторизованных пользователей.
+    </p>
+  </div>
+</section>

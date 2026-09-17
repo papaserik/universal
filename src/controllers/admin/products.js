@@ -174,6 +174,13 @@ exports.save = async (req, res) => {
     console.error('autosync error:', e);
   }
 
+  // Сброс кеша страниц
+  try {
+    const cache = require('../../services/cache');
+    cache.delByPrefix('page:/');
+    cache.delByPrefix('page:');
+  } catch (e) {}
+
   res.redirect('/admin/products/' + productId + '?saved=1');
 };
 

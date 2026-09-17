@@ -149,6 +149,9 @@ app.use((req, res, next) => {
   next();
 });
 
+// ─── Кеш публичных страниц ───
+app.use(require('./services/cache').pageCacheMiddleware);
+
 app.use('/', require('./routes/shop'));
 app.use('/admin', require('./routes/admin'));
 app.use('/api', require('./routes/api'));

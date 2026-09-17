@@ -36,10 +36,12 @@ exports.save = async (req, res) => {
   } else {
     await prisma.category.create({ data });
   }
+  try { require('../../services/cache').delByPrefix('page:'); } catch (e) {}
   res.redirect('/admin/categories');
 };
 
 exports.remove = async (req, res) => {
   await prisma.category.delete({ where: { id: Number(req.params.id) } });
+  try { require('../../services/cache').delByPrefix('page:'); } catch (e) {}
   res.redirect('/admin/categories');
 };
