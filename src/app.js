@@ -20,6 +20,20 @@ app.use(express.static(path.join(__dirname, 'public'), { maxAge: '7d' }));
 app.use('/uploads', express.static(path.join(__dirname, '..', 'data', 'uploads')));
 app.use('/theme',    express.static(path.join(__dirname, 'themes')));
 
+// ─── Статика модулей (автоматически) ───
+(function registerModuleStatics() {
+  const fs = require('fs');
+  const modulesDir = path.join(__dirname, 'modules');
+  if (!fs.existsSync(modulesDir)) return;
+  for (const dir of fs.readdirSync(modulesDir)) {
+    if (dir.startsWith('_')) continue;
+    const pub = path.join(modulesDir, dir, 'public');
+    if (fs.existsSync(pub)) {
+      app.use('/modules/' + dir, express.static(pub, { maxAge: '7d' }));
+    }
+  }
+})();
+
 app.use(session({
   store: new SQLiteStore({ db: 'sessions.db', dir: 'data' }),
   secret: process.env.SESSION_SECRET || 'dev-secret',

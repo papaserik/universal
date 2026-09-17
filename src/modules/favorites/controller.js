@@ -1,4 +1,4 @@
-const { prisma } = require('../config/db');
+const { prisma } = require('../../config/db');
 
 // ─── API: переключить ───
 exports.toggle = async (req, res) => {

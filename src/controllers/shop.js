@@ -1,6 +1,6 @@
 const { prisma } = require('../config/db');
 const bc = require('../services/breadcrumbs');
-const reviews = require('./reviews');
+const reviews = require('../modules/reviews/controller-public');
 
 async function getMarketplaceBySlug(slug) {
   if (!slug) return null;

@@ -1,0 +1,8 @@
+{
+  "code": "tags",
+  "name": "Теги",
+  "desc": "Метки товаров: «Новинка», «Хит», «Скидка»",
+  "icon": "🏷️",
+  "group": "catalog",
+  "default": true
+}

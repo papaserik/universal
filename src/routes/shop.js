@@ -44,11 +44,6 @@ router.get('/subscribe', require('../controllers/subscribe').form);
 router.post('/subscribe', require('../controllers/subscribe').submit);
 router.get('/unsubscribe', require('../controllers/subscribe').unsubscribe);
 
-const favorites = require('../controllers/favorites');
-router.post('/api/favorites/toggle', requireModule('favorites'), favorites.toggle);
-router.get('/api/favorites/ids', requireModule('favorites'), favorites.listIds);
-router.get('/favorites', requireModule('favorites'), favorites.page);
-router.get('/account/favorites', requireModule('favorites'), require('../controllers/account').requireAuth, favorites.page);
 const account = require('../controllers/account');
 const { imageUpload } = require('../services/upload');
 
@@ -66,5 +61,13 @@ router.get('/sitemap.xml', shopCtrl.sitemap);
 router.get('/robots.txt', shopCtrl.robots);
 
 
-router.post('/product/:productId/review', requireModule('reviews'), require('../controllers/reviews').submit);
+// ─── Модуль: Избранное ───
+const favModule = require('../modules/favorites/routes/public');
+router.use('/favorites', favModule);
+router.use('/account/favorites', favModule);
+router.use('/api/favorites', favModule);
+
+// ─── Модуль: Отзывы (public) ───
+router.use('/', require('../modules/reviews/routes/public'));
+
 module.exports = router;

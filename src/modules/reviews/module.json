@@ -1,0 +1,8 @@
+{
+  "code": "reviews",
+  "name": "Отзывы",
+  "desc": "Отзывы с модерацией, рейтинг товаров, баллы за отзыв",
+  "icon": "💬",
+  "group": "marketing",
+  "default": true
+}

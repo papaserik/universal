@@ -23,3 +23,18 @@ exports.list = async (req, res) => {
 
   res.render('admin/reviews/list', { items: enriched, filter, counts });
 };
+
+exports.approve = async (req, res) => {
+  await prisma.review.update({ where: { id: Number(req.params.id) }, data: { approved: true } });
+  res.redirect('/admin/reviews');
+};
+
+exports.reject = async (req, res) => {
+  await prisma.review.update({ where: { id: Number(req.params.id) }, data: { approved: false } });
+  res.redirect('/admin/reviews');
+};
+
+exports.remove = async (req, res) => {
+  await prisma.review.delete({ where: { id: Number(req.params.id) } });
+  res.redirect('/admin/reviews');
+};

@@ -1,8 +1,5 @@
 const router = require('express').Router();
 const backupAdmin = require('../controllers/admin/backup');
-const bannersAdmin = require('../controllers/admin/banners');
-const brandsAdmin = require('../controllers/admin/brands');
-const tagsAdmin = require('../controllers/admin/tags');
 const imagesAdmin = require('../controllers/admin/images');
 const modulesAdmin = require('../controllers/admin/modules');
 const pushAdmin = require('../controllers/admin/push');
@@ -41,8 +38,6 @@ const marketing  = require('../controllers/admin/marketing');
 const orderStatuses = require('../controllers/admin/orderStatuses');
 const emailTemplates = require('../controllers/admin/emailTemplates');
 const loyalty    = require('../controllers/admin/loyalty');
-const reviews    = require('../controllers/admin/reviews');
-const reviewsCtrl = require('../controllers/reviews');
 const payment    = require('../controllers/admin/payment');
 const ordersExport = require('../controllers/admin/ordersExport');
 
@@ -231,44 +226,18 @@ router.get('/loyalty/transactions', loyalty.transactions);
 router.post('/loyalty/transactions/manual', loyalty.addManual);
 router.get('/loyalty/user-balance', loyalty.userBalance);
 
-router.get('/reviews', reviews.list);
-router.post('/reviews/:id/approve', reviewsCtrl.approve);
-router.post('/reviews/:id/reject', reviewsCtrl.reject);
-router.post('/reviews/:id/delete', reviewsCtrl.remove);
 
 router.get('/backup', backupAdmin.index);
 router.get('/backup/download', backupAdmin.download);
 router.get('/backup/import', backupAdmin.importView);
 router.post('/backup/import', require('../services/upload').importUpload.single('file'), backupAdmin.importRun);
 
-router.get('/banners', bannersAdmin.list);
-router.get('/banners/new', bannersAdmin.form);
-router.get('/banners/:id', bannersAdmin.form);
-router.post('/banners', bannersAdmin.save);
-router.post('/banners/:id', bannersAdmin.save);
-router.post('/banners/:id/toggle', bannersAdmin.toggle);
-router.post('/banners/:id/delete', bannersAdmin.remove);
-router.post('/banners/upload', require('../services/upload').imageUpload.array('files', 1), processUploaded, bannersAdmin.uploadImage);
 
 router.get('/images', imagesAdmin.index);
 router.post('/images/settings', imagesAdmin.saveSettings);
 router.post('/images/optimize', imagesAdmin.runOptimize);
 
-router.get('/brands', brandsAdmin.list);
-router.get('/brands/new', brandsAdmin.form);
-router.get('/brands/:id', brandsAdmin.form);
-router.post('/brands', brandsAdmin.save);
-router.post('/brands/:id', brandsAdmin.save);
-router.post('/brands/:id/toggle', brandsAdmin.toggle);
-router.post('/brands/:id/delete', brandsAdmin.remove);
-router.post('/brands/upload', imageUpload.array('files', 1), processUploaded, brandsAdmin.list);
 
-router.get('/tags', tagsAdmin.list);
-router.get('/tags/new', tagsAdmin.form);
-router.get('/tags/:id', tagsAdmin.form);
-router.post('/tags', tagsAdmin.save);
-router.post('/tags/:id', tagsAdmin.save);
-router.post('/tags/:id/delete', tagsAdmin.remove);
 
 router.get('/modules', modulesAdmin.index);
 router.post('/modules/save', modulesAdmin.save);
@@ -308,5 +277,17 @@ router.post('/push/run-digest', async (req, res) => {
 
 // ─── Модуль: Кеширование ───
 router.use('/cache', require('../modules/cache/routes/admin'));
+
+// ─── Модуль: Бренды ───
+router.use('/brands', require('../modules/brands/routes/admin'));
+
+// ─── Модуль: Теги ───
+router.use('/tags', require('../modules/tags/routes/admin'));
+
+// ─── Модуль: Баннеры ───
+router.use('/banners', require('../modules/banners/routes/admin'));
+
+// ─── Модуль: Отзывы ───
+router.use('/reviews', require('../modules/reviews/routes/admin'));
 
 module.exports = router;
