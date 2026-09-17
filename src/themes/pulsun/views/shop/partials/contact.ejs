@@ -1,0 +1,44 @@
+<section class="contact">
+  <div class="container contact__inner">
+
+    <div class="contact__info">
+      <h2 class="contact__title">Контакты</h2>
+      <p class="contact__lead">
+        Будем рады ответить на любые вопросы и помочь с выбором.
+      </p>
+
+      <ul class="contact__list">
+        <li>
+          <span class="contact__icon">✉</span>
+          <a href="mailto:hello@pulsun.ru">hello@pulsun.ru</a>
+        </li>
+        <li>
+          <span class="contact__icon">☎</span>
+          <a href="tel:+70000000000">+7 (000) 000-00-00</a>
+          <small>Пн–Пт с 9:00 до 18:00</small>
+        </li>
+        <li>
+          <span class="contact__icon">📍</span>
+          <span>Санкт-Петербург</span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="contact__form-wrap">
+      <form class="contact__form" method="post" action="/contact">
+        <label class="contact__field">
+          <span>Напишите нам</span>
+          <input type="text" name="name" placeholder="Ваше имя" required>
+        </label>
+        <label class="contact__field">
+          <input type="email" name="email" placeholder="Email или телефон" required>
+        </label>
+        <label class="contact__field">
+          <textarea name="message" placeholder="Ваше сообщение" rows="4" required></textarea>
+        </label>
+        <button type="submit" class="btn btn--primary">Отправить <span aria-hidden="true">→</span></button>
+      </form>
+    </div>
+
+  </div>
+</section>

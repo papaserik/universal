@@ -409,3 +409,256 @@
   .recipes__grid { grid-template-columns: 1fr; }
   .recipe-card__title { font-size: 16px; }
 }
+
+/* ── ABOUT ────────────────────────────────────────── */
+.about {
+  padding: var(--sp-20) 0;
+}
+.about__inner {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: var(--sp-12);
+  align-items: center;
+}
+.about__title {
+  font-size: var(--fs-h2);
+  font-weight: var(--fw-black);
+  margin: 0 0 var(--sp-4);
+  line-height: var(--lh-tight);
+}
+.about__lead {
+  font-size: 17px;
+  color: var(--text-primary);
+  line-height: 1.55;
+  margin: 0 0 var(--sp-4);
+  font-weight: var(--fw-medium);
+}
+.about__text {
+  font-size: 15px;
+  color: var(--text-secondary);
+  line-height: 1.65;
+  margin: 0 0 var(--sp-8);
+}
+.about__list {
+  list-style: none;
+  padding: 0; margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-5);
+}
+.about__item {
+  display: flex;
+  gap: var(--sp-4);
+  align-items: flex-start;
+}
+.about__item-icon {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+  flex: 0 0 auto;
+}
+.about__item-title {
+  font-family: var(--font-heading);
+  font-weight: var(--fw-bold);
+  font-size: 15px;
+  margin-bottom: 2px;
+}
+.about__item-desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.about__visual {
+  position: relative;
+  min-height: 480px;
+  display: flex; align-items: center; justify-content: center;
+}
+.about__bottles {
+  position: relative;
+  width: 100%; height: 100%;
+  display: flex; gap: var(--sp-6);
+  align-items: center; justify-content: center;
+}
+.about__bottle {
+  width: 130px; height: 380px;
+  border-radius: 100px 100px 20px 20px;
+  box-shadow: 0 20px 40px rgba(58,37,25,0.18);
+}
+.about__bottle--1 {
+  background: linear-gradient(180deg, #F5DEB3 0%, #8B5A2B 100%);
+  transform: rotate(-3deg);
+}
+.about__bottle--2 {
+  background: linear-gradient(180deg, #E8A0A8 0%, #8B2F3A 100%);
+  transform: rotate(4deg) translateY(20px);
+}
+.about__badge {
+  position: absolute;
+  top: 0; right: 0;
+  font-size: 22px;
+  text-align: center;
+  color: var(--text-secondary);
+  transform: rotate(-6deg);
+}
+
+/* ── TIPS ─────────────────────────────────────────── */
+.tips {
+  padding: var(--sp-20) 0;
+  background: var(--bg-cream-2);
+}
+.tips__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--sp-6);
+}
+.tip-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  background: var(--bg-card);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  padding: 0 0 var(--sp-5);
+  border: 1px solid var(--border-soft);
+}
+.tip-card__img {
+  aspect-ratio: 4 / 3;
+  background: var(--bg-cream-3);
+  display: flex; align-items: center; justify-content: center;
+}
+.tip-card__placeholder { font-size: 44px; opacity: 0.4; }
+.tip-card__title {
+  font-size: 16px;
+  font-weight: var(--fw-bold);
+  padding: 0 var(--sp-5);
+  margin: 0;
+  line-height: 1.3;
+}
+.tip-card__desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  padding: 0 var(--sp-5);
+  margin: 0;
+  line-height: 1.5;
+  flex: 1 1 auto;
+}
+.tip-card .recipe-card__link {
+  margin: 0 var(--sp-5);
+}
+
+/* ── CONTACT ──────────────────────────────────────── */
+.contact {
+  padding: var(--sp-20) 0;
+}
+.contact__inner {
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  gap: var(--sp-12);
+  align-items: start;
+}
+.contact__title {
+  font-size: var(--fs-h2);
+  font-weight: var(--fw-black);
+  margin: 0 0 var(--sp-3);
+}
+.contact__lead {
+  font-size: 15px;
+  color: var(--text-secondary);
+  margin: 0 0 var(--sp-8);
+  line-height: 1.5;
+}
+.contact__list {
+  list-style: none;
+  padding: 0; margin: 0;
+  display: flex; flex-direction: column;
+  gap: var(--sp-5);
+}
+.contact__list li {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+  font-size: 15px;
+}
+.contact__list small {
+  display: block;
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+.contact__icon {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: var(--bg-cream-2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+  flex: 0 0 auto;
+}
+.contact__list a {
+  color: var(--text-primary);
+  font-weight: var(--fw-medium);
+}
+.contact__list a:hover { color: var(--accent-hover); }
+
+.contact__form-wrap {
+  background: var(--bg-card);
+  border-radius: var(--r-xl);
+  padding: var(--sp-8);
+  border: 1px solid var(--border-soft);
+  box-shadow: var(--shadow-card);
+  position: relative;
+}
+.contact__form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+}
+.contact__field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.contact__field > span {
+  font-family: var(--font-heading);
+  font-weight: var(--fw-bold);
+  font-size: 13px;
+  color: var(--text-primary);
+}
+.contact__field input,
+.contact__field textarea {
+  width: 100%;
+  padding: 14px 18px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  background: var(--bg-cream);
+  font-size: 15px;
+  font-family: inherit;
+  transition: border-color var(--tr-fast);
+}
+.contact__field input:focus,
+.contact__field textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+.contact__field textarea { resize: vertical; min-height: 100px; }
+.contact__form .btn { align-self: flex-start; }
+
+/* ── ABOUT / TIPS / CONTACT адаптив ──────────────── */
+@media (max-width: 1100px) {
+  .about__inner { grid-template-columns: 1fr; gap: var(--sp-8); }
+  .about__visual { min-height: 380px; order: -1; }
+  .tips__grid { grid-template-columns: repeat(2, 1fr); gap: var(--sp-5); }
+  .contact__inner { grid-template-columns: 1fr; gap: var(--sp-8); }
+}
+@media (max-width: 900px) {
+  .about, .tips, .contact { padding: var(--sp-12) 0; }
+  .about__bottle { width: 100px; height: 300px; }
+  .about__badge { font-size: 18px; }
+}
+@media (max-width: 600px) {
+  .tips__grid { grid-template-columns: 1fr; }
+  .contact__form-wrap { padding: var(--sp-5); }
+}
