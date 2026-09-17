@@ -4,7 +4,7 @@
   // ─── Регистрация Service Worker ───
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', function () {
-      navigator.serviceWorker.register('/sw.js', { scope: '/' })
+      navigator.serviceWorker.register('/modules/pwa/sw.js', { scope: '/' })
         .then(function (reg) {
           console.log('[PWA] SW зарегистрирован:', reg.scope);
 

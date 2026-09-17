@@ -11,16 +11,16 @@ const CACHE_OFFLINE = 'shop-offline-' + VERSION;
 // Что кешируем сразу при установке
 const PRECACHE_URLS = [
   '/',
-  '/offline.html',
-  '/manifest.json',
+  '/modules/pwa/offline.html',
+  '/modules/pwa/manifest.json',
   '/css/base.css',
   '/css/admin.css',
   '/js/base.js',
   '/js/info-tips.js',
   '/js/favorites.js',
-  '/icons/icon-192.png',
-  '/icons/icon-512.png',
-  '/icons/favicon-32.png'
+  '/modules/pwa/icons/icon-192.png',
+  '/modules/pwa/icons/icon-512.png',
+  '/modules/pwa/icons/favicon-32.png'
 ];
 
 // Публичные страницы — кешируем динамически
@@ -143,7 +143,7 @@ self.addEventListener('fetch', (event) => {
           return caches.match(req).then((cached) => {
             if (cached) return cached;
             // Офлайн-страница
-            return caches.match('/offline.html');
+            return caches.match('/modules/pwa/offline.html');
           });
         })
     );
@@ -165,8 +165,8 @@ self.addEventListener('push', (event) => {
   let data = {
     title: 'Universal Shop',
     body: 'Новое уведомление',
-    icon: '/icons/icon-192.png',
-    badge: '/icons/icon-192.png',
+    icon: '/modules/pwa/icons/icon-192.png',
+    badge: '/modules/pwa/icons/icon-192.png',
     url: '/',
     tag: 'default'
   };

@@ -4,4 +4,7 @@ router.get('/search/suggest', require('../controllers/api/search').suggest);
 // ─── Модуль: Push (API) ───
 router.use('/push', require('../modules/push/routes/api'));
 
+// ─── Модуль: PWA ───
+router.use('/pwa', require('../modules/pwa/routes/api'));
+
 module.exports = router;
