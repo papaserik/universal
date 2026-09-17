@@ -260,6 +260,7 @@ model Marketplace {
 
 model Cart {
   id          Int        @id @default(autoincrement())
+  pushSentAt  DateTime?
   sessionId   String     @unique
   userId      Int?
   email       String?

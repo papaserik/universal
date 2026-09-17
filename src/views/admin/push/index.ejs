@@ -1,0 +1,168 @@
+<div class="admin-header">
+  <h1>🔔 Push-подписки</h1>
+</div>
+
+<% if (msg) { %><div class="admin-alert admin-alert-ok">✓ <%= msg %></div><% } %>
+<% if (error) { %><div class="admin-alert" style="background:#fee2e2;color:#991b1b">✗ <%= error %></div><% } %>
+
+<p class="admin-hint">
+  Push-уведомления доставляются в браузер клиента даже когда сайт закрыт. Работают на Android/Desktop Chrome и iOS 16.4+ (только с установленного PWA).
+</p>
+
+<div class="sales-stats" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr))">
+  <div class="sales-stat">
+    <div class="sales-stat-label">Всего подписок</div>
+    <div class="sales-stat-value"><%= stats.total %></div>
+  </div>
+  <div class="sales-stat" style="background:#f0fdf4;border-color:#bbf7d0">
+    <div class="sales-stat-label">Активных</div>
+    <div class="sales-stat-value" style="color:#16a34a"><%= stats.active %></div>
+  </div>
+  <div class="sales-stat">
+    <div class="sales-stat-label">Пользователей</div>
+    <div class="sales-stat-value"><%= stats.users %></div>
+    <div class="sales-stat-sub">с уведомлениями</div>
+  </div>
+  <div class="sales-stat" style="<%= stats.inactive > 0 ? 'background:#fef2f2;border-color:#fecaca' : '' %>">
+    <div class="sales-stat-label">Неактивных</div>
+    <div class="sales-stat-value" style="<%= stats.inactive > 0 ? 'color:#dc2626' : '' %>"><%= stats.inactive %></div>
+  </div>
+</div>
+
+<section class="sales-block">
+  <h2>⏰ Автоматические задачи</h2>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin-top:12px">
+    <div style="padding:16px 18px;background:#fafbfc;border-radius:10px;border:1px solid #e5e7eb">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <span style="font-size:20px">🛒</span>
+        <strong style="font-size:14.5px">Брошенные корзины</strong>
+      </div>
+      <p style="font-size:13px;color:#6b7280;line-height:1.5;margin:0 0 12px">
+        Каждые 30 минут проверяем корзины без действий более 2 часов.
+      </p>
+      <button type="button" class="btn btn-sm" id="run-carts" style="background:#2563eb">▶ Запустить сейчас</button>
+      <span id="carts-result" style="margin-left:10px;font-size:13px;color:#6b7280"></span>
+    </div>
+
+    <div style="padding:16px 18px;background:#fafbfc;border-radius:10px;border:1px solid #e5e7eb">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <span style="font-size:20px">📊</span>
+        <strong style="font-size:14.5px">Дневная сводка админам</strong>
+      </div>
+      <p style="font-size:13px;color:#6b7280;line-height:1.5;margin:0 0 12px">
+        Каждый день в 9:00 отправляем сводку по заказам за сутки.
+      </p>
+      <button type="button" class="btn btn-sm" id="run-digest" style="background:#6b7280">▶ Отправить сейчас</button>
+      <span id="digest-result" style="margin-left:10px;font-size:13px;color:#6b7280"></span>
+    </div>
+  </div>
+
+  <script>
+  (function () {
+    var cartsBtn = document.getElementById('run-carts');
+    var digestBtn = document.getElementById('run-digest');
+    var cartsRes = document.getElementById('carts-result');
+    var digestRes = document.getElementById('digest-result');
+
+    function run(btn, endpoint, resultEl) {
+      btn.disabled = true;
+      resultEl.textContent = '⏳ Запуск…';
+      fetch(endpoint, { method: 'POST' })
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          btn.disabled = false;
+          if (d.ok) {
+            resultEl.style.color = '#16a34a';
+            resultEl.textContent = '✓ Отправлено: ' + (d.sent || 0) + ' из ' + (d.total || 0);
+          } else {
+            resultEl.style.color = '#dc2626';
+            resultEl.textContent = '✗ ' + (d.error || 'Ошибка');
+          }
+        })
+        .catch(function (e) {
+          btn.disabled = false;
+          resultEl.style.color = '#dc2626';
+          resultEl.textContent = '✗ ' + e.message;
+        });
+    }
+    cartsBtn.addEventListener('click', function () { run(cartsBtn, '/admin/push/run-carts', cartsRes); });
+    digestBtn.addEventListener('click', function () { run(digestBtn, '/admin/push/run-digest', digestRes); });
+  })();
+  </script>
+</section>
+
+<section class="sales-block">
+  <h2>📣 Отправить push всем подписчикам</h2>
+  <form method="post" action="/admin/push/broadcast" style="display:grid;gap:12px;max-width:640px">
+    <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;color:#4b5563;font-weight:500">
+      Заголовок
+      <input type="text" name="title" required maxlength="100" placeholder="🎉 Скидки на выходных" style="padding:10px 12px;border:1px solid #d1d5db;border-radius:8px;font:inherit;font-size:14px">
+    </label>
+    <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;color:#4b5563;font-weight:500">
+      Текст
+      <textarea name="body" required maxlength="200" rows="3" placeholder="Скидки до 40% на всю электронику" style="padding:10px 12px;border:1px solid #d1d5db;border-radius:8px;font:inherit;font-size:14px;resize:vertical"></textarea>
+    </label>
+    <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;color:#4b5563;font-weight:500">
+      Ссылка (необязательно)
+      <input type="text" name="url" placeholder="/catalog?sort=sale" style="padding:10px 12px;border:1px solid #d1d5db;border-radius:8px;font:inherit;font-size:14px">
+    </label>
+    <button type="submit" class="btn" style="align-self:flex-start;background:#16a34a"
+            onclick="return confirm('Отправить push всем <%= stats.active %> подписчикам?')">
+      🚀 Отправить (<%= stats.active %>)
+    </button>
+  </form>
+</section>
+
+<section class="sales-block">
+  <h2>Подписки</h2>
+  <% if (!subscriptions.length) { %>
+    <div style="text-align:center;padding:40px;color:#9ca3af">
+      Пока никто не подписан.
+    </div>
+  <% } else { %>
+    <div class="admin-table-wrap">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th style="width:50px">ID</th>
+            <th>Пользователь</th>
+            <th style="width:150px;text-align:center">Статус</th>
+            <th style="width:150px">Подписан</th>
+            <th style="width:180px">Последняя отправка</th>
+            <th style="width:80px;text-align:center">Ошибок</th>
+            <th style="width:100px;text-align:right"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% subscriptions.forEach(s => { %>
+            <tr>
+              <td><%= s.id %></td>
+              <td>
+                <% if (s.user) { %>
+                  <div class="cell-title"><%= s.user.name || s.user.email %></div>
+                  <div class="cell-sub"><%= s.user.email %></div>
+                <% } else { %>
+                  <em style="color:#9ca3af">Гость</em>
+                <% } %>
+              </td>
+              <td style="text-align:center">
+                <% if (s.active) { %><span class="badge badge-paid">✓ Активна</span>
+                <% } else { %><span class="badge badge-cancelled">✗ Отключена</span><% } %>
+              </td>
+              <td><%= s.createdAt.toLocaleString('ru-RU') %></td>
+              <td><%= s.lastSentAt ? s.lastSentAt.toLocaleString('ru-RU') : '—' %></td>
+              <td style="text-align:center;color:<%= s.failCount > 0 ? '#dc2626' : '#9ca3af' %>">
+                <%= s.failCount %>
+              </td>
+              <td class="cell-actions">
+                <form method="post" action="/admin/push/<%= s.id %>/delete" onsubmit="return confirm('Удалить?')" class="inline-form">
+                  <button class="btn btn-sm btn-danger">×</button>
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  <% } %>
+</section>

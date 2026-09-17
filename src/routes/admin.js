@@ -5,6 +5,7 @@ const brandsAdmin = require('../controllers/admin/brands');
 const tagsAdmin = require('../controllers/admin/tags');
 const imagesAdmin = require('../controllers/admin/images');
 const modulesAdmin = require('../controllers/admin/modules');
+const pushAdmin = require('../controllers/admin/push');
 const integrationsAdmin = require('../controllers/admin/integrations');
 const integrationsImportCtrl = require('../controllers/admin/integrationsImport');
 const syncOrdersCtrl = require('../controllers/admin/syncOrders');
@@ -287,5 +288,21 @@ router.post('/integrations/:slug', integrationsAdmin.save);
 router.post('/integrations/:slug/toggle', integrationsAdmin.toggle);
 router.get('/integrations/:slug/export/yml', integrationsAdmin.exportYml);
 router.get('/integrations/:slug/export/csv', integrationsAdmin.exportCsv);
+
+router.get('/push', pushAdmin.index);
+router.post('/push/broadcast', pushAdmin.broadcast);
+router.post('/push/:id/delete', pushAdmin.remove);
+router.post('/push/run-carts', async (req, res) => {
+  try {
+    const r = await require('../services/push/cron').runNow('carts');
+    res.json(r);
+  } catch (e) { res.json({ ok: false, error: e.message }); }
+});
+router.post('/push/run-digest', async (req, res) => {
+  try {
+    const r = await require('../services/push/cron').runNow('digest');
+    res.json(r);
+  } catch (e) { res.json({ ok: false, error: e.message }); }
+});
 
 module.exports = router;

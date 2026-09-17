@@ -69,7 +69,8 @@
         </button>
         <div class="admin-group-items">
           <% if (moduleEnabled('banners')) { %><a href="/admin/banners">Баннеры</a><% } %>
-          <% if (moduleEnabled('newsletter')) { %><a href="/admin/marketing/subscribers">Подписчики</a><% } %>
+          <% if (moduleEnabled('newsletter')) { %><a href="/admin/marketing/subscribers">Подписчики</a>
+          <a href="/admin/push">Push-подписки</a><% } %>
           <% if (moduleEnabled('newsletter')) { %><a href="/admin/marketing/newsletters">Рассылки</a><% } %>
           <a href="/admin/email-templates">Шаблоны писем</a>
           <% if (moduleEnabled('reviews')) { %><a href="/admin/reviews">Отзывы</a><% } %>
