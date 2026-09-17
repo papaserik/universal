@@ -3,10 +3,14 @@
 
   // ─── Регистрация Service Worker ───
   if ('serviceWorker' in navigator) {
+    if (location.pathname.startsWith('/admin')) return;
+
     window.addEventListener('load', function () {
-      navigator.serviceWorker.register('/modules/pwa/sw.js', { scope: '/' })
-        .then(function (reg) {
-          console.log('[PWA] SW зарегистрирован:', reg.scope);
+      if (location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
+  navigator.serviceWorker.register('/modules/pwa/sw.js', { scope: '/' })
+          .then(function (reg) {
+            console.log('[PWA] SW зарегистрирован:', reg.scope);
+}
 
           // Проверка обновлений каждые 60 минут
           setInterval(function () {

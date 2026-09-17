@@ -2,7 +2,7 @@
 // Service Worker для Universal Shop
 // ═══════════════════════════════════════════════
 
-const VERSION = 'v1.0.0';
+const VERSION = 'v202609180001';
 const CACHE_STATIC  = 'shop-static-'  + VERSION;
 const CACHE_IMAGES  = 'shop-images-'  + VERSION;
 const CACHE_PAGES   = 'shop-pages-'   + VERSION;
@@ -13,8 +13,7 @@ const PRECACHE_URLS = [
   '/',
   '/modules/pwa/offline.html',
   '/modules/pwa/manifest.json',
-  '/css/base.css',
-  '/css/admin.css',
+
   '/js/base.js',
   '/js/info-tips.js',
   '/js/favorites.js',
