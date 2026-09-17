@@ -20,7 +20,8 @@ exports.home = async (req, res) => {
     hitProducts,
     categories,
     posts,
-    totalProducts
+    totalProducts,
+    flavors,
   ] = await Promise.all([
     // Баннеры с учётом расписания
     prisma.banner.findMany({
@@ -28,17 +29,17 @@ exports.home = async (req, res) => {
         active: true,
         AND: [
           { OR: [{ startsAt: null }, { startsAt: { lte: now } }] },
-          { OR: [{ endsAt: null }, { endsAt: { gte: now } }] }
-        ]
+          { OR: [{ endsAt: null }, { endsAt: { gte: now } }] },
+        ],
       },
-      orderBy: [{ sort: 'asc' }, { id: 'desc' }]
+      orderBy: [{ sort: 'asc' }, { id: 'desc' }],
     }),
 
     // Новинки
     prisma.product.findMany({
       where: { published: true, stock: { gt: 0 } },
       orderBy: { createdAt: 'desc' },
-      take: 8
+      take: 8,
     }),
 
     // Хиты — товары со скидкой
@@ -46,10 +47,10 @@ exports.home = async (req, res) => {
       where: {
         published: true,
         stock: { gt: 0 },
-        oldPrice: { not: null }
+        oldPrice: { not: null },
       },
       orderBy: { createdAt: 'desc' },
-      take: 4
+      take: 4,
     }),
 
     // Категории верхнего уровня
@@ -57,34 +58,46 @@ exports.home = async (req, res) => {
       where: { parentId: null },
       include: { _count: { select: { products: true } } },
       orderBy: [{ sort: 'asc' }, { name: 'asc' }],
-      take: 8
+      take: 8,
     }),
 
     // Посты блога
     prisma.blogPost.findMany({
       where: { published: true },
       orderBy: { createdAt: 'desc' },
-      take: 3
+      take: 3,
     }),
 
-    prisma.product.count({ where: { published: true } })
+    prisma.product.count({ where: { published: true } }),
+
+    // Сиропы — для секции «Наши вкусы»
+    prisma.product.findMany({
+      where: { published: true },
+      orderBy: { id: 'asc' },
+      take: 8,
+    }),
   ]);
 
   res.locals.setMeta({
     title: res.locals.settings.siteName,
-    description: 'Универсальный интернет-магазин: ' + totalProducts + ' товаров в каталоге. Быстрая доставка, оплата онлайн и при получении.'
+    description:
+      'Универсальный интернет-магазин: ' +
+      totalProducts +
+      ' товаров в каталоге. Быстрая доставка, оплата онлайн и при получении.',
   });
 
   res.render('shop/home', {
+    flavors,
     banners,
     products: newProducts,
     newProducts,
     hitProducts,
     categories,
     posts,
-    totalProducts
+    totalProducts,
   });
 };
+
 
 exports.catalog = async (req, res) => {
   const where = { published: true };
