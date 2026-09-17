@@ -1,0 +1,140 @@
+/* =====================================================================
+   responsive.css — единый мобильный слой для всего сайта и админки.
+   Подключается ПОСЛЕДНИМ. Breakpoints: 1200 / 900 / 600 / 480.
+   ===================================================================== */
+
+/* ======================= 1200px — планшет ======================= */
+@media (max-width: 1200px) {
+  .container { padding-left: 16px; padding-right: 16px; }
+  .product-grid { grid-template-columns: repeat(3, 1fr) !important; }
+  .catalog-layout { grid-template-columns: 220px 1fr !important; }
+}
+
+/* ======================= 900px — маленький планшет ============== */
+@media (max-width: 900px) {
+  /* Общее */
+  .container { padding-left: 14px; padding-right: 14px; }
+  h1 { font-size: 26px !important; }
+  h2 { font-size: 20px !important; }
+
+  /* Шапка сайта */
+  .site-header .header-inner { flex-wrap: wrap; gap: 8px; }
+  .site-header .header-search { order: 3; flex: 1 1 100%; }
+  .site-header .c-header-right { gap: 8px; }
+
+  /* Каталог */
+  .catalog-layout { display: block !important; }
+  .catalog-sidebar { position: static !important; width: auto !important; margin-bottom: 16px; }
+  .product-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 12px !important; }
+  .product-card { padding: 10px !important; }
+  .product-card .card-actions { flex-wrap: wrap; gap: 6px; }
+  .product-card .btn { font-size: 13px; padding: 7px 10px; }
+
+  /* Карточка товара */
+  .product-page .product-layout,
+  .product-page .product-content { grid-template-columns: 1fr !important; display: block !important; }
+  .product-gallery, .product-image { max-width: 100% !important; }
+  .product-page .description { font-size: 14.5px; }
+  .thumbs img { width: 60px !important; height: 60px !important; }
+
+  /* Корзина */
+  .cart-table, .cart-table thead, .cart-table tbody,
+  .cart-table tr, .cart-table td { display: block !important; width: 100% !important; }
+  .cart-table thead { display: none !important; }
+  .cart-table tr { border-bottom: 1px solid #e5e7eb; padding: 10px 0; }
+  .cart-table td { padding: 4px 0 !important; border: 0 !important; }
+
+  /* Checkout */
+  .checkout-layout, .checkout-main { grid-template-columns: 1fr !important; display: block !important; }
+  .checkout-gift-fields { grid-template-columns: 1fr !important; }
+  .checkout-gift-fields textarea { min-height: 60px; }
+
+  /* Личный кабинет */
+  .account-layout, .account-grid { grid-template-columns: 1fr !important; }
+  .account-tabs { flex-wrap: wrap; gap: 6px; }
+  .account-tabs a { padding: 6px 10px; font-size: 13px; }
+
+  /* Блог */
+  .blog-layout { grid-template-columns: 1fr !important; }
+  .blog-sidebar { position: static !important; }
+  .blog-grid { grid-template-columns: repeat(2, 1fr) !important; }
+
+  /* Футер */
+  .site-footer .footer-cols { grid-template-columns: 1fr 1fr !important; gap: 16px; }
+
+  /* Модули */
+  .reviews-list { gap: 10px; }
+  .review-form-row { grid-template-columns: 1fr !important; }
+  .banners-grid { grid-template-columns: 1fr !important; }
+  .brands-grid, .tags-cloud { grid-template-columns: repeat(3, 1fr) !important; }
+
+  /* Общие таблицы на публичке */
+  .content table { display: block; overflow-x: auto; white-space: nowrap; }
+}
+
+/* ======================= 600px — телефон ======================== */
+@media (max-width: 600px) {
+  h1 { font-size: 22px !important; }
+  h2 { font-size: 18px !important; }
+  h3 { font-size: 16px !important; }
+
+  /* Шапка */
+  .site-header .logo { font-size: 18px; }
+  .header-icon-btn { width: 36px; height: 36px; font-size: 16px; }
+  .header-search input { font-size: 16px; } /* против iOS auto-zoom */
+
+  /* Каталог — карточки 2 в ряд остаются, но компактнее */
+  .product-grid { gap: 8px !important; }
+  .product-card { padding: 8px !important; border-radius: 8px; }
+  .product-card .product-title { font-size: 13px; line-height: 1.3; }
+  .product-card .price { font-size: 15px; }
+  .product-card .btn { font-size: 12px; padding: 6px 8px; }
+
+  /* Просмотр товара */
+  .product-page .product-title { font-size: 20px; }
+  .product-page .price-block { font-size: 22px; }
+
+  /* Корзина/checkout — крупные кнопки на всю ширину */
+  .cart-actions .btn,
+  .checkout-actions .btn { width: 100%; margin-bottom: 8px; }
+
+  /* Дашборд-карточки для публички (если есть) */
+  .stat-grid { grid-template-columns: repeat(2, 1fr) !important; }
+
+  /* Формы — 1 колонка */
+  .form-grid, .form-row { grid-template-columns: 1fr !important; }
+
+  /* Футер — 1 колонка */
+  .site-footer .footer-cols { grid-template-columns: 1fr !important; }
+
+  /* Блог */
+  .blog-grid { grid-template-columns: 1fr !important; }
+
+  /* Модули */
+  .brands-grid, .tags-cloud { grid-template-columns: repeat(2, 1fr) !important; }
+
+  /* Публичные таблицы */
+  .content table { font-size: 13px; }
+}
+
+/* ======================= 480px — маленький телефон ============= */
+@media (max-width: 480px) {
+  .container { padding-left: 10px; padding-right: 10px; }
+  h1 { font-size: 20px !important; }
+
+  .product-grid { gap: 6px !important; }
+  .product-card { padding: 6px !important; }
+  .product-card .btn { padding: 5px 6px; font-size: 11px; }
+
+  /* Все inputs — крупный шрифт против iOS zoom */
+  input, select, textarea { font-size: 16px !important; }
+
+  /* Кнопки на всю ширину */
+  .btn-block-mobile, .checkout-actions .btn { display: block; width: 100%; }
+}
+
+/* =================== Печать ==================================== */
+@media print {
+  .site-header, .site-footer, .admin-side, .admin-burger, .admin-overlay { display: none !important; }
+  body { background: #fff !important; color: #000 !important; }
+}

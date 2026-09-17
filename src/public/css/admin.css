@@ -689,7 +689,7 @@ tr.dragging {
 .order-meta-row span { color: #6b7280; }
 .order-meta-row strong { color: #111; font-weight: 600; }
 
-@media (max-width: 1000px) {
+@media (max-width: 900px) {
   .order-layout { grid-template-columns: 1fr; }
   .order-side { position: static; }
   .order-fields-grid { grid-template-columns: 1fr; }
@@ -1069,7 +1069,7 @@ a + .admin-group {
 }
 .admin-login-copyright a:hover { color: #fff; }
 
-@media (max-width: 500px) {
+@media (max-width: 480px) {
   .admin-login-card { padding: 32px 24px 24px; }
   .admin-login-header h1 { font-size: 19px; }
   .admin-login-icon { width: 56px; height: 56px; font-size: 26px; }
@@ -1255,7 +1255,7 @@ a + .admin-group {
   align-self: flex-start;
 }
 
-@media (max-width: 700px) {
+@media (max-width: 600px) {
   .cat-image-uploader { flex-direction: column; }
   .cat-image-preview { width: 100px; height: 100px; }
 }
@@ -1670,7 +1670,7 @@ a + .admin-group {
   background: #15803d;
 }
 
-@media (max-width: 700px) {
+@media (max-width: 600px) {
   .module-item {
     grid-template-columns: 44px 1fr;
     gap: 10px;
@@ -1794,7 +1794,7 @@ a + .admin-group {
   top: 20px;
 }
 
-@media (max-width: 1000px) {
+@media (max-width: 900px) {
   .integration-form-grid { grid-template-columns: 1fr; }
   .integration-side { position: static; }
   .integrations-grid { grid-template-columns: 1fr; }
@@ -1933,7 +1933,7 @@ a + .admin-group {
 }
 
 /* На узких экранах — колонки в столбик */
-@media (max-width: 700px) {
+@media (max-width: 600px) {
   .admin-form .form-row {
     flex-direction: column;
     gap: 14px;
@@ -2280,4 +2280,99 @@ a.finance-card:hover {
   padding-top: 8px;
   border-top: 1px solid #f3f4f6;
   margin-top: 4px;
+}
+
+/* ================================================================
+   МОБИЛЬНАЯ АДАПТИВНОСТЬ (v2)
+   ================================================================ */
+.admin-burger {
+  display: none;
+  position: fixed; top: 12px; left: 12px; z-index: 1100;
+  width: 42px; height: 42px; border-radius: 10px;
+  background: #1e293b; color: #fff; border: 0;
+  font-size: 22px; line-height: 1; cursor: pointer;
+  align-items: center; justify-content: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,.15);
+}
+.admin-overlay {
+  display: none;
+  position: fixed; inset: 0; z-index: 999;
+  background: rgba(0,0,0,.45);
+}
+
+@media (max-width: 900px) {
+  .admin-burger { display: flex; }
+  .admin-overlay.open { display: block; }
+
+  .admin-side {
+    position: fixed !important;
+    top: 0; left: 0; bottom: 0;
+    width: 268px; max-width: 85vw;
+    height: 100vh !important;
+    transform: translateX(-100%) !important;
+    transition: transform .25s ease;
+    z-index: 1000;
+    overflow-y: auto;
+  }
+  .admin-side.open { transform: translateX(0) !important; }
+
+  .admin-main { padding: 64px 14px 20px !important; }
+
+  .admin-header {
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .admin-header h1 { font-size: 20px !important; margin: 0 !important; }
+
+  /* Дашборд-карточки метрик — 2 в ряд */
+  .stat-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+    margin-bottom: 18px !important;
+  }
+  .stat-card {
+    padding: 12px 14px !important;
+    border-radius: 8px !important;
+  }
+  .stat-card-wide {
+    grid-column: span 2 !important;
+  }
+  .stat-num,
+  .stat-card > span:first-child {
+    font-size: 20px !important;
+  }
+  .stat-card span:last-child {
+    font-size: 12px !important;
+  }
+
+  /* Таблицы — горизонтальный скролл */
+  .admin-main table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  /* Формы — в одну колонку */
+  .admin-form,
+  .form-grid,
+  .form-row { grid-template-columns: 1fr !important; }
+}
+
+@media (max-width: 480px) {
+  .admin-main { padding: 58px 10px 16px !important; }
+  .stat-grid { gap: 8px !important; }
+  .stat-card { padding: 10px 12px !important; }
+  .stat-num,
+  .stat-card > span:first-child { font-size: 18px !important; }
+  .admin-main h2 { font-size: 16px !important; }
+  .admin-main h3 { font-size: 15px !important; }
+  .admin-header .btn,
+  .admin-header button.btn { padding: 7px 10px; font-size: 13px; }
+
+  /* iOS: без авто-zoom при фокусе */
+  .admin-main input,
+  .admin-main select,
+  .admin-main textarea { font-size: 16px; }
 }
