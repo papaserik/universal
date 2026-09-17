@@ -1,5 +1,6 @@
 const { prisma } = require('../../config/db');
 const orderNotifications = require('../../services/orderNotifications');
+const logger = require('../../lib/logger');
 
 exports.list = async (req, res) => {
   const status = req.query.status || '';
@@ -98,7 +99,7 @@ exports.updateStatus = async (req, res) => {
   if (oldStatus !== newStatus) {
     const updated = await prisma.order.findUnique({ where: { id: orderId }, include: { items: true } });
     orderNotifications.notifyStatusChange(updated, newStatus, oldStatus)
-      .catch(e => console.error('notifyStatusChange:', e));
+      .catch(e => logger.error('notifyStatusChange:', e));
   }
 
   res.redirect('/admin/orders/' + orderId + '?changed=1');

@@ -2,6 +2,7 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const imageProcessor = require('./imageProcessor');
+const logger = require('../lib/logger');
 
 const UPLOAD_DIR = path.join(__dirname, '..', '..', 'data', 'uploads');
 if (!fs.existsSync(UPLOAD_DIR)) fs.mkdirSync(UPLOAD_DIR, { recursive: true });
@@ -59,7 +60,7 @@ async function processUploaded(req, res, next) {
     }
     next();
   } catch (e) {
-    console.error('[upload processor]', e);
+    logger.error('[upload processor]', e);
     next();
   }
 }

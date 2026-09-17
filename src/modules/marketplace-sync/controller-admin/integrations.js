@@ -1,5 +1,6 @@
 const { prisma } = require('../../../config/db');
 const exportSvc = require('../service/export');
+const logger = require('../../../lib/logger');
 
 // ─── Список интеграций ───
 exports.index = async (req, res) => {
@@ -154,7 +155,7 @@ exports.exportYml = async (req, res) => {
     res.setHeader('Content-Disposition', 'attachment; filename="' + filename + '"');
     res.send(result.xml);
   } catch (e) {
-    console.error('export yml error:', e);
+    logger.error('export yml error:', e);
     await prisma.marketplaceSyncLog.update({
       where: { id: log.id },
       data: {

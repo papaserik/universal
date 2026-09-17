@@ -1,4 +1,5 @@
 const { getSetting } = require('./settings');
+const logger = require('../lib/logger');
 
 function money(n) { return Number(n).toLocaleString('ru-RU') + ' ₽'; }
 
@@ -135,10 +136,10 @@ async function notifyNewOrder(order) {
   results.forEach((r, i) => {
     const name = i === 0 ? 'Telegram' : (i === 1 ? 'WhatsApp' : 'MAX');
     if (r.status === 'fulfilled' && r.value && r.value.ok) {
-      console.log('[notify] ' + name + ' — отправлено');
+      logger.debug('[notify] ' + name + ' — отправлено');
     } else {
       const reason = r.value && r.value.reason || r.reason || 'unknown';
-      console.log('[notify] ' + name + ' — не отправлено: ' + reason);
+      logger.debug('[notify] ' + name + ' — не отправлено: ' + reason);
     }
   });
 }

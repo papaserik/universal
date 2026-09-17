@@ -1,4 +1,5 @@
 const { prisma } = require('../../config/db');
+const logger = require('../../lib/logger');
 
 // ─── API: переключить ───
 exports.toggle = async (req, res) => {
@@ -30,7 +31,7 @@ exports.toggle = async (req, res) => {
     const count = await prisma.favorite.count({ where: { userId: user.id } });
     res.json({ ok: true, isFavorite, count });
   } catch (e) {
-    console.error('[favorites toggle]', e);
+    logger.error('[favorites toggle]', e);
     res.json({ ok: false, error: e.message });
   }
 };

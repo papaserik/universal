@@ -8,6 +8,7 @@ const compression = require('compression');
 const expressLayouts = require('express-ejs-layouts');
 const { getSetting } = require('./services/settings');
 const { loadTheme, viewPaths } = require('./services/theme');
+const logger = require('./lib/logger');
 
 const app = express();
 
@@ -188,7 +189,7 @@ app.use('/api', require('./routes/api'));
 
 app.use((req, res) => res.status(404).render('errors/404'));
 app.use((err, req, res, next) => {
-  console.error(err);
+  logger.error(err);
   res.status(500).render('errors/500', { error: err.message });
 });
 

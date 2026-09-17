@@ -2,6 +2,7 @@ const { prisma } = require('../config/db');
 const mail = require('../services/mail');
 const { getSetting } = require('../services/settings');
 const loyalty = require('../modules/loyalty/service');
+const logger = require('../lib/logger');
 
 // ─── Подписка ───
 exports.form = async (req, res) => {
@@ -56,7 +57,7 @@ exports.submit = async (req, res) => {
           }
         }
       }
-    } catch (e) { console.error('subscribe points:', e); }
+    } catch (e) { logger.error('subscribe points:', e); }
 
     // Приветственное письмо
     const siteName = await getSetting('site_name', 'Магазин');
@@ -72,7 +73,7 @@ exports.submit = async (req, res) => {
 
     res.render('pages/subscribe', { sent: true, error: null, unsubscribed: false, email });
   } catch (e) {
-    console.error('subscribe error:', e);
+    logger.error('subscribe error:', e);
     res.render('pages/subscribe', { sent: false, error: 'Ошибка сервера. Попробуйте позже.', unsubscribed: false, email });
   }
 };

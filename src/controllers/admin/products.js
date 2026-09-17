@@ -2,6 +2,7 @@ const { prisma } = require('../../config/db');
 const slugify = require('slugify');
 const fs = require('fs');
 const path = require('path');
+const logger = require('../../lib/logger');
 
 const UPLOAD_DIR = path.join(__dirname, '..', '..', '..', 'data', 'uploads');
 
@@ -162,16 +163,16 @@ exports.save = async (req, res) => {
               if (mpSlug === 'ozon') {
                 await syncStockPrice.syncPrices(mpSlug, [productId]);
               }
-              console.log('[autosync] ' + mpSlug + ' ← товар #' + productId);
+              logger.debug('[autosync] ' + mpSlug + ' ← товар #' + productId);
             } catch (e) {
-              console.error('[autosync] ' + mpSlug + ':', e.message);
+              logger.error('[autosync] ' + mpSlug + ':', e.message);
             }
           }
         }
       }
     }
   } catch (e) {
-    console.error('autosync error:', e);
+    logger.error('autosync error:', e);
   }
 
   // Сброс кеша страниц

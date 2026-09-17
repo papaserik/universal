@@ -1,5 +1,6 @@
 const modules = require('../../services/modules');
 const { setSetting } = require('../../services/settings');
+const logger = require('../../lib/logger');
 
 exports.index = async (req, res) => {
   const all = await modules.listWithState();
@@ -54,7 +55,7 @@ exports.save = async (req, res) => {
       fs.readdirSync(cacheDir).forEach(f => { try { fs.unlinkSync(path.join(cacheDir, f)); } catch(e){} });
     }
   } catch (e) {
-    console.error('[modules.save] cache.invalidate failed:', e.message);
+    logger.error('[modules.save] cache.invalidate failed:', e.message);
   }
 
   // Синхронизируем старые ключи для совместимости

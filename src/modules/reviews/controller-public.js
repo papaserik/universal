@@ -1,5 +1,6 @@
 const { prisma } = require('../../config/db');
 const loyalty = require('../../modules/loyalty/service');
+const logger = require('../../lib/logger');
 
 const rateMap = new Map();
 function rateLimit(ip, limit = 5, windowMs = 3600 * 1000) {
@@ -89,12 +90,12 @@ exports.submit = async (req, res) => {
               'Баллы за отзыв товар#' + productId);
           }
         }
-      } catch (e) { console.error('review points:', e); }
+      } catch (e) { logger.error('review points:', e); }
     }
 
     res.json({ ok: true, id: review.id, pending: true });
   } catch (e) {
-    console.error('review submit error:', e);
+    logger.error('review submit error:', e);
     res.status(500).json({ ok: false, error: e.message });
   }
 };

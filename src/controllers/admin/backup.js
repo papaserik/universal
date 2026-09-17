@@ -5,6 +5,7 @@ const path = require('path');
 exports.index = async (req, res) => {
   // Считаем размеры таблиц
   const { prisma } = require('../../config/db');
+const logger = require('../../lib/logger');
   const counts = {};
   let total = 0;
   for (const t of backup.TABLES) {
@@ -42,7 +43,7 @@ exports.download = async (req, res) => {
     res.setHeader('Content-Disposition', 'attachment; filename="' + filename + '"');
     res.send(json);
   } catch (e) {
-    console.error('backup download error:', e);
+    logger.error('backup download error:', e);
     res.status(500).send('Ошибка экспорта: ' + e.message);
   }
 };
@@ -69,7 +70,7 @@ exports.importRun = async (req, res) => {
       'Импорт завершён (' + mode + '). Ошибок: ' + result.errors.length
     ));
   } catch (e) {
-    console.error('import error:', e);
+    logger.error('import error:', e);
     res.render('admin/backup/import', { error: 'Ошибка импорта: ' + e.message });
   }
 };

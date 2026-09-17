@@ -11,6 +11,7 @@ const { requireAuth, requireAdmin, requireAdminGuest } = require('../middleware/
 const adminAuth = require('../controllers/admin/auth');
 const roles = require('../middleware/roles');
 const { imageUpload, importUpload, processUploaded } = require('../services/upload');
+const logger = require('../lib/logger');
 
 // ─── Публичные роуты админки (до защиты) ───
 router.get('/login', requireAdminGuest, adminAuth.loginForm);
@@ -169,7 +170,7 @@ router.post('/reorder/:type', async (req, res) => {
     }
     res.json({ ok: true, count: ids.length });
   } catch (e) {
-    console.error('reorder error:', e);
+    logger.error('reorder error:', e);
     res.json({ ok: false, error: e.message });
   }
 });

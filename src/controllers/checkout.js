@@ -3,6 +3,7 @@ const cart = require('../services/cart');
 const delivery = require('../services/delivery');
 const payment = require('../services/payment');
 const loyalty = require('../modules/loyalty/service');
+const logger = require('../lib/logger');
 
 async function enrichItems(items) {
   const ids = items.map(i => i.productId);
@@ -181,13 +182,13 @@ exports.submit = async (req, res) => {
 
   // Начисление кэшбэка (по сумме после скидки доставки, без учёта баллов)
   if (user) {
-    try { await loyalty.awardForOrder(order, user.id); } catch (e) { console.error('loyalty award:', e); }
+    try { await loyalty.awardForOrder(order, user.id); } catch (e) { logger.error('loyalty award:', e); }
 
     // ─── Реферальная программа ───
     try {
       const referral = require('../modules/club/service');
       await referral.processOrder(order, user.id);
-    } catch (e) { console.error('referral processOrder:', e); }
+    } catch (e) { logger.error('referral processOrder:', e); }
   }
 
   // Уведомления
@@ -195,12 +196,12 @@ exports.submit = async (req, res) => {
     const mailer = require('../services/orderMailer');
     await mailer.notifyAdmin(order);
     if (mailer.notifyChannels) await mailer.notifyChannels(order);
-  } catch (e) { console.error('mail error', e); }
+  } catch (e) { logger.error('mail error', e); }
 
   try {
     const orderNotifications = require('../services/orderNotifications');
     await orderNotifications.sendOrderCreatedEmail(order);
-  } catch (e) { console.error('order email error', e); }
+  } catch (e) { logger.error('order email error', e); }
 
   // Помечаем корзину как оформленную
   await cart.markConverted(req);

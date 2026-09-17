@@ -1,6 +1,7 @@
 const { prisma } = require('../config/db');
 const fs = require('fs');
 const path = require('path');
+const logger = require('../lib/logger');
 
 // Какие таблицы выгружаем и в каком порядке (важен для импорта)
 const TABLES = [
@@ -44,13 +45,13 @@ async function exportAll() {
 
   for (const t of TABLES) {
     if (!prisma[t]) {
-      console.warn('Пропускаю неизвестную модель:', t);
+      logger.warn('Пропускаю неизвестную модель:', t);
       continue;
     }
     try {
       data.tables[t] = await prisma[t].findMany();
     } catch (e) {
-      console.warn('Ошибка выгрузки', t, ':', e.message);
+      logger.warn('Ошибка выгрузки', t, ':', e.message);
       data.tables[t] = [];
     }
   }

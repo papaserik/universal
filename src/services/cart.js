@@ -1,4 +1,5 @@
 const { prisma } = require('../config/db');
+const logger = require('../lib/logger');
 
 function getCart(req) {
   return req.session.cart || (req.session.cart = []);
@@ -57,7 +58,7 @@ async function syncDb(req) {
       });
     }
   } catch (e) {
-    console.error('[cart sync]', e.message);
+    logger.error('[cart sync]', e.message);
   }
 }
 
@@ -69,7 +70,7 @@ async function markConverted(req) {
       where: { sessionId: sid },
       data: { status: 'converted', convertedAt: new Date() }
     });
-  } catch (e) { console.error('[cart mark]', e.message); }
+  } catch (e) { logger.error('[cart mark]', e.message); }
 }
 
 function addToCart(req, product, qty = 1) {

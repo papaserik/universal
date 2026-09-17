@@ -4,6 +4,7 @@ const referral = require('../modules/club/service');
 const loyalty = require('../modules/loyalty/service');
 const authCode = require('../services/authCode');
 const { getSetting } = require('../services/settings');
+const logger = require('../lib/logger');
 
 exports.loginForm = (req, res) => {
   res.render('auth/login', { error: null, step: 'password' });
@@ -41,7 +42,7 @@ exports.register = async (req, res) => {
     if (ls.enabled && ls.forSignup > 0) {
       await loyalty.addPoints(user.id, ls.forSignup, 'signup', 'Бонус за регистрацию');
     }
-  } catch (e) { console.error('signup points:', e); }
+  } catch (e) { logger.error('signup points:', e); }
 
   req.session.user = { id: user.id, email: user.email, name: user.name, role: user.role, avatar: user.avatar || null };
   res.redirect('/');
@@ -112,6 +113,6 @@ async function handleReferralOnSignup(req, newUser) {
     // Убираем cookie
     req.res.clearCookie('ref');
   } catch (e) {
-    console.error('referral signup error:', e);
+    logger.error('referral signup error:', e);
   }
 }

@@ -1,4 +1,5 @@
 const { prisma } = require('../../config/db');
+const logger = require('../../lib/logger');
 
 async function listActive() {
   return prisma.paymentMethod.findMany({
@@ -30,7 +31,7 @@ async function createPayment(order, method) {
         const stripeSvc = require('./stripe');
         return await stripeSvc.create(order);
       } catch (e) {
-        console.error('Stripe error:', e.message);
+        logger.error('Stripe error:', e.message);
         return { redirect: '/checkout/success?order=' + order.number };
       }
     }
@@ -40,7 +41,7 @@ async function createPayment(order, method) {
         const yooSvc = require('./yookassa');
         return await yooSvc.create(order);
       } catch (e) {
-        console.error('YooKassa error:', e.message);
+        logger.error('YooKassa error:', e.message);
         return { redirect: '/checkout/success?order=' + order.number };
       }
     }

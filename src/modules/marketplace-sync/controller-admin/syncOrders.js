@@ -1,6 +1,7 @@
 const { prisma } = require('../../../config/db');
 const syncOrders = require('../service/syncOrders');
 const access = require('../service/access');
+const logger = require('../../../lib/logger');
 
 // ─── Тест подключения к API ───
 exports.testConnection = async (req, res) => {
@@ -73,7 +74,7 @@ exports.sync = async (req, res) => {
       errors: stats.errors.slice(0, 10)
     });
   } catch (e) {
-    console.error('sync orders error:', e);
+    logger.error('sync orders error:', e);
     await prisma.marketplaceSyncLog.update({
       where: { id: log.id },
       data: { status: 'error', message: e.message, finishedAt: new Date() }
@@ -126,7 +127,7 @@ exports.syncStocks = async (req, res) => {
       errors: stats.errors.slice(0, 10)
     });
   } catch (e) {
-    console.error('sync stocks error:', e);
+    logger.error('sync stocks error:', e);
     await prisma.marketplaceSyncLog.update({
       where: { id: log.id },
       data: { status: 'error', message: e.message, finishedAt: new Date() }
@@ -173,7 +174,7 @@ exports.syncPrices = async (req, res) => {
       errors: stats.errors.slice(0, 10)
     });
   } catch (e) {
-    console.error('sync prices error:', e);
+    logger.error('sync prices error:', e);
     await prisma.marketplaceSyncLog.update({
       where: { id: log.id },
       data: { status: 'error', message: e.message, finishedAt: new Date() }

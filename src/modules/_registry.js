@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { prisma } = require('../config/db');
+const logger = require('../lib/logger');
 
 const MODULES_DIR = __dirname;
 
@@ -34,7 +35,7 @@ function scan() {
       meta._dir = name;
       modules.push(meta);
     } catch (e) {
-      console.error('[modules] Ошибка чтения ' + name + '/module.json:', e.message);
+      logger.error('[modules] Ошибка чтения ' + name + '/module.json:', e.message);
     }
   }
   return modules;
@@ -95,7 +96,7 @@ function loadModule(name) {
   try {
     return require(modulePath);
   } catch (e) {
-    console.error('[modules] Ошибка загрузки ' + name + ':', e.message);
+    logger.error('[modules] Ошибка загрузки ' + name + ':', e.message);
     return null;
   }
 }

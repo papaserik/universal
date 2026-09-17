@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const importSvc = require('../service/import');
 const { prisma } = require('../../../config/db');
+const logger = require('../../../lib/logger');
 
 // ─── Форма ───
 exports.form = async (req, res) => {
@@ -82,7 +83,7 @@ exports.run = async (req, res) => {
       error: null
     });
   } catch (e) {
-    console.error('import error:', e);
+    logger.error('import error:', e);
     await prisma.marketplaceSyncLog.update({
       where: { id: log.id },
       data: { status: 'error', message: e.message, finishedAt: new Date() }

@@ -1,5 +1,6 @@
 const nodemailer = require('nodemailer');
 const { getSetting } = require('./settings');
+const logger = require('../lib/logger');
 
 let _transport = null;
 let _cacheKey = '';
@@ -27,7 +28,7 @@ async function transport() {
 async function send({ to, subject, html, text }) {
   const t = await transport();
   if (!t) {
-    console.log('[mail] SMTP не настроен, письмо пропущено:', subject);
+    logger.debug('[mail] SMTP не настроен, письмо пропущено:', subject);
     return { ok: false, reason: 'not_configured' };
   }
   const from = (await getSetting('smtp_from')) || (await getSetting('email')) || 'shop@example.com';
@@ -35,7 +36,7 @@ async function send({ to, subject, html, text }) {
     await t.sendMail({ from, to, subject, html, text });
     return { ok: true };
   } catch (e) {
-    console.error('[mail] Ошибка отправки:', e.message);
+    logger.error('[mail] Ошибка отправки:', e.message);
     return { ok: false, reason: e.message };
   }
 }

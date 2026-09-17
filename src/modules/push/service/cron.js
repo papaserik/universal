@@ -2,6 +2,7 @@ const cron = require('node-cron');
 const { prisma } = require('../../../config/db');
 const push = require('./index');
 const { getSetting } = require('../../../services/settings');
+const logger = require('../../../lib/logger');
 
 // ─── Проверка брошенных корзин ───
 async function checkAbandonedCarts() {
@@ -36,7 +37,7 @@ async function checkAbandonedCarts() {
   });
 
   if (!carts.length) {
-    console.log('[push/cron] Брошенных корзин для отправки нет');
+    logger.debug('[push/cron] Брошенных корзин для отправки нет');
     return { ok: true, sent: 0, total: 0 };
   }
 
@@ -74,7 +75,7 @@ async function checkAbandonedCarts() {
 
       if (result && result.sent > 0) {
         sent++;
-        console.log('[push/cron] Отправлено ' + cart.user.email + ' (' + itemCount + ' тов., ' + total + ' ₽)');
+        logger.debug('[push/cron] Отправлено ' + cart.user.email + ' (' + itemCount + ' тов., ' + total + ' ₽)');
       }
 
       // Помечаем, что отправлено (даже если неуспешно — не спамим)
@@ -84,7 +85,7 @@ async function checkAbandonedCarts() {
       });
     } catch (e) {
       failed++;
-      console.error('[push/cron] Ошибка для cart#' + cart.id + ':', e.message);
+      logger.error('[push/cron] Ошибка для cart#' + cart.id + ':', e.message);
     }
   }
 
@@ -103,7 +104,7 @@ async function dailyDigest() {
   });
 
   if (!orders.length) {
-    console.log('[push/cron] Сводка: заказов за сутки нет');
+    logger.debug('[push/cron] Сводка: заказов за сутки нет');
     return { ok: true, sent: 0 };
   }
 
@@ -125,7 +126,7 @@ async function dailyDigest() {
     icon: '/icons/icon-192.png'
   });
 
-  console.log('[push/cron] Сводка отправлена:', result.sent);
+  logger.debug('[push/cron] Сводка отправлена:', result.sent);
   return { ok: true, sent: result.sent };
 }
 
@@ -138,15 +139,15 @@ function start() {
 
   // Каждые 30 минут — проверяем брошенные корзины
   cron.schedule('*/30 * * * *', () => {
-    checkAbandonedCarts().catch(e => console.error('[push/cron] carts error:', e.message));
+    checkAbandonedCarts().catch(e => logger.error('[push/cron] carts error:', e.message));
   });
 
   // Каждый день в 9:00 — сводка админам
   cron.schedule('0 9 * * *', () => {
-    dailyDigest().catch(e => console.error('[push/cron] digest error:', e.message));
+    dailyDigest().catch(e => logger.error('[push/cron] digest error:', e.message));
   });
 
-  console.log('[push/cron] Запущены задачи: брошенные корзины (каждые 30 мин), сводка (в 9:00)');
+  logger.debug('[push/cron] Запущены задачи: брошенные корзины (каждые 30 мин), сводка (в 9:00)');
 }
 
 // ─── Ручной запуск для отладки ───

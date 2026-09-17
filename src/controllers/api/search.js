@@ -1,4 +1,5 @@
 const { prisma } = require('../../config/db');
+const logger = require('../../lib/logger');
 
 // Нормализация: нижний регистр, ё→е, убираем лишние пробелы/дефисы, пробелы→пробел
 function norm(s) {
@@ -50,7 +51,7 @@ exports.suggest = async (req, res) => {
 
     res.json({ items });
   } catch (e) {
-    console.error('suggest error:', e);
+    logger.error('suggest error:', e);
     res.status(500).json({ items: [], error: e.message });
   }
 };

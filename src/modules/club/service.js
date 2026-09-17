@@ -1,5 +1,6 @@
 const { prisma } = require('../../config/db');
 const crypto = require('crypto');
+const logger = require('../../lib/logger');
 
 // Генерирует уникальный 8-символьный код
 async function generateRefCode() {
@@ -112,7 +113,7 @@ async function processOrder(order, buyerId) {
     // Разблокируем pending-баллы покупателю
     const unlocked = await unlockPendingPoints(buyerId);
     if (unlocked > 0) {
-      console.log('[referral] Разблокировано', unlocked, 'баллов для userId', buyerId);
+      logger.debug('[referral] Разблокировано', unlocked, 'баллов для userId', buyerId);
     }
 
     // Начисляем бонус пригласившему
@@ -124,7 +125,7 @@ async function processOrder(order, buyerId) {
         'referral_bonus',
         'Бонус за первую покупку приглашённого друга'
       );
-      console.log('[referral] Пригласившему начислено', bonusPoints, 'бонусных баллов');
+      logger.debug('[referral] Пригласившему начислено', bonusPoints, 'бонусных баллов');
     }
 
     // Обновляем статус связи
@@ -154,7 +155,7 @@ async function processOrder(order, buyerId) {
         where: { id: link.id },
         data: { totalEarned: { increment: cashbackPoints } }
       });
-      console.log('[referral] Пригласившему начислено', cashbackPoints, 'кэшбэка');
+      logger.debug('[referral] Пригласившему начислено', cashbackPoints, 'кэшбэка');
     }
   }
 }

@@ -1,5 +1,6 @@
 const webpush = require('web-push');
 const { prisma } = require('../../../config/db');
+const logger = require('../../../lib/logger');
 
 // Настраиваем VAPID один раз при загрузке
 let configured = false;
@@ -10,13 +11,13 @@ function setup() {
   const subject = process.env.VAPID_SUBJECT || 'mailto:admin@shop.local';
 
   if (!publicKey || !privateKey) {
-    console.warn('[push] VAPID-ключи не заданы — push-уведомления отключены');
+    logger.warn('[push] VAPID-ключи не заданы — push-уведомления отключены');
     return;
   }
 
   webpush.setVapidDetails(subject, publicKey, privateKey);
   configured = true;
-  console.log('[push] VAPID настроены');
+  logger.debug('[push] VAPID настроены');
 }
 
 // ─── Отправка одному подписчику ───
@@ -41,7 +42,7 @@ async function sendToSubscription(subscription, payload) {
     });
     return { ok: true };
   } catch (e) {
-    console.error('[push] ошибка:', e.statusCode, e.message);
+    logger.error('[push] ошибка:', e.statusCode, e.message);
     // 404/410 = подписка недействительна — деактивируем
     if (e.statusCode === 404 || e.statusCode === 410) {
       await prisma.pushSubscription.update({

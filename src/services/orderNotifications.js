@@ -2,6 +2,7 @@ const { getStatusByCode, renderStatusEmail, renderTemplate } = require('./templa
 const { buildVars } = require('./orderVars');
 const mail = require('./mail');
 const notify = require('./notify');
+const logger = require('../lib/logger');
 
 async function sendOrderCreatedEmail(order) {
   try {
@@ -13,11 +14,11 @@ async function sendOrderCreatedEmail(order) {
         subject: rendered.subject,
         html: rendered.html
       });
-      if (result.ok) console.log('[order] Спасибо-письмо → ' + order.email);
-      else console.log('[order] Письмо не отправлено: ' + (result.reason || 'unknown'));
+      if (result.ok) logger.debug('[order] Спасибо-письмо → ' + order.email);
+      else logger.debug('[order] Письмо не отправлено: ' + (result.reason || 'unknown'));
     }
   } catch (e) {
-    console.error('[order] Ошибка письма:', e.message);
+    logger.error('[order] Ошибка письма:', e.message);
   }
 
   // Письмо получателю подарка — если это подарок и есть email
@@ -26,7 +27,7 @@ async function sendOrderCreatedEmail(order) {
       const vars = await buildVars(order);
       const rendered = await renderTemplate('gift_recipient', vars);
       if (!rendered) {
-        console.log('[gift] Шаблон gift_recipient не найден');
+        logger.debug('[gift] Шаблон gift_recipient не найден');
         return;
       }
       // У получателя может не быть email — тогда пробуем по email покупателя
@@ -37,10 +38,10 @@ async function sendOrderCreatedEmail(order) {
         subject: rendered.subject,
         html: rendered.html
       });
-      if (result.ok) console.log('[gift] Письмо получателю → ' + targetEmail);
-      else console.log('[gift] Письмо не отправлено: ' + (result.reason || 'unknown'));
+      if (result.ok) logger.debug('[gift] Письмо получателю → ' + targetEmail);
+      else logger.debug('[gift] Письмо не отправлено: ' + (result.reason || 'unknown'));
     } catch (e) {
-      console.error('[gift] Ошибка письма получателю:', e.message);
+      logger.error('[gift] Ошибка письма получателю:', e.message);
     }
   }
 }
@@ -57,8 +58,8 @@ async function notifyStatusChange(order, newStatus, oldStatus) {
       const rendered = await renderStatusEmail(status, vars);
       if (rendered) {
         const r = await mail.send({ to: order.email, subject: rendered.subject, html: rendered.html });
-        if (r.ok) console.log('[status] Клиенту ' + order.email + ' → ' + status.name);
-        else console.log('[status] Письмо не отправлено: ' + (r.reason || 'unknown'));
+        if (r.ok) logger.debug('[status] Клиенту ' + order.email + ' → ' + status.name);
+        else logger.debug('[status] Письмо не отправлено: ' + (r.reason || 'unknown'));
       }
     }
 
@@ -72,10 +73,10 @@ async function notifyStatusChange(order, newStatus, oldStatus) {
       try {
         await notify.sendTelegram(text);
         await notify.sendMax(text);
-      } catch (e) { console.error('[status] notify error:', e.message); }
+      } catch (e) { logger.error('[status] notify error:', e.message); }
     }
   } catch (e) {
-    console.error('[status] Ошибка уведомления:', e.message);
+    logger.error('[status] Ошибка уведомления:', e.message);
   }
 }
 

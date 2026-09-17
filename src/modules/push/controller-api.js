@@ -1,5 +1,6 @@
 const { prisma } = require('../../config/db');
 const push = require('./service');
+const logger = require('../../lib/logger');
 
 // ─── Публичный ключ для клиента ───
 exports.publicKey = (req, res) => {
@@ -49,7 +50,7 @@ exports.subscribe = async (req, res) => {
 
     res.json({ ok: true });
   } catch (e) {
-    console.error('push subscribe error:', e);
+    logger.error('push subscribe error:', e);
     res.status(500).json({ ok: false, error: e.message });
   }
 };

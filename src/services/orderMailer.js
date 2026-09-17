@@ -1,5 +1,6 @@
 const { getSetting } = require('./settings');
 const mail = require('./mail');
+const logger = require('../lib/logger');
 
 function money(n) { return Number(n).toLocaleString('ru-RU') + ' ₽'; }
 
@@ -52,5 +53,5 @@ exports.notifyChannels = async (order) => {
   try {
     const notify = require('./notify');
     await notify.notifyNewOrder(order);
-  } catch (e) { console.error('[notify] error:', e.message); }
+  } catch (e) { logger.error('[notify] error:', e.message); }
 };

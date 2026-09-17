@@ -1,6 +1,7 @@
 const sharp = require('sharp');
 const path = require('path');
 const fs = require('fs');
+const logger = require('../lib/logger');
 
 const UPLOAD_DIR = path.join(__dirname, '..', '..', 'data', 'uploads');
 const THUMB_DIR = path.join(UPLOAD_DIR, '_thumbs');
@@ -114,7 +115,7 @@ async function process(inputPath, options = {}) {
         .jpeg({ quality: 80, mozjpeg: true })
         .toFile(thumbPath);
     } catch (e) {
-      console.error('[imageProcessor] ошибка обработки:', e.message);
+      logger.error('[imageProcessor] ошибка обработки:', e.message);
       // Продолжаем с оригиналом
     }
   }

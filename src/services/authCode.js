@@ -3,6 +3,7 @@ const mail = require('./mail');
 const { getSetting } = require('./settings');
 const loyalty = require('../modules/loyalty/service');
 const referral = require('../modules/club/service');
+const logger = require('../lib/logger');
 
 function generateCode() {
   return String(Math.floor(100000 + Math.random() * 900000));
@@ -104,7 +105,7 @@ async function verify(email, code) {
       if (ls.enabled && ls.forSignup > 0) {
         await loyalty.addPoints(user.id, ls.forSignup, 'signup', 'Бонус за первую регистрацию');
       }
-    } catch (e) { console.error('signup points:', e); }
+    } catch (e) { logger.error('signup points:', e); }
   }
   if (!user.active) return { ok: false, reason: 'Аккаунт заблокирован' };
 
