@@ -6,7 +6,6 @@ const tagsAdmin = require('../controllers/admin/tags');
 const imagesAdmin = require('../controllers/admin/images');
 const modulesAdmin = require('../controllers/admin/modules');
 const pushAdmin = require('../controllers/admin/push');
-const cacheAdmin = require('../controllers/admin/cache');
 const integrationsAdmin = require('../controllers/admin/integrations');
 const integrationsImportCtrl = require('../controllers/admin/integrationsImport');
 const syncOrdersCtrl = require('../controllers/admin/syncOrders');
@@ -306,8 +305,8 @@ router.post('/push/run-digest', async (req, res) => {
   } catch (e) { res.json({ ok: false, error: e.message }); }
 });
 
-router.get('/cache', cacheAdmin.index);
-router.post('/cache/save', cacheAdmin.save);
-router.post('/cache/clear', cacheAdmin.clear);
+
+// ─── Модуль: Кеширование ───
+router.use('/cache', require('../modules/cache/routes/admin'));
 
 module.exports = router;

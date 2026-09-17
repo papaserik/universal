@@ -37,7 +37,20 @@ app.use(expressLayouts);
 
 app.use(async (req, res, next) => {
   const theme = await loadTheme();
-  app.set('views', viewPaths(theme));
+  const baseViews = viewPaths(theme);
+  // Views модулей идут после views темы, но до базового fallback
+  const fs = require('fs');
+  const path = require('path');
+  const MODULES_DIR = path.join(__dirname, 'modules');
+  const moduleViews = [];
+  if (fs.existsSync(MODULES_DIR)) {
+    for (const dir of fs.readdirSync(MODULES_DIR)) {
+      if (dir.startsWith('_')) continue;
+      const vp = path.join(MODULES_DIR, dir, 'views');
+      if (fs.existsSync(vp)) moduleViews.push(vp);
+    }
+  }
+  app.set('views', [...baseViews, ...moduleViews]);
   res.locals.theme = theme;
   next();
 });
@@ -129,7 +142,7 @@ app.use(async (req, res, next) => {
     og: {}
   };
   res.locals.jsonLd = [];
-  const asset = require('./services/cache/asset').asset;
+  const asset = require('./modules/cache/asset').asset;
   res.locals.asset = asset;
 
   res.locals.setMeta = (m) => Object.assign(res.locals.meta, m);
@@ -153,7 +166,7 @@ app.use((req, res, next) => {
 });
 
 // ─── Кеш публичных страниц ───
-app.use(require('./services/cache').pageCacheMiddleware);
+app.use(require('./modules/cache').middleware);
 
 app.use('/', require('./routes/shop'));
 app.use('/admin', require('./routes/admin'));

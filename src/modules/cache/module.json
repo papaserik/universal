@@ -1,0 +1,8 @@
+{
+  "code": "cache",
+  "name": "Кеширование",
+  "desc": "Ускорение сайта в 5-10 раз: HTML-кеш публичных страниц, cache busting CSS/JS, кеш настроек",
+  "icon": "⚡",
+  "group": "system",
+  "default": true
+}

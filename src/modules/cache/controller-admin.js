@@ -1,4 +1,4 @@
-const cache = require('../../services/cache');
+const cache = require('./service');
 const { getAllSettings, setSetting } = require('../../services/settings');
 
 exports.index = async (req, res) => {
