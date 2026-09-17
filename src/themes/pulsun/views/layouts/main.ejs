@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title><%= typeof title !== 'undefined' ? title + ' — PULSUN' : 'PULSUN — больше, чем просто сироп' %></title>
+<meta name="description" content="<%= typeof metaDesc !== 'undefined' ? metaDesc : 'Сиропы PULSUN без сахара, 8 вкусов, натуральные ароматизаторы.' %>">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;900&family=Inter:wght@400;500;600&family=Caveat:wght@500&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="/theme/pulsun/assets/css/tokens.css">
+<link rel="stylesheet" href="/theme/pulsun/assets/css/base.css">
+<link rel="stylesheet" href="/theme/pulsun/assets/css/header.css">
+<link rel="stylesheet" href="/theme/pulsun/assets/css/footer.css">
+<link rel="stylesheet" href="/theme/pulsun/assets/css/sections.css">
+<%- typeof extraCss !== 'undefined' ? extraCss : '' %>
+</head>
+<body class="theme-pulsun">
+
+<%- include('../shop/partials/header') %>
+
+<main class="main">
+  <%- body %>
+</main>
+
+<%- include('../shop/partials/footer') %>
+
+<script src="/theme/pulsun/assets/js/main.js" defer></script>
+</body>
+</html>
