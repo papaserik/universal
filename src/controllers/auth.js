@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
 const { prisma } = require('../config/db');
-const referral = require('../services/referral');
+const referral = require('../modules/club/service');
 const loyalty = require('../modules/loyalty/service');
 const authCode = require('../services/authCode');
 const { getSetting } = require('../services/settings');

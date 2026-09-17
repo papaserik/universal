@@ -171,7 +171,7 @@ module.exports._safeJson = safeJson;
 // ─── Клуб / Реферальная программа ───
 exports.club = async (req, res) => {
   const user = req.session.user;
-  const referral = require('../services/referral');
+  const referral = require('../modules/club/service');
   const { getSetting } = require('../services/settings');
 
   // Убедимся, что у юзера есть refCode

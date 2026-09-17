@@ -1,6 +1,5 @@
 const modules = require('../services/modules');
 
-// Блокирует роут, если модуль выключен
 function requireModule(code) {
   return async (req, res, next) => {
     const enabled = await modules.isEnabled(code);

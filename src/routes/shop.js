@@ -7,7 +7,6 @@ const blog = require('../controllers/blog');
 const pages = require('../controllers/pages');
 const auth = require('../controllers/auth');
 
-router.get('/r/:code', requireModule('club'), require('../middleware/referral').capture);
 router.get('/', shopCtrl.home);
 router.get('/catalog', shopCtrl.catalog);
 router.get('/catalog/:slug', shopCtrl.category);
@@ -50,7 +49,6 @@ const { imageUpload } = require('../services/upload');
 router.get('/account', account.requireAuth, account.dashboard);
 router.get('/account/orders', account.requireAuth, account.orders);
 router.get('/account/orders/:number', account.requireAuth, account.order);
-router.get('/account/club', requireModule('club'), account.requireAuth, account.club);
 router.get('/account/profile', account.requireAuth, account.profile);
 router.post('/account/profile', account.requireAuth, account.saveProfile);
 router.post('/account/avatar', account.requireAuth, imageUpload.single('avatar'), account.uploadAvatar);
@@ -71,5 +69,9 @@ router.use('/', require('../modules/reviews/routes/public'));
 
 // ─── Модуль: Лояльность (кабинет) ───
 router.use('/account/loyalty', require('../modules/loyalty/routes/account'));
+
+// ─── Модуль: Клуб ───
+router.get('/r/:code', require('../modules/club/middleware').capture);
+router.use('/account/club', require('../modules/club/routes/account'));
 
 module.exports = router;

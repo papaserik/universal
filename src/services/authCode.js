@@ -2,7 +2,7 @@ const { prisma } = require('../config/db');
 const mail = require('./mail');
 const { getSetting } = require('./settings');
 const loyalty = require('../modules/loyalty/service');
-const referral = require('./referral');
+const referral = require('../modules/club/service');
 
 function generateCode() {
   return String(Math.floor(100000 + Math.random() * 900000));

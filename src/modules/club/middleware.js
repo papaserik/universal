@@ -1,4 +1,4 @@
-const referral = require('../services/referral');
+const referral = require('./service');
 
 // Обрабатывает GET /r/:code — сохраняет cookie, редиректит на главную
 exports.capture = async (req, res) => {

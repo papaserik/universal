@@ -185,7 +185,7 @@ exports.submit = async (req, res) => {
 
     // ─── Реферальная программа ───
     try {
-      const referral = require('../services/referral');
+      const referral = require('../modules/club/service');
       await referral.processOrder(order, user.id);
     } catch (e) { console.error('referral processOrder:', e); }
   }

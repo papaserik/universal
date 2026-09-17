@@ -1,4 +1,4 @@
-const { prisma } = require('../config/db');
+const { prisma } = require('../../config/db');
 const crypto = require('crypto');
 
 // Генерирует уникальный 8-символьный код
@@ -94,7 +94,7 @@ async function unlockPendingPoints(userId) {
 async function processOrder(order, buyerId) {
   if (!order || !buyerId) return;
 
-  const { getSetting } = require('./settings');
+  const { getSetting } = require('../../services/settings');
   const loyalty = require('../modules/loyalty/service');
 
   const link = await prisma.referral.findUnique({
