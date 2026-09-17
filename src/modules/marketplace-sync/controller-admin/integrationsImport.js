@@ -10,7 +10,7 @@ exports.form = async (req, res) => {
     orderBy: { name: 'asc' }
   });
 
-  res.render('admin/integrations/import', {
+  res.render('integrations/import', {
     integrations,
     result: null,
     error: null
@@ -25,7 +25,7 @@ exports.run = async (req, res) => {
   });
 
   if (!req.file) {
-    return res.render('admin/integrations/import', {
+    return res.render('integrations/import', {
       integrations,
       result: null,
       error: 'Файл не загружен'
@@ -76,7 +76,7 @@ exports.run = async (req, res) => {
     // Удаляем временный файл
     try { fs.unlinkSync(req.file.path); } catch (e) {}
 
-    res.render('admin/integrations/import', {
+    res.render('integrations/import', {
       integrations,
       result: stats,
       error: null
@@ -87,7 +87,7 @@ exports.run = async (req, res) => {
       where: { id: log.id },
       data: { status: 'error', message: e.message, finishedAt: new Date() }
     });
-    res.render('admin/integrations/import', {
+    res.render('integrations/import', {
       integrations,
       result: null,
       error: e.message

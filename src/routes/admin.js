@@ -1,6 +1,6 @@
 const router = require('express').Router();
 
-router.use(require('../modules/marketplace-sync/routes/admin'));
+
 const backupAdmin = require('../controllers/admin/backup');
 const imagesAdmin = require('../controllers/admin/images');
 const modulesAdmin = require('../controllers/admin/modules');
@@ -20,6 +20,9 @@ router.get('/logout', adminAuth.logout);
 // ─── Защита всех остальных роутов ───
 router.use(requireAdmin);
 
+router.use(require('../modules/marketplace-sync/routes/admin'));
+router.use(require('../modules/newsletter/routes/admin'));
+
 const dashboard = require('../controllers/admin/dashboard');
 const categories = require('../controllers/admin/categories');
 const options    = require('../controllers/admin/options');
@@ -35,7 +38,6 @@ const blogCats   = require('../controllers/admin/blogCategories');
 const sales      = require('../controllers/admin/sales');
 const abandoned  = require('../controllers/admin/abandoned');
 const marketplaces = require('../modules/marketplace-sync/controller-admin/marketplaces');
-const marketing  = require('../controllers/admin/marketing');
 const orderStatuses = require('../controllers/admin/orderStatuses');
 const emailTemplates = require('../controllers/admin/emailTemplates');
 const payment    = require('../controllers/admin/payment');
@@ -137,21 +139,7 @@ router.post('/blog-categories/:id', blogCats.save);
 router.post('/blog-categories/:id/delete', blogCats.remove);
 
 
-router.get('/marketing/subscribers', marketing.subscribers);
-router.get('/marketing/subscribers/export', marketing.subscribersExport);
-router.get('/marketing/subscribers/new', marketing.subscriberForm);
-router.get('/marketing/subscribers/:id', marketing.subscriberForm);
-router.post('/marketing/subscribers', marketing.subscriberSave);
-router.post('/marketing/subscribers/:id', marketing.subscriberSave);
-router.post('/marketing/subscribers/:id/delete', marketing.subscriberRemove);
 
-router.get('/marketing/newsletters', marketing.newsletters);
-router.get('/marketing/newsletters/new', marketing.newsletterForm);
-router.get('/marketing/newsletters/:id', marketing.newsletterForm);
-router.post('/marketing/newsletters', marketing.newsletterSave);
-router.post('/marketing/newsletters/:id', marketing.newsletterSave);
-router.post('/marketing/newsletters/:id/delete', marketing.newsletterRemove);
-router.post('/marketing/newsletters/:id/send', marketing.newsletterSend);
 
 // ─── Drag&drop сортировка ───
 router.post('/reorder/:type', async (req, res) => {

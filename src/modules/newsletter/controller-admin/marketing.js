@@ -1,5 +1,5 @@
-const { prisma } = require('../../config/db');
-const newsletter = require('../../services/newsletter');
+const { prisma } = require('../../../config/db');
+const newsletter = require('../service/newsletter');
 
 // ─── Подписчики ───
 exports.subscribers = async (req, res) => {
@@ -20,14 +20,14 @@ exports.subscribers = async (req, res) => {
     unconfirmed: await prisma.subscriber.count({ where: { confirmed: false, unsubscribed: false } }),
     unsubscribed: await prisma.subscriber.count({ where: { unsubscribed: true } })
   };
-  res.render('admin/marketing/subscribers', { items, counts, filter });
+  res.render('marketing/subscribers', { items, counts, filter });
 };
 
 exports.subscriberForm = async (req, res) => {
   const item = req.params.id
     ? await prisma.subscriber.findUnique({ where: { id: Number(req.params.id) } })
     : null;
-  res.render('admin/marketing/subscriber-form', { item, error: null });
+  res.render('marketing/subscriber-form', { item, error: null });
 };
 
 exports.subscriberSave = async (req, res) => {
@@ -48,7 +48,7 @@ exports.subscriberSave = async (req, res) => {
     }
     res.redirect('/admin/marketing/subscribers');
   } catch (e) {
-    res.render('admin/marketing/subscriber-form', { item: req.body, error: e.message });
+    res.render('marketing/subscriber-form', { item: req.body, error: e.message });
   }
 };
 
@@ -77,7 +77,7 @@ exports.subscribersExport = async (req, res) => {
 // ─── Рассылки ───
 exports.newsletters = async (req, res) => {
   const items = await prisma.newsletter.findMany({ orderBy: { createdAt: 'desc' }, take: 100 });
-  res.render('admin/marketing/newsletters', { items });
+  res.render('marketing/newsletters', { items });
 };
 
 exports.newsletterForm = async (req, res) => {
@@ -89,7 +89,7 @@ exports.newsletterForm = async (req, res) => {
     withEmail: await prisma.subscriber.count({ where: { confirmed: true, unsubscribed: false, email: { not: null } } }),
     withTg: await prisma.subscriber.count({ where: { confirmed: true, unsubscribed: false, telegramChatId: { not: null } } })
   };
-  res.render('admin/marketing/newsletter-form', { item, counts, error: null });
+  res.render('marketing/newsletter-form', { item, counts, error: null });
 };
 
 exports.newsletterSave = async (req, res) => {

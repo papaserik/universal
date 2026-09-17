@@ -1,6 +1,6 @@
-const { prisma } = require('../config/db');
-const mail = require('./mail');
-const { getSetting } = require('./settings');
+const { prisma } = require('../../../config/db');
+const mail = require('../../../services/mail');
+const { getSetting } = require('../../../services/settings');
 
 function renderTemplate(text, vars) {
   return String(text || '').replace(/\{\{(\w+)\}\}/g, (_, k) => vars[k] || '');

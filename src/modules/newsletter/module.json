@@ -1,0 +1,8 @@
+{
+  "code": "newsletter",
+  "name": "Рассылки",
+  "desc": "Подписка, email-рассылки, экспорт подписчиков",
+  "icon": "📧",
+  "group": "marketing",
+  "default": true
+}

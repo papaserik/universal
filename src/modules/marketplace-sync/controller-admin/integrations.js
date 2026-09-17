@@ -17,7 +17,7 @@ exports.index = async (req, res) => {
     stats[i.slug] = lastLog || null;
   }
 
-  res.render('admin/integrations/index', {
+  res.render('integrations/index', {
     integrations,
     stats,
     saved: req.query.saved === '1',
@@ -47,7 +47,7 @@ exports.form = async (req, res) => {
     take: 20
   });
 
-  res.render('admin/integrations/form', {
+  res.render('integrations/form', {
     integration,
     config,
     counts: { totalProducts, publishedProducts, withStock },

@@ -6,14 +6,14 @@ exports.list = async (req, res) => {
   const items = await prisma.marketplace.findMany({
     orderBy: [{ sort: 'asc' }, { id: 'asc' }]
   });
-  res.render('admin/marketplaces/list', { items });
+  res.render('marketplaces/list', { items });
 };
 
 exports.form = async (req, res) => {
   const item = req.params.id
     ? await prisma.marketplace.findUnique({ where: { id: Number(req.params.id) } })
     : null;
-  res.render('admin/marketplaces/form', { item, error: null });
+  res.render('marketplaces/form', { item, error: null });
 };
 
 exports.save = async (req, res) => {
