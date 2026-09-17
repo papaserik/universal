@@ -1,5 +1,5 @@
 const { prisma } = require('../../config/db');
-const push = require('../../services/push');
+const push = require('./service');
 
 exports.index = async (req, res) => {
   const [total, active, users, recent] = await Promise.all([

@@ -1,7 +1,7 @@
 const cron = require('node-cron');
-const { prisma } = require('../../config/db');
+const { prisma } = require('../../../config/db');
 const push = require('./index');
-const { getSetting } = require('../settings');
+const { getSetting } = require('../../../services/settings');
 
 // ─── Проверка брошенных корзин ───
 async function checkAbandonedCarts() {

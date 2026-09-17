@@ -1,5 +1,5 @@
 const webpush = require('web-push');
-const { prisma } = require('../../config/db');
+const { prisma } = require('../../../config/db');
 
 // Настраиваем VAPID один раз при загрузке
 let configured = false;

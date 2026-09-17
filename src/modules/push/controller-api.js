@@ -1,5 +1,5 @@
 const { prisma } = require('../../config/db');
-const push = require('../../services/push');
+const push = require('./service');
 
 // ─── Публичный ключ для клиента ───
 exports.publicKey = (req, res) => {
