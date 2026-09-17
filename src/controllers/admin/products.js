@@ -176,7 +176,7 @@ exports.save = async (req, res) => {
 
   // Сброс кеша страниц
   try {
-    const cache = require('../../services/cache');
+    const cache = require('../../modules/cache');
     cache.delByPrefix('page:/');
     cache.delByPrefix('page:');
   } catch (e) {}

@@ -38,6 +38,25 @@ exports.save = async (req, res) => {
 
   modules.invalidate();
 
+  // cache-sync: сброс HTML-кеша публичных страниц — иначе баннеры/товары
+  // остаются в старом HTML до истечения TTL
+  try {
+    const cache = require('../modules/cache');
+    if (cache && typeof cache.invalidate === 'function') await cache.invalidate();
+    if (cache && typeof cache.clear === 'function')      await cache.clear();
+    if (cache && cache.service && typeof cache.service.invalidate === 'function') await cache.service.invalidate();
+    if (cache && cache.service && typeof cache.service.clear === 'function')      await cache.service.clear();
+    // если кеш использует файловое хранилище
+    const fs = require('fs');
+    const path = require('path');
+    const cacheDir = path.join(__dirname, '..', '..', 'tmp', 'cache');
+    if (fs.existsSync(cacheDir)) {
+      fs.readdirSync(cacheDir).forEach(f => { try { fs.unlinkSync(path.join(cacheDir, f)); } catch(e){} });
+    }
+  } catch (e) {
+    console.error('[modules.save] cache.invalidate failed:', e.message);
+  }
+
   // Синхронизируем старые ключи для совместимости
   const { setSetting: ss } = require('../../services/settings');
   await ss('loyalty_enabled', enabledArr.includes('loyalty') ? '1' : '0');

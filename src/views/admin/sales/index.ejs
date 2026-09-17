@@ -28,14 +28,23 @@
 
 <section class="sales-block">
   <h2>Выручка за 14 дней</h2>
-  <div class="sales-chart">
-    <% chart.forEach(d => { %>
-      <div class="sales-chart-bar" title="<%= d.label %>: <%= d.revenue %> ₽ (<%= d.count %> заказ.)">
-        <div class="sales-chart-bar-fill" style="height:<%= Math.round((d.revenue / chartMax) * 100) %>%"></div>
-        <div class="sales-chart-bar-label"><%= d.label %></div>
-        <div class="sales-chart-bar-value"><%= d.revenue > 0 ? d.revenue : '' %></div>
+  <div class="sales-rows">
+    <% chart.forEach(function(d) { %>
+      <div class="sales-row<%= d.revenue === 0 ? ' is-zero' : '' %>">
+        <div class="sales-row-date"><%= d.label %></div>
+        <div class="sales-row-bar">
+          <div class="sales-row-bar-fill" style="width:<%= Math.max(2, Math.round((d.revenue / chartMax) * 100)) %>%"></div>
+        </div>
+        <div class="sales-row-sum"><%= d.revenue.toLocaleString('ru-RU') %> ₽</div>
+        <div class="sales-row-count"><%= d.count %> зак.</div>
       </div>
-    <% }) %>
+    <% }); %>
+    <div class="sales-row sales-row-total">
+      <div class="sales-row-date">Итого</div>
+      <div class="sales-row-bar"></div>
+      <div class="sales-row-sum"><%= chart.reduce(function(a,b){return a+b.revenue}, 0).toLocaleString('ru-RU') %> ₽</div>
+      <div class="sales-row-count"><%= chart.reduce(function(a,b){return a+b.count}, 0) %> зак.</div>
+    </div>
   </div>
 </section>
 

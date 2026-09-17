@@ -51,14 +51,14 @@ exports.save = async (req, res) => {
 
 exports.remove = async (req, res) => {
   await prisma.banner.delete({ where: { id: Number(req.params.id) } });
-  try { require('../../services/cache').delByPrefix('page:'); } catch (e) {}
+  try { require('../../modules/cache').delByPrefix('page:'); } catch (e) {}
   res.redirect('/admin/banners');
 };
 
 exports.toggle = async (req, res) => {
   const b = await prisma.banner.findUnique({ where: { id: Number(req.params.id) } });
   if (b) await prisma.banner.update({ where: { id: b.id }, data: { active: !b.active } });
-  try { require('../../services/cache').delByPrefix('page:'); } catch (e) {}
+  try { require('../../modules/cache').delByPrefix('page:'); } catch (e) {}
   res.redirect('/admin/banners');
 };
 

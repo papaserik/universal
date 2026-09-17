@@ -5,7 +5,7 @@ exports.index = async (req, res) => {
   const values = await getAllSettings();
   const stats = cache.getStats();
 
-  res.render('admin/cache/index', {
+  res.render('cache/index', {
     values,
     stats,
     saved: req.query.saved === '1',

@@ -2376,3 +2376,41 @@ a.finance-card:hover {
   .admin-main select,
   .admin-main textarea { font-size: 16px; }
 }
+
+/* ============ Sales — горизонтальные строки (замена вертикальных баров) ============ */
+.sales-rows { display: flex; flex-direction: column; gap: 4px; margin: 8px 0 16px; }
+.sales-row {
+  display: grid;
+  grid-template-columns: 56px 1fr 110px 70px;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  font-size: 13px;
+  background: #fff;
+  border: 1px solid #eef0f3;
+}
+.sales-row.is-zero { opacity: .45; }
+.sales-row-date { color: #64748b; font-variant-numeric: tabular-nums; }
+.sales-row-bar { background: #eef2f7; border-radius: 3px; height: 8px; overflow: hidden; }
+.sales-row-bar-fill { background: linear-gradient(90deg,#3b82f6,#1d4ed8); height: 100%; border-radius: 3px; }
+.sales-row-sum { font-weight: 600; color: #0f172a; text-align: right; font-variant-numeric: tabular-nums; }
+.sales-row-count { color: #94a3b8; text-align: right; font-size: 12px; }
+.sales-row-total {
+  background: #f8fafc; border-color: #e2e8f0; font-weight: 700;
+  margin-top: 4px;
+}
+.sales-row-total .sales-row-date,
+.sales-row-total .sales-row-sum { color: #0f172a; }
+
+@media (max-width: 600px) {
+  .sales-row {
+    grid-template-columns: 44px 1fr 90px;
+    gap: 6px;
+    padding: 5px 6px;
+    font-size: 12px;
+  }
+  .sales-row-count { display: none; }
+  .sales-row-sum { font-size: 12px; }
+  .sales-row-date { font-size: 11px; }
+}

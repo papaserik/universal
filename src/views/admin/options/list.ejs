@@ -11,10 +11,10 @@
 
 <% options.forEach(o => { %>
   <div class="admin-form" style="margin-bottom:16px">
-    <div class="admin-header" style="margin:0">
-      <h2 style="margin:0"><%= o.name %> <small style="color:#6b7280;font-size:13px">/ <%= o.slug %></small></h2>
+    <div class="admin-header" style="margin:0;flex-wrap:wrap;gap:8px;align-items:center">
+      <h2 style="margin:0;flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"><%= o.name %> <small style="color:#6b7280;font-size:13px">/ <%= o.slug %></small></h2>
       <form method="post" action="/admin/options/<%= o.id %>/delete" onsubmit="return confirm('Удалить опцию и все её значения?')">
-        <button class="btn btn-sm btn-danger">Удалить опцию</button>
+        <button class="btn btn-sm btn-danger" style="flex:0 0 auto;white-space:nowrap">Удалить</button>
       </form>
     </div>
     <div>

@@ -30,12 +30,12 @@ exports.save = async (req, res) => {
   } else {
     await prisma.page.create({ data });
   }
-  try { require('../../services/cache').delByPrefix('page:'); } catch (e) {}
+  try { require('../../modules/cache').delByPrefix('page:'); } catch (e) {}
   res.redirect('/admin/pages');
 };
 
 exports.remove = async (req, res) => {
   await prisma.page.delete({ where: { id: Number(req.params.id) } });
-  try { require('../../services/cache').delByPrefix('page:'); } catch (e) {}
+  try { require('../../modules/cache').delByPrefix('page:'); } catch (e) {}
   res.redirect('/admin/pages');
 };
