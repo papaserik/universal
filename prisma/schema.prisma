@@ -15,6 +15,11 @@ model User {
   role      String   @default("USER")
   active    Boolean  @default(true)
   avatar    String?
+  refCode   String?  @unique
+  referredById Int?
+  pendingReferralPoints Int @default(0)
+  referralsSent     Referral[] @relation("ReferralsSent")
+  referralReceived  Referral?  @relation("ReferralReceived")
   savedAddress String @default("{}")
   savedPhone   String?
   savedName    String?
@@ -467,4 +472,20 @@ model Favorite {
 
   @@unique([userId, productId])
   @@index([userId])
+}
+
+model Referral {
+  id             Int      @id @default(autoincrement())
+  inviterId      Int
+  invitedId      Int      @unique
+  status         String   @default("registered")
+  firstOrderId   Int?
+  invitedAt      DateTime @default(now())
+  convertedAt    DateTime?
+  totalEarned    Float    @default(0)
+
+  inviter        User     @relation("ReferralsSent",     fields: [inviterId], references: [id], onDelete: Cascade)
+  invited        User     @relation("ReferralReceived", fields: [invitedId], references: [id], onDelete: Cascade)
+
+  @@index([inviterId, status])
 }

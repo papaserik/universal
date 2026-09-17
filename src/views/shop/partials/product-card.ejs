@@ -4,10 +4,16 @@
     ? Math.round((1 - p.price / p.oldPrice) * 100) : 0;
 
   let mpList = [];
-  try { mpList = JSON.parse(p.marketplaceLinks || '[]'); } catch (e) {}
-  if (!mpList.length && p.marketplace && p.marketplaceUrl) {
-    mpList = [{ slug: p.marketplace, url: p.marketplaceUrl }];
+  if (moduleEnabled('marketplaces')) {
+    try { mpList = JSON.parse(p.marketplaceLinks || '[]'); } catch (e) {}
+    if (!mpList.length && p.marketplace && p.marketplaceUrl) {
+      mpList = [{ slug: p.marketplace, url: p.marketplaceUrl }];
+    }
   }
+
+  const showBrand = moduleEnabled('brands') && p.brand;
+  const showTags = moduleEnabled('tags') && p.tags && p.tags.length;
+  const showFav = moduleEnabled('favorites');
 %>
 <article class="product-card">
   <div class="product-image-wrap">
@@ -20,7 +26,7 @@
       <% if (discount > 0) { %>
         <span class="badge-discount">-<%= discount %>%</span>
       <% } %>
-      <% if (p.tags && p.tags.length) { %>
+      <% if (showTags) { %>
         <div class="product-tags-overlay">
           <% p.tags.slice(0, 2).forEach(pt => { %>
             <span class="product-tag-mini" style="background:<%= pt.tag.color %>;color:#fff">
@@ -31,18 +37,20 @@
       <% } %>
     </a>
 
-    <button type="button"
-            class="fav-btn"
-            data-fav-id="<%= p.id %>"
-            aria-label="Добавить в избранное"
-            title="В избранное">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-      </svg>
-    </button>
+    <% if (showFav) { %>
+      <button type="button"
+              class="fav-btn"
+              data-fav-id="<%= p.id %>"
+              aria-label="Добавить в избранное"
+              title="В избранное">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+        </svg>
+      </button>
+    <% } %>
   </div>
 
-  <% if (p.brand) { %>
+  <% if (showBrand) { %>
     <div class="product-card-brand"><%= p.brand.name %></div>
   <% } %>
 

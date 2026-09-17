@@ -1,0 +1,66 @@
+<div class="admin-header">
+  <h1>🧩 Модули и функции</h1>
+</div>
+
+<% if (saved) { %><div class="admin-alert admin-alert-ok">✓ Модули сохранены. Изменения вступают в силу мгновенно.</div><% } %>
+
+<p class="admin-hint">
+  Включайте только нужные функции — интерфейс очистится от лишних элементов,
+  витрина станет проще, а скорость вырастет. Все модули можно включить обратно в любой момент.
+</p>
+
+<form method="post" action="/admin/modules/save">
+  <% Object.entries(groups).forEach(([groupCode, items]) => {
+       const meta = groupMeta[groupCode] || { title: groupCode, desc: '' };
+  %>
+    <section class="modules-group">
+      <header class="modules-group-head">
+        <h2><%= meta.title %></h2>
+        <% if (meta.desc) { %><p><%= meta.desc %></p><% } %>
+      </header>
+
+      <div class="modules-list">
+        <% items.forEach(m => { %>
+          <label class="module-item">
+            <div class="module-item-check">
+              <input type="checkbox" name="modules" value="<%= m.code %>" <%= m.enabled ? 'checked' : '' %>>
+              <span class="module-toggle"></span>
+            </div>
+            <div class="module-item-icon"><%= m.icon %></div>
+            <div class="module-item-body">
+              <div class="module-item-name"><%= m.name %></div>
+              <div class="module-item-desc"><%= m.desc %></div>
+            </div>
+            <div class="module-item-status" data-status>
+              <%= m.enabled ? 'Включено' : 'Отключено' %>
+            </div>
+          </label>
+        <% }) %>
+      </div>
+    </section>
+  <% }) %>
+
+  <div class="modules-sticky-save">
+    <button type="submit" class="btn">💾 Сохранить модули</button>
+  </div>
+</form>
+
+<script>
+(function () {
+  document.querySelectorAll('.module-item').forEach(function (item) {
+    var input = item.querySelector('input[type="checkbox"]');
+    var status = item.querySelector('[data-status]');
+    if (!input) return;
+    input.addEventListener('change', function () {
+      if (input.checked) {
+        item.classList.remove('module-off');
+        if (status) { status.textContent = 'Включено'; status.style.color = '#16a34a'; }
+      } else {
+        item.classList.add('module-off');
+        if (status) { status.textContent = 'Отключено'; status.style.color = '#9ca3af'; }
+      }
+    });
+    if (!input.checked) item.classList.add('module-off');
+  });
+})();
+</script>

@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt');
 const { prisma } = require('../config/db');
+const referral = require('../services/referral');
 const loyalty = require('../services/loyalty');
 const authCode = require('../services/authCode');
 const { getSetting } = require('../services/settings');
@@ -79,6 +80,38 @@ exports.codeVerify = async (req, res) => {
 
   delete req.session.pendingEmail;
   const user = result.user;
+  // ─── Реферальная программа ───
+  if (result.isNewUser) {
+    await handleReferralOnSignup(req, user);
+  }
+
   req.session.user = { id: user.id, email: user.email, name: user.name, role: user.role, avatar: user.avatar || null };
   res.redirect(user.role === 'USER' ? '/' : '/admin');
 };
+
+// ─── Хелпер: обработка реферала при регистрации ───
+async function handleReferralOnSignup(req, newUser) {
+  try {
+    const refCode = req.cookies && req.cookies.ref;
+    if (!refCode) return;
+
+    const inviter = await referral.findByCode(refCode);
+    if (!inviter || inviter.id === newUser.id) return;
+
+    // Создаём связь
+    const link = await referral.createReferral(inviter.id, newUser.id);
+    if (!link) return;
+
+    // Начисляем приглашённому pending-баллы
+    const { getSetting } = require('../services/settings');
+    const points = Number(await getSetting('referral_signup_points', '200')) || 0;
+    if (points > 0) {
+      await referral.awardPendingPoints(newUser.id, points);
+    }
+
+    // Убираем cookie
+    req.res.clearCookie('ref');
+  } catch (e) {
+    console.error('referral signup error:', e);
+  }
+}

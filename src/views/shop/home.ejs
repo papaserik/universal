@@ -1,7 +1,7 @@
 <div class="home-page">
 
   <%# ═══ БАННЕРЫ ═══ %>
-  <% if (banners && banners.length) { %>
+  <% if (moduleEnabled('banners') && banners && banners.length) { %>
     <section class="home-banners">
       <% banners.forEach((b, i) => {
            const bgImg = b.imageUrl ? `background-image:url('${b.imageUrl}');background-size:cover;background-position:center;` : '';
@@ -144,7 +144,7 @@
   </section>
 
   <%# ═══ БЛОГ ═══ %>
-  <% if (posts && posts.length) { %>
+  <% if (moduleEnabled('blog') && posts && posts.length) { %>
     <section class="home-section">
       <header class="home-section-head">
         <h2>📝 Из блога</h2>

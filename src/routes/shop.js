@@ -1,4 +1,5 @@
 const router = require('express').Router();
+const { requireModule } = require('../middleware/module');
 const shopCtrl = require('../controllers/shop');
 const cartCtrl = require('../controllers/cart');
 const checkout = require('../controllers/checkout');
@@ -6,6 +7,7 @@ const blog = require('../controllers/blog');
 const pages = require('../controllers/pages');
 const auth = require('../controllers/auth');
 
+router.get('/r/:code', requireModule('club'), require('../middleware/referral').capture);
 router.get('/', shopCtrl.home);
 router.get('/catalog', shopCtrl.catalog);
 router.get('/catalog/:slug', shopCtrl.category);
@@ -20,9 +22,9 @@ router.get('/checkout', checkout.form);
 router.post('/checkout', checkout.submit);
 router.get('/checkout/success', checkout.success);
 
-router.get('/blog', blog.list);
-router.get('/blog/category/:slug', blog.category);
-router.get('/blog/:slug', blog.post);
+router.get('/blog', requireModule('blog'), blog.list);
+router.get('/blog/category/:slug', requireModule('blog'), blog.category);
+router.get('/blog/:slug', requireModule('blog'), blog.post);
 
 router.get('/page/:slug', pages.show);
 
@@ -43,15 +45,16 @@ router.post('/subscribe', require('../controllers/subscribe').submit);
 router.get('/unsubscribe', require('../controllers/subscribe').unsubscribe);
 
 const favorites = require('../controllers/favorites');
-router.post('/api/favorites/toggle', favorites.toggle);
-router.get('/api/favorites/ids', favorites.listIds);
-router.get('/favorites', favorites.page);
+router.post('/api/favorites/toggle', requireModule('favorites'), favorites.toggle);
+router.get('/api/favorites/ids', requireModule('favorites'), favorites.listIds);
+router.get('/favorites', requireModule('favorites'), favorites.page);
 const account = require('../controllers/account');
 const { imageUpload } = require('../services/upload');
 
 router.get('/account', account.requireAuth, account.dashboard);
 router.get('/account/orders', account.requireAuth, account.orders);
 router.get('/account/orders/:number', account.requireAuth, account.order);
+router.get('/account/club', requireModule('club'), account.requireAuth, account.club);
 router.get('/account/loyalty', account.requireAuth, account.loyalty);
 router.get('/account/profile', account.requireAuth, account.profile);
 router.post('/account/profile', account.requireAuth, account.saveProfile);
@@ -62,5 +65,5 @@ router.get('/sitemap.xml', shopCtrl.sitemap);
 router.get('/robots.txt', shopCtrl.robots);
 
 
-router.post('/product/:productId/review', require('../controllers/reviews').submit);
+router.post('/product/:productId/review', requireModule('reviews'), require('../controllers/reviews').submit);
 module.exports = router;

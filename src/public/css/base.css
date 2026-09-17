@@ -4585,3 +4585,258 @@ body:has(.mobile-menu:not([hidden])) { overflow: hidden; }
   .auth-header h1 { font-size: 20px; }
   .auth-icon { width: 54px; height: 54px; font-size: 26px; }
 }
+
+/* Бейдж «заблокированные баллы» в шапке */
+.pending-badge {
+  display: inline-block;
+  background: #fbbf24;
+  color: #78350f;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 8px;
+  margin-left: 2px;
+  line-height: 1.4;
+  vertical-align: middle;
+}
+
+/* ═══════════════════════════════════════════════
+   КЛУБ / РЕФЕРАЛЬНАЯ ПРОГРАММА
+   ═══════════════════════════════════════════════ */
+.club-subtitle {
+  color: #6b7280;
+  margin: -8px 0 24px;
+  font-size: 15px;
+}
+
+.club-disabled {
+  text-align: center;
+  padding: 60px 20px;
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+}
+.club-disabled-icon { font-size: 56px; margin-bottom: 12px; }
+.club-disabled h3 { margin: 0 0 8px; }
+.club-disabled p { color: #6b7280; margin: 0; }
+
+/* ─── Статистика ─── */
+.club-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 28px;
+}
+.club-stat {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+}
+.club-stat-num {
+  font-size: 30px;
+  font-weight: 800;
+  color: #111;
+  letter-spacing: -1px;
+  line-height: 1;
+}
+.club-stat-label {
+  font-size: 13px;
+  color: #6b7280;
+  margin-top: 6px;
+}
+.club-stat-accent {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  border-color: #fcd34d;
+}
+.club-stat-accent .club-stat-num { color: #b45309; }
+.club-stat-accent .club-stat-label { color: #92400e; }
+
+/* ─── Как работает ─── */
+.club-howto {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 24px 28px;
+  margin-bottom: 28px;
+}
+.club-howto h2 { margin: 0 0 20px; font-size: 18px; }
+
+.club-steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+.club-step {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.club-step-num {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 15px;
+}
+.club-step-body strong { display: block; font-size: 14.5px; color: #111; margin-bottom: 2px; }
+.club-step-body p { margin: 0; font-size: 13px; color: #6b7280; line-height: 1.5; }
+.club-step-body b { color: #b45309; }
+
+/* ─── Реферальная ссылка ─── */
+.club-reflink-block {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 24px 28px;
+  margin-bottom: 28px;
+}
+.club-reflink-block h2 { margin: 0 0 6px; font-size: 18px; }
+.club-reflink-desc { margin: 0 0 16px; color: #6b7280; font-size: 14px; }
+
+.club-reflink-box {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.club-reflink-box input {
+  flex: 1;
+  padding: 12px 16px;
+  border: 2px solid #e5e7eb;
+  border-radius: 10px;
+  font: inherit;
+  font-size: 14.5px;
+  font-family: ui-monospace, Menlo, monospace;
+  background: #f9fafb;
+  color: #111;
+}
+.club-reflink-box input:focus {
+  outline: 0;
+  border-color: #3b82f6;
+}
+
+.club-copy-btn {
+  padding: 0 24px;
+  background: #0f172a;
+  color: #fff;
+  border: 0;
+  border-radius: 10px;
+  font: inherit;
+  font-size: 14.5px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background .15s;
+  min-width: 140px;
+}
+.club-copy-btn:hover { background: #1e293b; }
+.club-copy-btn-ok { background: #16a34a !important; }
+
+.club-share-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.club-share-label {
+  font-size: 13px;
+  color: #6b7280;
+  margin-right: 4px;
+}
+.club-share-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #fff;
+  color: #374151;
+  text-decoration: none;
+  font: inherit;
+  font-size: 13.5px;
+  cursor: pointer;
+  transition: all .15s;
+}
+.club-share-btn:hover {
+  border-color: #cbd5e1;
+  transform: translateY(-1px);
+}
+.club-share-tg:hover { background: #0088cc; color: #fff; border-color: #0088cc; }
+.club-share-wa:hover { background: #25d366; color: #fff; border-color: #25d366; }
+.club-share-copy:hover { background: #f3f4f6; }
+
+/* ─── Приглашённые ─── */
+.club-invited-block {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 24px 28px;
+  margin-bottom: 28px;
+}
+.club-invited-block h2 { margin: 0 0 16px; font-size: 18px; }
+
+.club-empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: #6b7280;
+}
+.club-empty-icon { font-size: 48px; margin-bottom: 10px; }
+.club-empty p { margin: 0; font-size: 14.5px; }
+
+/* ─── Бонусы ─── */
+.club-bonuses-block {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 24px 28px;
+}
+.club-bonuses-block h2 { margin: 0 0 16px; font-size: 18px; }
+
+.club-bonuses-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.club-bonuses-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #f3f4f6;
+  gap: 16px;
+}
+.club-bonuses-list li:last-child { border-bottom: 0; }
+.club-bonuses-list strong { display: block; font-size: 14.5px; color: #111; font-weight: 500; }
+.club-bonus-date { font-size: 12px; color: #9ca3af; margin-top: 2px; }
+.club-bonus-points {
+  font-size: 16px;
+  font-weight: 700;
+  color: #16a34a;
+  white-space: nowrap;
+}
+
+/* ─── Адаптив ─── */
+@media (max-width: 700px) {
+  .club-stats { grid-template-columns: 1fr; }
+  .club-steps { grid-template-columns: 1fr; }
+  .club-reflink-box { flex-direction: column; }
+  .club-copy-btn { padding: 12px; width: 100%; }
+  .club-share-row { gap: 6px; }
+  .club-share-label { display: none; }
+  .club-share-btn { flex: 1; justify-content: center; font-size: 12.5px; padding: 8px 10px; }
+  .club-howto, .club-reflink-block, .club-invited-block, .club-bonuses-block {
+    padding: 20px 18px;
+  }
+  .club-stat-num { font-size: 26px; }
+}

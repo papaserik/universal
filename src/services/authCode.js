@@ -2,6 +2,7 @@ const { prisma } = require('../config/db');
 const mail = require('./mail');
 const { getSetting } = require('./settings');
 const loyalty = require('./loyalty');
+const referral = require('./referral');
 
 function generateCode() {
   return String(Math.floor(100000 + Math.random() * 900000));
@@ -84,13 +85,15 @@ async function verify(email, code) {
   let user = await prisma.user.findUnique({ where: { email } });
   let isNewUser = false;
   if (!user) {
+    const refCode = await referral.generateRefCode();
     user = await prisma.user.create({
       data: {
         email,
         password: 'magic:' + Math.random().toString(36).slice(2) + Date.now(),
         name: email.split('@')[0],
         role: 'USER',
-        active: true
+        active: true,
+        refCode
       }
     });
     isNewUser = true;

@@ -2,14 +2,25 @@
   var t = typeof activeTab !== 'undefined' ? activeTab : 'dashboard';
 %>
 <div class="cabinet-tabs">
-  <a href="/account"          class="cabinet-tab <%= t === 'dashboard' ? 'active' : '' %>">Обзор</a>
-  <a href="/account/orders"   class="cabinet-tab <%= t === 'orders'    ? 'active' : '' %>">Мои заказы</a>
-  <a href="/account/favorites" class="cabinet-tab <%= t === 'favorites' ? 'active' : '' %>">
-    ❤️ Избранное
-    <% if (typeof favoritesCount !== 'undefined' && favoritesCount > 0) { %>
-      <span class="cabinet-tab-badge"><%= favoritesCount %></span>
-    <% } %>
-  </a>
-  <a href="/account/loyalty"  class="cabinet-tab <%= t === 'loyalty'   ? 'active' : '' %>">Баллы</a>
-  <a href="/account/profile"  class="cabinet-tab <%= t === 'profile'   ? 'active' : '' %>">Профиль</a>
+  <a href="/account" class="cabinet-tab <%= t === 'dashboard' ? 'active' : '' %>">Обзор</a>
+  <a href="/account/orders" class="cabinet-tab <%= t === 'orders' ? 'active' : '' %>">Мои заказы</a>
+
+  <% if (moduleEnabled('favorites')) { %>
+    <a href="/account/favorites" class="cabinet-tab <%= t === 'favorites' ? 'active' : '' %>">
+      ❤️ Избранное
+      <% if (typeof favoritesCount !== 'undefined' && favoritesCount > 0) { %>
+        <span class="cabinet-tab-badge"><%= favoritesCount %></span>
+      <% } %>
+    </a>
+  <% } %>
+
+  <% if (moduleEnabled('club')) { %>
+    <a href="/account/club" class="cabinet-tab <%= t === 'club' ? 'active' : '' %>">🎁 Клуб</a>
+  <% } %>
+
+  <% if (moduleEnabled('loyalty')) { %>
+    <a href="/account/loyalty" class="cabinet-tab <%= t === 'loyalty' ? 'active' : '' %>">Баллы</a>
+  <% } %>
+
+  <a href="/account/profile" class="cabinet-tab <%= t === 'profile' ? 'active' : '' %>">Профиль</a>
 </div>

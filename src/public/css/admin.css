@@ -1524,3 +1524,189 @@ a + .admin-group {
   background: #0f172a;
   color: #fff;
 }
+
+/* ═══════════════════════════════════════════════
+   МОДУЛИ
+   ═══════════════════════════════════════════════ */
+.modules-group {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 0;
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+.modules-group-head {
+  padding: 16px 22px;
+  border-bottom: 1px solid #f3f4f6;
+  background: #fafbfc;
+}
+.modules-group-head h2 {
+  margin: 0 0 4px;
+  font-size: 16px;
+  font-weight: 700;
+}
+.modules-group-head p {
+  margin: 0;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.modules-list { padding: 6px 0; }
+
+.module-item {
+  display: grid !important;
+  grid-template-columns: 44px 44px 1fr auto;
+  gap: 14px;
+  align-items: center;
+  padding: 14px 22px;
+  cursor: pointer;
+  transition: background .12s;
+  flex-direction: row !important;
+  margin: 0 !important;
+  font-weight: 400 !important;
+  font-size: 14px !important;
+  color: #111 !important;
+}
+.module-item:hover { background: #fafbfc; }
+.module-item + .module-item { border-top: 1px solid #f9fafb; }
+
+.module-item-check {
+  position: relative;
+  width: 44px;
+  height: 26px;
+  flex-shrink: 0;
+}
+.module-item-check input {
+  position: absolute !important;
+  opacity: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  cursor: pointer;
+  z-index: 2;
+}
+.module-toggle {
+  position: absolute;
+  inset: 0;
+  background: #e5e7eb;
+  border-radius: 13px;
+  transition: background .2s;
+  pointer-events: none;
+}
+.module-toggle::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0,0,0,.15);
+  transition: transform .2s;
+}
+.module-item-check input:checked + .module-toggle {
+  background: #16a34a;
+}
+.module-item-check input:checked + .module-toggle::after {
+  transform: translateX(18px);
+}
+
+.module-item-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: #f3f4f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+.module-off .module-item-icon {
+  background: #f9fafb;
+  opacity: .5;
+}
+
+.module-item-body { min-width: 0; }
+.module-item-name {
+  font-size: 14.5px;
+  font-weight: 600;
+  color: #111;
+  margin-bottom: 2px;
+}
+.module-item-desc {
+  font-size: 12.5px;
+  color: #6b7280;
+  line-height: 1.4;
+}
+.module-off .module-item-name,
+.module-off .module-item-desc {
+  color: #9ca3af;
+}
+
+.module-item-status {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #16a34a;
+  white-space: nowrap;
+}
+
+.modules-sticky-save {
+  position: sticky;
+  bottom: 20px;
+  background: #1e293b;
+  padding: 14px 20px;
+  border-radius: 10px;
+  display: flex;
+  justify-content: flex-end;
+  box-shadow: 0 6px 20px rgba(0,0,0,.15);
+  margin-top: 20px;
+}
+.modules-sticky-save .btn {
+  background: #16a34a;
+}
+.modules-sticky-save .btn:hover {
+  background: #15803d;
+}
+
+@media (max-width: 700px) {
+  .module-item {
+    grid-template-columns: 44px 1fr;
+    gap: 10px;
+    padding: 14px 16px;
+  }
+  .module-item-icon { display: none; }
+  .module-item-status { grid-column: 2; justify-self: start; }
+}
+
+/* Теги в форме товара */
+.product-tags-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.product-tag-option {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 20px;
+  border: 1px solid #e5e7eb;
+  transition: all .15s;
+  font-size: 13px !important;
+  color: #374151 !important;
+  font-weight: 400 !important;
+  flex-direction: row !important;
+}
+.product-tag-option:hover { border-color: #cbd5e1; background: #f9fafb; }
+.product-tag-option input[type="checkbox"] { width: 14px; height: 14px; margin: 0; }
+.product-tag-badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 12.5px;
+  font-weight: 600;
+}

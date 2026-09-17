@@ -167,3 +167,39 @@ function safeJson(s) {
 
 module.exports.requireAuth = requireAuth;
 module.exports._safeJson = safeJson;
+
+// ─── Клуб / Реферальная программа ───
+exports.club = async (req, res) => {
+  const user = req.session.user;
+  const referral = require('../services/referral');
+  const { getSetting } = require('../services/settings');
+
+  // Убедимся, что у юзера есть refCode
+  const refCode = await referral.ensureRefCode(user.id);
+
+  // Обновим сессию (если код только что сгенерировался)
+  if (refCode && req.session.user) {
+    req.session.user.refCode = refCode;
+  }
+
+  const info = await referral.stats(user.id);
+
+  const settings = {
+    enabled:          (await getSetting('referral_enabled', '1')) === '1',
+    signupPoints:     Number(await getSetting('referral_signup_points', '200')) || 200,
+    firstBonus:       Number(await getSetting('referral_first_purchase_bonus', '500')) || 500,
+    cashbackPercent:  Number(await getSetting('referral_cashback_percent', '2')) || 2
+  };
+
+  // Полный URL реферальной ссылки
+  const baseUrl = process.env.SITE_URL || (req.protocol + '://' + req.get('host'));
+  const refUrl = baseUrl + '/r/' + refCode;
+
+  res.locals.setMeta({ title: 'Клуб — приглашайте друзей' });
+  res.render('account/club', {
+    refCode,
+    refUrl,
+    info,
+    settings
+  });
+};

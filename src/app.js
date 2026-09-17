@@ -61,6 +61,19 @@ app.use(async (req, res, next) => {
     } catch (e) {}
   }
 
+  // Pending-баллы реферальной программы
+  res.locals.referralPending = 0;
+  if (req.session.user) {
+    try {
+      const { prisma } = require('./config/db');
+      const u = await prisma.user.findUnique({
+        where: { id: req.session.user.id },
+        select: { pendingReferralPoints: true }
+      });
+      res.locals.referralPending = u?.pendingReferralPoints || 0;
+    } catch (e) {}
+  }
+
   // Баллы и уровень — только для юзера
   res.locals.userLoyalty = null;
   if (req.session.user) {
@@ -95,6 +108,19 @@ app.use(async (req, res, next) => {
       res.locals.marketplaceMeta[m.slug] = { name: m.name, color: m.color, iconUrl: m.iconUrl, slug: m.slug };
     }
   } catch (e) { }
+  // ─── Модули (включены/выключены) ───
+  try {
+    const modules = require('./services/modules');
+    res.locals.modules = await modules.loadAll();
+  } catch (e) {
+    res.locals.modules = {};
+  }
+
+  // Хелпер для проверки модуля в шаблонах
+  res.locals.moduleEnabled = function(code) {
+    return res.locals.modules[code] !== false;
+  };
+
   res.locals.meta = {
     title: res.locals.settings.siteName,
     description: '',

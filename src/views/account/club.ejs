@@ -1,0 +1,206 @@
+<div class="cabinet">
+  <h1>🎁 Клуб привилегий</h1>
+  <p class="club-subtitle">Приглашайте друзей — получайте баллы за их покупки</p>
+
+  <%- include('partials/tabs', { activeTab: 'club' }) %>
+
+  <% if (!settings.enabled) { %>
+    <div class="club-disabled">
+      <div class="club-disabled-icon">🚧</div>
+      <h3>Программа временно недоступна</h3>
+      <p>Скоро вернёмся. Следите за новостями!</p>
+    </div>
+  <% } else { %>
+
+    <%# ─── Статистика ─── %>
+    <div class="club-stats">
+      <div class="club-stat">
+        <div class="club-stat-num"><%= info.totalInvited %></div>
+        <div class="club-stat-label">Приглашено друзей</div>
+      </div>
+      <div class="club-stat">
+        <div class="club-stat-num"><%= info.converted %></div>
+        <div class="club-stat-label">Совершили покупку</div>
+      </div>
+      <div class="club-stat club-stat-accent">
+        <div class="club-stat-num"><%= info.totalEarned %></div>
+        <div class="club-stat-label">Заработано баллов</div>
+      </div>
+    </div>
+
+    <%# ─── Как работает ─── %>
+    <div class="club-howto">
+      <h2>Как это работает</h2>
+      <div class="club-steps">
+        <div class="club-step">
+          <div class="club-step-num">1</div>
+          <div class="club-step-body">
+            <strong>Поделитесь ссылкой</strong>
+            <p>Отправьте другу вашу персональную ссылку</p>
+          </div>
+        </div>
+        <div class="club-step">
+          <div class="club-step-num">2</div>
+          <div class="club-step-body">
+            <strong>Друг регистрируется</strong>
+            <p>Он получает <b>+<%= settings.signupPoints %> баллов</b>, но тратить их сможет после первой покупки</p>
+          </div>
+        </div>
+        <div class="club-step">
+          <div class="club-step-num">3</div>
+          <div class="club-step-body">
+            <strong>Друг совершает покупку</strong>
+            <p>Его баллы разблокируются, а вы получаете <b>+<%= settings.firstBonus %> баллов</b></p>
+          </div>
+        </div>
+        <div class="club-step">
+          <div class="club-step-num">4</div>
+          <div class="club-step-body">
+            <strong>Вы получаете <%= settings.cashbackPercent %>%</strong>
+            <p>С каждой покупки друга — баллы на ваш счёт</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <%# ─── Реферальная ссылка ─── %>
+    <div class="club-reflink-block">
+      <h2>Ваша реферальная ссылка</h2>
+      <p class="club-reflink-desc">Отправьте эту ссылку другу любым способом</p>
+
+      <div class="club-reflink-box">
+        <input type="text" id="ref-url" value="<%= refUrl %>" readonly>
+        <button type="button" class="club-copy-btn" id="copy-btn">
+          <span id="copy-btn-text">Копировать</span>
+        </button>
+      </div>
+
+      <div class="club-share-row">
+        <div class="club-share-label">Поделиться:</div>
+        <a class="club-share-btn club-share-tg" target="_blank" rel="noopener"
+           href="https://t.me/share/url?url=<%= encodeURIComponent(refUrl) %>&text=<%= encodeURIComponent('Зацени этот магазин — тут клёвые товары со скидками!') %>">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/></svg>
+          Telegram
+        </a>
+        <a class="club-share-btn club-share-wa" target="_blank" rel="noopener"
+           href="https://wa.me/?text=<%= encodeURIComponent('Зацени этот магазин: ' + refUrl) %>">
+          WhatsApp
+        </a>
+        <button type="button" class="club-share-btn club-share-copy" id="share-copy">Скопировать текст</button>
+      </div>
+    </div>
+
+    <%# ─── Список приглашённых ─── %>
+    <div class="club-invited-block">
+      <h2>Приглашённые друзья</h2>
+
+      <% if (!info.referrals.length) { %>
+        <div class="club-empty">
+          <div class="club-empty-icon">👥</div>
+          <p>Пока никого не пригласили. Отправьте первую ссылку — и получите баллы!</p>
+        </div>
+      <% } else { %>
+        <div class="admin-table-wrap" style="margin-top:12px">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Друг</th>
+                <th style="width:140px">Дата регистрации</th>
+                <th style="width:170px;text-align:center">Статус</th>
+                <th style="width:170px;text-align:right">Заработано</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% info.referrals.forEach(r => {
+                   const statusMap = {
+                     registered: { text: 'Ожидает покупки', color: '#f59e0b' },
+                     converted:  { text: '✓ Совершил покупку', color: '#16a34a' }
+                   };
+                   const st = statusMap[r.status] || { text: r.status, color: '#6b7280' };
+                   const emailMasked = r.invited.email.replace(/(.{2}).*(@.*)/, '$1***$2');
+              %>
+                <tr>
+                  <td>
+                    <div class="cell-title"><%= emailMasked %></div>
+                    <% if (r.invited.name) { %><div class="cell-sub"><%= r.invited.name %></div><% } %>
+                  </td>
+                  <td><%= r.invitedAt.toLocaleDateString('ru-RU') %></td>
+                  <td style="text-align:center">
+                    <span class="status-pill" style="background:<%= st.color %>1a;color:<%= st.color %>">
+                      <%= st.text %>
+                    </span>
+                  </td>
+                  <td style="text-align:right">
+                    <% if (r.totalEarned > 0) { %>
+                      <strong style="color:#16a34a">+<%= r.totalEarned %></strong> б.
+                    <% } else { %>
+                      <span style="color:#9ca3af">—</span>
+                    <% } %>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      <% } %>
+    </div>
+
+    <%# ─── История начислений ─── %>
+    <% if (info.bonuses && info.bonuses.length) { %>
+      <div class="club-bonuses-block">
+        <h2>История начислений</h2>
+        <ul class="club-bonuses-list">
+          <% info.bonuses.forEach(b => { %>
+            <li>
+              <div>
+                <strong><%= b.reason %></strong>
+                <div class="club-bonus-date"><%= b.createdAt.toLocaleString('ru-RU') %></div>
+              </div>
+              <div class="club-bonus-points">+<%= b.points %></div>
+            </li>
+          <% }) %>
+        </ul>
+      </div>
+    <% } %>
+
+  <% } %>
+</div>
+
+<script>
+(function () {
+  // Копировать ссылку
+  var btn = document.getElementById('copy-btn');
+  var url = document.getElementById('ref-url');
+  if (btn && url) {
+    btn.addEventListener('click', function () {
+      url.select();
+      url.setSelectionRange(0, 99999);
+      navigator.clipboard.writeText(url.value).then(function () {
+        var t = document.getElementById('copy-btn-text');
+        var old = t.textContent;
+        t.textContent = '✓ Скопировано';
+        btn.classList.add('club-copy-btn-ok');
+        setTimeout(function () {
+          t.textContent = old;
+          btn.classList.remove('club-copy-btn-ok');
+        }, 2000);
+      }).catch(function () {
+        alert('Не удалось скопировать. Скопируйте вручную.');
+      });
+    });
+  }
+
+  // Поделиться текстом
+  var share = document.getElementById('share-copy');
+  if (share) {
+    share.addEventListener('click', function () {
+      var text = 'Зацени этот магазин — тут клёвые товары со скидками: ' + (url ? url.value : '');
+      navigator.clipboard.writeText(text).then(function () {
+        var old = share.textContent;
+        share.textContent = '✓ Скопировано';
+        setTimeout(function () { share.textContent = old; }, 2000);
+      });
+    });
+  }
+})();
+</script>

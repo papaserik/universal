@@ -29,8 +29,8 @@
           <a href="/admin/products">Товары</a>
           <a href="/admin/categories">Категории</a>
           <a href="/admin/options">Опции</a>
-          <a href="/admin/brands">Бренды</a>
-          <a href="/admin/tags">Теги</a>
+          <% if (moduleEnabled('brands')) { %><a href="/admin/brands">Бренды</a><% } %>
+          <% if (moduleEnabled('tags')) { %><a href="/admin/tags">Теги</a><% } %>
         </div>
       </div>
 
@@ -55,7 +55,7 @@
           <span class="admin-group-arrow">▸</span>
         </button>
         <div class="admin-group-items">
-          <a href="/admin/blog">Посты</a>
+          <% if (moduleEnabled('blog')) { %><a href="/admin/blog">Посты</a><% } %>
           <a href="/admin/blog-categories">Категории блога</a>
           <a href="/admin/pages">Страницы</a>
         </div>
@@ -68,20 +68,21 @@
           <span class="admin-group-arrow">▸</span>
         </button>
         <div class="admin-group-items">
-          <a href="/admin/banners">Баннеры</a>
-          <a href="/admin/marketing/subscribers">Подписчики</a>
-          <a href="/admin/marketing/newsletters">Рассылки</a>
+          <% if (moduleEnabled('banners')) { %><a href="/admin/banners">Баннеры</a><% } %>
+          <% if (moduleEnabled('newsletter')) { %><a href="/admin/marketing/subscribers">Подписчики</a><% } %>
+          <% if (moduleEnabled('newsletter')) { %><a href="/admin/marketing/newsletters">Рассылки</a><% } %>
           <a href="/admin/email-templates">Шаблоны писем</a>
-          <a href="/admin/reviews">Отзывы</a>
-          <a href="/admin/loyalty/settings">Баллы и уровни</a>
+          <% if (moduleEnabled('reviews')) { %><a href="/admin/reviews">Отзывы</a><% } %>
+          <% if (moduleEnabled('loyalty')) { %><a href="/admin/loyalty/settings">Баллы и уровни</a><% } %>
           <a href="/admin/loyalty/transactions">История баллов</a>
         </div>
       </div>
 
       <a href="/admin/users">👥 Пользователи</a>
-      <a href="/admin/import">📥 Импорт</a>
-      <a href="/admin/marketplaces">🏪 Маркетплейсы</a>
-      <a href="/admin/images">🖼 Изображения</a>
+      <% if (moduleEnabled('import')) { %><a href="/admin/import">📥 Импорт</a><% } %>
+      <% if (moduleEnabled('marketplaces')) { %><a href="/admin/marketplaces">🏪 Маркетплейсы</a><% } %>
+      <% if (moduleEnabled('image_optimize')) { %><a href="/admin/images">🖼 Изображения</a><% } %>
+      <a href="/admin/modules">🧩 Модули</a>
       <a href="/admin/settings">⚙ Настройки</a>
     </nav>
     <div class="admin-bottom">

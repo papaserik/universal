@@ -4,6 +4,7 @@ const bannersAdmin = require('../controllers/admin/banners');
 const brandsAdmin = require('../controllers/admin/brands');
 const tagsAdmin = require('../controllers/admin/tags');
 const imagesAdmin = require('../controllers/admin/images');
+const modulesAdmin = require('../controllers/admin/modules');
 const { requireAuth, requireAdmin, requireAdminGuest } = require('../middleware/auth');
 const adminAuth = require('../controllers/admin/auth');
 const roles = require('../middleware/roles');
@@ -264,5 +265,8 @@ router.get('/tags/:id', tagsAdmin.form);
 router.post('/tags', tagsAdmin.save);
 router.post('/tags/:id', tagsAdmin.save);
 router.post('/tags/:id/delete', tagsAdmin.remove);
+
+router.get('/modules', modulesAdmin.index);
+router.post('/modules/save', modulesAdmin.save);
 
 module.exports = router;

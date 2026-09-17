@@ -5,7 +5,7 @@ function num(s, def) { const n = Number(s); return isNaN(n) ? def : n; }
 
 async function settings() {
   return {
-    enabled:        (await getSetting('loyalty_enabled', '1')) === '1',
+    enabled:        (await getSetting('module_loyalty', '1')) === '1',
     pointsPerRub:   num(await getSetting('loyalty_points_per_rub', '0.05'), 0.05),
     pointValue:     num(await getSetting('loyalty_point_value', '1'), 1),
     maxPayPercent:  num(await getSetting('loyalty_max_pay_percent', '50'), 50),

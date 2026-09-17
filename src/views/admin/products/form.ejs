@@ -84,7 +84,8 @@
   <% } %>
 
 
-  <fieldset class="full" id="mp-fieldset">
+  <% if (moduleEnabled('marketplaces')) { %>
+    <fieldset class="full" id="mp-fieldset">
     <legend>Маркетплейсы</legend>
     <p style="color:#6b7280;font-size:13px;margin:0 0 10px">
       Отметьте один или несколько маркетплейсов, где продаётся товар. На сайте под кнопкой «В корзину» появятся кнопки перехода.
@@ -93,8 +94,48 @@
     <button type="button" class="btn btn-sm" id="mp-add" style="margin-top:8px">+ Добавить маркетплейс</button>
     <input type="hidden" name="marketplaceLinks" id="mp-json-input">
   </fieldset>
+    <% } %>
 
-  <fieldset class="full">
+  <% if (moduleEnabled('brands')) { %>
+    <fieldset class="full">
+      <legend>🏢 Бренд</legend>
+      <label>Бренд товара
+        <select name="brandId">
+          <option value="">— не указан —</option>
+          <% brands.forEach(b => { %>
+            <option value="<%= b.id %>" <%= product && product.brandId === b.id ? 'selected' : '' %>><%= b.name %></option>
+          <% }) %>
+        </select>
+      </label>
+    </fieldset>
+    <% } %>
+
+    <% if (moduleEnabled('tags')) { %>
+    <fieldset class="full">
+      <legend>🏷️ Теги</legend>
+      <p style="font-size:13px;color:#6b7280;margin:0 0 10px">
+        Теги показываются бейджами на карточке товара и используются для фильтрации.
+      </p>
+      <div class="product-tags-grid">
+        <% allTags.forEach(t => { %>
+          <label class="product-tag-option">
+            <input type="checkbox" name="tags" value="<%= t.id %>"
+                   <%= productTags.includes(t.id) ? 'checked' : '' %>>
+            <span class="product-tag-badge" style="background:<%= t.color %>1a;color:<%= t.color %>">
+              <%= t.name %>
+            </span>
+          </label>
+        <% }) %>
+        <% if (!allTags.length) { %>
+          <p style="color:#9ca3af;font-size:13px;margin:0">
+            Тегов пока нет. <a href="/admin/tags/new" target="_blank">Создать тег →</a>
+          </p>
+        <% } %>
+      </div>
+    </fieldset>
+    <% } %>
+
+    <fieldset class="full">
     <legend>SEO</legend>
     <label>SEO Title <input type="text" name="seoTitle" value="<%= product && product.seoTitle ? product.seoTitle : '' %>"></label>
     <label>SEO Description <input type="text" name="seoDesc" value="<%= product && product.seoDesc ? product.seoDesc : '' %>"></label>

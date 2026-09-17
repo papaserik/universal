@@ -163,6 +163,12 @@ exports.submit = async (req, res) => {
   // Начисление кэшбэка (по сумме после скидки доставки, без учёта баллов)
   if (user) {
     try { await loyalty.awardForOrder(order, user.id); } catch (e) { console.error('loyalty award:', e); }
+
+    // ─── Реферальная программа ───
+    try {
+      const referral = require('../services/referral');
+      await referral.processOrder(order, user.id);
+    } catch (e) { console.error('referral processOrder:', e); }
   }
 
   // Уведомления
