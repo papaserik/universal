@@ -27,7 +27,8 @@ const MODULES = [
   { code: 'search_suggest', name: 'Подсказки поиска',      desc: 'Автодополнение при вводе в поиске',                        group: 'customer', icon: '🔍' },
 
   // Система
-  { code: 'image_optimize', name: 'Оптимизация изображений', desc: 'Автосжатие, WebP, миниатюры при загрузке',               group: 'system',  icon: '🖼' }
+  { code: 'image_optimize', name: 'Оптимизация изображений', desc: 'Автосжатие, WebP, миниатюры при загрузке',               group: 'system',  icon: '🖼' },
+  { code: 'pwa',            name: 'PWA (установка на телефон)', desc: 'Установка магазина как приложения: манифест, offline-режим, кеш, кнопка установки', group: 'system', icon: '📲' }
 ];
 
 const CACHE_TTL = 30 * 1000; // 30 секунд
