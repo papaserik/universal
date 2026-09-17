@@ -142,14 +142,211 @@
       </a>
     </section>
 
+    <%# API-синхронизация %>
+    <% if (integration.slug === 'ozon' || integration.slug === 'wildberries') { %>
+      <section class="order-block order-block-api" style="margin-top:16px">
+        <header class="order-block-head">
+          <h2>
+            ⚡ API-синхронизация
+            <i class="info-tip info-tip-left" data-tip="Только импорт заказов С маркетплейса. Ваши заказы со своего сайта (source: own) НИКОГДА не отправляются на маркетплейсы — они остаются в вашей базе. Через API можно только забирать данные, а не отправлять свои заказы."></i>
+          </h2>
+        </header>
+
+        <div style="margin-bottom:12px">
+          <div id="api-status" style="font-size:13px;padding:10px 12px;background:#f9fafb;border-radius:8px;color:#6b7280">
+            Проверка подключения…
+          </div>
+        </div>
+
+        <button type="button" class="btn btn-sm" style="width:100%;justify-content:center;margin-bottom:8px" id="btn-test-api">
+          🔍 Проверить подключение
+        </button>
+
+        <button type="button" class="btn" style="width:100%;justify-content:center;background:#16a34a" id="btn-sync-orders">
+          ⚡ Забрать заказы (24 ч)
+        </button>
+
+        <select id="sync-hours" style="width:100%;margin-top:8px;padding:8px 12px;border:1px solid #d1d5db;border-radius:6px;font:inherit;font-size:13px">
+          <option value="1">за последний час</option>
+          <option value="6">за 6 часов</option>
+          <option value="24" selected>за 24 часа</option>
+          <option value="72">за 3 дня</option>
+          <option value="168">за неделю</option>
+        </select>
+
+        <div id="sync-result" style="margin-top:10px;font-size:13px"></div>
+      </section>
+
+      <%# Синхронизация остатков и цен %>
+      <section class="order-block order-block-stock" style="margin-top:16px">
+        <header class="order-block-head">
+          <h2>
+            📦 Остатки и цены
+            <i class="info-tip info-tip-left" data-tip="Отправляем ваши актуальные остатки и цены на маркетплейс. Обновляются только товары, у которых заполнен External ID в карточке товара (поле «Внешние ID»). Заказы со своего сайта сюда не отправляются."></i>
+          </h2>
+        </header>
+
+        <p style="color:#6b7280;font-size:13px;margin:0 0 12px">
+          Обновляем данные <strong>только для товаров с заполненным External ID</strong>.
+          Остальные останутся без изменений.
+        </p>
+
+        <button type="button" class="btn btn-sm" style="width:100%;justify-content:center;margin-bottom:8px;background:#2563eb" id="btn-sync-stocks">
+          📦 Обновить остатки
+        </button>
+
+        <button type="button" class="btn btn-sm" style="width:100%;justify-content:center;background:#7c3aed" id="btn-sync-prices">
+          💰 Обновить цены
+        </button>
+
+        <div id="stock-result" style="margin-top:10px;font-size:13px"></div>
+      </section>
+
+      <script>
+      (function () {
+        var slug = '<%= integration.slug %>';
+        var stocksBtn = document.getElementById('btn-sync-stocks');
+        var pricesBtn = document.getElementById('btn-sync-prices');
+        var resultEl = document.getElementById('stock-result');
+
+        function run(action, endpoint, btn, label) {
+          if (!confirm('Обновить ' + label + ' на маркетплейсе?\n\nДанные отправятся для всех товаров с заполненным External ID.')) return;
+          btn.disabled = true;
+          var origText = btn.textContent;
+          btn.textContent = '⏳ Обновление…';
+          resultEl.innerHTML = '';
+
+          fetch('/admin/integrations/' + slug + '/' + endpoint, { method: 'POST' })
+            .then(function (r) { return r.json(); })
+            .then(function (d) {
+              btn.disabled = false;
+              btn.textContent = origText;
+
+              if (!d.ok) {
+                resultEl.innerHTML = '<div style="color:#dc2626;padding:10px 12px;background:#fef2f2;border-radius:8px">✗ ' + (d.error || 'Ошибка') + '</div>';
+                return;
+              }
+
+              var errorsHtml = '';
+              if (d.errors && d.errors.length) {
+                errorsHtml = '<details style="margin-top:8px"><summary style="cursor:pointer;color:#dc2626">Показать ошибки (' + d.errors.length + ')</summary><ul style="margin:6px 0 0;padding-left:18px;font-size:12px">';
+                d.errors.forEach(function (e) { errorsHtml += '<li>' + e + '</li>'; });
+                errorsHtml += '</ul></details>';
+              }
+
+              resultEl.innerHTML =
+                '<div style="padding:10px 12px;background:#f0fdf4;border-radius:8px;color:#166534">' +
+                  '<strong>✓ Готово</strong><br>' +
+                  'Всего товаров: ' + d.total + '<br>' +
+                  'Обновлено: ' + d.updated + '<br>' +
+                  (d.failed ? '<span style="color:#dc2626">Ошибок: ' + d.failed + '</span>' : '') +
+                '</div>' + errorsHtml;
+            })
+            .catch(function (e) {
+              btn.disabled = false;
+              btn.textContent = origText;
+              resultEl.innerHTML = '<div style="color:#dc2626">✗ ' + e.message + '</div>';
+            });
+        }
+
+        stocksBtn.addEventListener('click', function () { run('stocks', 'sync-stocks', stocksBtn, 'остатки'); });
+        pricesBtn.addEventListener('click', function () { run('prices', 'sync-prices', pricesBtn, 'цены'); });
+      })();
+      </script>
+
+      <script>
+      (function () {
+        var slug = '<%= integration.slug %>';
+        var statusEl = document.getElementById('api-status');
+        var testBtn = document.getElementById('btn-test-api');
+        var syncBtn = document.getElementById('btn-sync-orders');
+        var hoursSel = document.getElementById('sync-hours');
+        var resultEl = document.getElementById('sync-result');
+
+        // Автопроверка при загрузке
+        fetch('/admin/integrations/' + slug + '/test')
+          .then(function (r) { return r.json(); })
+          .then(function (d) {
+            if (d.ok) {
+              statusEl.style.background = '#f0fdf4';
+              statusEl.style.color = '#166534';
+              statusEl.innerHTML = '✓ Подключение работает' + (d.categories ? ' · категорий: ' + d.categories : '');
+            } else {
+              statusEl.style.background = '#fef2f2';
+              statusEl.style.color = '#991b1b';
+              statusEl.innerHTML = '✗ ' + (d.error || 'Не подключено');
+            }
+          })
+          .catch(function () {
+            statusEl.innerHTML = '✗ Ошибка проверки';
+          });
+
+        testBtn.addEventListener('click', function () {
+          statusEl.innerHTML = 'Проверка…';
+          statusEl.style.background = '#f9fafb';
+          statusEl.style.color = '#6b7280';
+          fetch('/admin/integrations/' + slug + '/test')
+            .then(function (r) { return r.json(); })
+            .then(function (d) {
+              if (d.ok) {
+                statusEl.style.background = '#f0fdf4';
+                statusEl.style.color = '#166534';
+                statusEl.innerHTML = '✓ Подключение работает';
+              } else {
+                statusEl.style.background = '#fef2f2';
+                statusEl.style.color = '#991b1b';
+                statusEl.innerHTML = '✗ ' + (d.error || 'Ошибка');
+              }
+            });
+        });
+
+        syncBtn.addEventListener('click', function () {
+          var hours = hoursSel.value;
+          syncBtn.disabled = true;
+          syncBtn.textContent = '⏳ Синхронизация…';
+          resultEl.innerHTML = '';
+
+          fetch('/admin/integrations/' + slug + '/sync', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ hours: Number(hours) })
+          })
+            .then(function (r) { return r.json(); })
+            .then(function (d) {
+              syncBtn.disabled = false;
+              syncBtn.textContent = '⚡ Забрать заказы (' + hours + ' ч)';
+
+              if (!d.ok) {
+                resultEl.innerHTML = '<div style="color:#dc2626">✗ ' + (d.error || 'Ошибка') + '</div>';
+                return;
+              }
+
+              resultEl.innerHTML =
+                '<div style="padding:10px 12px;background:#f0fdf4;border-radius:8px;color:#166534">' +
+                  '<strong>✓ Готово</strong><br>' +
+                  'Создано: ' + d.created + '<br>' +
+                  'Пропущено: ' + d.skipped + '<br>' +
+                  (d.failed ? '<span style="color:#dc2626">Ошибок: ' + d.failed + '</span>' : '') +
+                '</div>';
+            })
+            .catch(function (e) {
+              syncBtn.disabled = false;
+              syncBtn.textContent = '⚡ Забрать заказы';
+              resultEl.innerHTML = '<div style="color:#dc2626">✗ ' + e.message + '</div>';
+            });
+        });
+      })();
+      </script>
+    <% } %>
+
     <section class="order-block" style="margin-top:16px">
       <header class="order-block-head">
-        <h2>📥 Импорт</h2>
+        <h2>📥 Импорт из файла</h2>
       </header>
       <p style="color:#6b7280;font-size:13.5px;line-height:1.5;margin:0 0 14px">
         Загрузите YML с маркетплейса — товары добавятся, существующие обновятся по SKU.
       </p>
-      <a href="/admin/import" class="btn" style="width:100%;justify-content:center;background:#16a34a">
+      <a href="/admin/import" class="btn" style="width:100%;justify-content:center;background:#6b7280">
         📥 Загрузить файл
       </a>
     </section>

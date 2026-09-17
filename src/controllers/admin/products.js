@@ -145,6 +145,35 @@ exports.save = async (req, res) => {
     if (t) await prisma.productTag.create({ data: { productId, tagId } });
   }
 
+  // ─── Автосинхронизация с маркетплейсами (если включена) ───
+  try {
+    const autoSync = (await require('../../services/settings').getSetting('marketplace_auto_sync', '0')) === '1';
+    if (autoSync) {
+      const updated = await prisma.product.findUnique({ where: { id: productId } });
+      if (updated && updated.externalIds && updated.externalIds !== '{}') {
+        let ext = {};
+        try { ext = JSON.parse(updated.externalIds || '{}'); } catch (e) {}
+        const syncStockPrice = require('../../services/marketplaceSync/syncStockPrice');
+        // Пуш остатков на все МП, где есть externalId
+        for (const mpSlug of Object.keys(ext)) {
+          if (['ozon', 'wildberries'].includes(mpSlug)) {
+            try {
+              await syncStockPrice.syncStocks(mpSlug, [productId]);
+              if (mpSlug === 'ozon') {
+                await syncStockPrice.syncPrices(mpSlug, [productId]);
+              }
+              console.log('[autosync] ' + mpSlug + ' ← товар #' + productId);
+            } catch (e) {
+              console.error('[autosync] ' + mpSlug + ':', e.message);
+            }
+          }
+        }
+      }
+    }
+  } catch (e) {
+    console.error('autosync error:', e);
+  }
+
   res.redirect('/admin/products/' + productId + '?saved=1');
 };
 

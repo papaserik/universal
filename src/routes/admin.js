@@ -7,6 +7,7 @@ const imagesAdmin = require('../controllers/admin/images');
 const modulesAdmin = require('../controllers/admin/modules');
 const integrationsAdmin = require('../controllers/admin/integrations');
 const integrationsImportCtrl = require('../controllers/admin/integrationsImport');
+const syncOrdersCtrl = require('../controllers/admin/syncOrders');
 const { requireAuth, requireAdmin, requireAdminGuest } = require('../middleware/auth');
 const adminAuth = require('../controllers/admin/auth');
 const roles = require('../middleware/roles');
@@ -274,6 +275,12 @@ router.post('/modules/save', modulesAdmin.save);
 router.get('/integrations', integrationsAdmin.index);
 router.get('/integrations/import', integrationsImportCtrl.form);
 router.post('/integrations/import', require('../services/upload').importUpload.single('file'), integrationsImportCtrl.run);
+
+router.get('/integrations/status', syncOrdersCtrl.status);
+router.post('/integrations/:slug/sync', syncOrdersCtrl.sync);
+router.post('/integrations/:slug/sync-stocks', syncOrdersCtrl.syncStocks);
+router.post('/integrations/:slug/sync-prices', syncOrdersCtrl.syncPrices);
+router.get('/integrations/:slug/test', syncOrdersCtrl.testConnection);
 
 router.get('/integrations/:slug', integrationsAdmin.form);
 router.post('/integrations/:slug', integrationsAdmin.save);
