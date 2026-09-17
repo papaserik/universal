@@ -129,6 +129,9 @@ app.use(async (req, res, next) => {
     og: {}
   };
   res.locals.jsonLd = [];
+  const asset = require('./services/cache/asset').asset;
+  res.locals.asset = asset;
+
   res.locals.setMeta = (m) => Object.assign(res.locals.meta, m);
   res.locals.addJsonLd = (o) => res.locals.jsonLd.push(o);
   next();
