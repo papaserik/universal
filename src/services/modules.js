@@ -8,6 +8,7 @@ const MODULES = [
   { code: 'tags',           name: 'Теги',                  desc: 'Метки товаров: «Новинка», «Хит», «Скидка»',                group: 'catalog', icon: '🏷️' },
   { code: 'filters',        name: 'Фильтры в каталоге',    desc: 'Фильтрация по опциям, брендам, тегам, цене',                group: 'catalog', icon: '🎛' },
   { code: 'marketplaces',   name: 'Маркетплейсы',          desc: 'Кнопки «Купить на Ozon/WB» со ссылками',                    group: 'catalog', icon: '🏪' },
+  { code: 'marketplace_sync', name: 'Синхронизация с МП',    desc: 'Импорт/экспорт каталога с Ozon, Wildberries, Яндекс.Маркет', group: 'catalog', icon: '🔄' },
   { code: 'import',         name: 'Импорт товаров',        desc: 'Импорт товаров из XLSX / YML / XML',                        group: 'catalog', icon: '📥' },
 
   // Контент

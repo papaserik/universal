@@ -1,0 +1,94 @@
+<div class="admin-header">
+  <h1>🔄 Интеграции с маркетплейсами</h1>
+</div>
+<p class="admin-hint">
+  Импорт и экспорт каталога с Ozon, Wildberries, Яндекс.Маркет.
+  Скачайте готовый YML/CSV и загрузите в личный кабинет продавца, или получите товары с маркетплейса.
+</p>
+
+<div class="integrations-grid">
+  <% integrations.forEach(i => {
+       const lastLog = stats[i.slug];
+  %>
+    <div class="integration-card <%= i.enabled ? 'enabled' : 'disabled' %>">
+      <div class="integration-card-head">
+        <div class="integration-icon">
+          <% if (i.slug === 'ozon') { %>🔵
+          <% } else if (i.slug === 'wildberries') { %>🟣
+          <% } else if (i.slug === 'yandex') { %>🔴
+          <% } else if (i.slug === 'sbermarket') { %>🟢
+          <% } else { %>🏪<% } %>
+        </div>
+        <div>
+          <div class="integration-name"><%= i.name %></div>
+          <div class="integration-status">
+            <% if (i.enabled) { %><span style="color:#16a34a">✓ Включено</span>
+            <% } else { %><span style="color:#9ca3af">✗ Отключено</span><% } %>
+          </div>
+        </div>
+      </div>
+
+      <div class="integration-card-meta">
+        <div>
+          <span>Режим:</span>
+          <strong>
+            <% if (i.direction === 'import') { %>Только импорт
+            <% } else if (i.direction === 'export') { %>Только экспорт
+            <% } else { %>Двусторонний<% } %>
+          </strong>
+        </div>
+        <div>
+          <span>Стратегия:</span>
+          <strong>
+            <% if (i.strategy === 'merge') { %>Обновить / добавить
+            <% } else if (i.strategy === 'overwrite') { %>Перезаписать
+            <% } else { %>Пропустить существующие<% } %>
+          </strong>
+        </div>
+        <% if (lastLog) { %>
+          <div>
+            <span>Последняя синх.:</span>
+            <strong><%= lastLog.startedAt.toLocaleString('ru-RU') %></strong>
+          </div>
+          <div>
+            <span>Результат:</span>
+            <strong style="color:<%= lastLog.status === 'success' ? '#16a34a' : '#dc2626' %>">
+              <%= lastLog.status === 'success' ? 'Успешно' : 'Ошибка' %>
+              <% if (lastLog.created) { %>· <%= lastLog.created %> поз.<% } %>
+            </strong>
+          </div>
+        <% } %>
+      </div>
+
+      <div class="integration-actions">
+        <a href="/admin/integrations/<%= i.slug %>" class="btn btn-sm">⚙ Настроить</a>
+        <a href="/admin/integrations/<%= i.slug %>/export/yml" class="btn btn-sm">📤 Экспорт YML</a>
+        <a href="/admin/integrations/<%= i.slug %>/export/csv" class="btn btn-sm btn-muted">📊 CSV</a>
+      </div>
+    </div>
+  <% }) %>
+</div>
+
+<section class="sales-block" style="margin-top:24px">
+  <h2>💡 Как это работает</h2>
+  <div style="color:#4b5563;font-size:14.5px;line-height:1.7">
+    <p><strong>Экспорт на маркетплейс:</strong></p>
+    <ol>
+      <li>Нажмите <b>«📤 Экспорт YML»</b> или <b>«📊 CSV»</b></li>
+      <li>Скачается файл с товарами (название, цена, остаток, фото, описание)</li>
+      <li>Загрузите его в личный кабинет продавца на Ozon / WB / Яндекс</li>
+    </ol>
+
+    <p style="margin-top:16px"><strong>Импорт с маркетплейса:</strong></p>
+    <ol>
+      <li>Скачайте YML из личного кабинета продавца</li>
+      <li>Загрузите на странице <a href="/admin/import">Импорт</a></li>
+      <li>Товары добавятся, существующие (по SKU) — обновятся</li>
+    </ol>
+
+    <p style="margin-top:16px;color:#6b7280;font-size:13px">
+      💡 Товары со стратегией <b>«Обновить / добавить»</b> не удаляют ваши существующие.
+      Смешанный режим: 10 своих товаров + 5 подгруженных из маркетплейса = 15 в каталоге.
+    </p>
+  </div>
+</section>

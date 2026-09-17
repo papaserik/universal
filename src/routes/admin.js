@@ -5,6 +5,7 @@ const brandsAdmin = require('../controllers/admin/brands');
 const tagsAdmin = require('../controllers/admin/tags');
 const imagesAdmin = require('../controllers/admin/images');
 const modulesAdmin = require('../controllers/admin/modules');
+const integrationsAdmin = require('../controllers/admin/integrations');
 const { requireAuth, requireAdmin, requireAdminGuest } = require('../middleware/auth');
 const adminAuth = require('../controllers/admin/auth');
 const roles = require('../middleware/roles');
@@ -268,5 +269,12 @@ router.post('/tags/:id/delete', tagsAdmin.remove);
 
 router.get('/modules', modulesAdmin.index);
 router.post('/modules/save', modulesAdmin.save);
+
+router.get('/integrations', integrationsAdmin.index);
+router.get('/integrations/:slug', integrationsAdmin.form);
+router.post('/integrations/:slug', integrationsAdmin.save);
+router.post('/integrations/:slug/toggle', integrationsAdmin.toggle);
+router.get('/integrations/:slug/export/yml', integrationsAdmin.exportYml);
+router.get('/integrations/:slug/export/csv', integrationsAdmin.exportCsv);
 
 module.exports = router;

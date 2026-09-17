@@ -1,0 +1,171 @@
+<div class="admin-header">
+  <h1><%= integration.name %></h1>
+  <a href="/admin/integrations" class="btn btn-sm">← К списку</a>
+</div>
+
+<% if (saved) { %><div class="admin-alert admin-alert-ok">✓ Настройки сохранены</div><% } %>
+<% if (typeof error !== 'undefined' && error) { %><div class="admin-alert" style="background:#fee2e2;color:#991b1b"><%= error %></div><% } %>
+
+<div class="integration-form-grid">
+
+  <form method="post" action="/admin/integrations/<%= integration.slug %>" class="admin-form">
+    <fieldset class="full">
+      <legend>Общие</legend>
+
+      <label class="checkbox-label" style="font-size:15px;padding:12px 14px;background:#f0fdf4;border-radius:8px;border:1px solid #bbf7d0">
+        <input type="checkbox" name="enabled" <%= integration.enabled ? 'checked' : '' %>>
+        <strong>Интеграция активна</strong>
+      </label>
+
+      <div class="form-row" style="margin-top:16px">
+        <label>Направление синхронизации
+          <select name="direction">
+            <option value="both"     <%= integration.direction === 'both'     ? 'selected' : '' %>>Двусторонняя (импорт + экспорт)</option>
+            <option value="import"   <%= integration.direction === 'import'   ? 'selected' : '' %>>Только импорт (забрать с МП)</option>
+            <option value="export"   <%= integration.direction === 'export'   ? 'selected' : '' %>>Только экспорт (отправить на МП)</option>
+          </select>
+        </label>
+      </div>
+
+      <label>Стратегия при конфликте (товар с таким SKU уже есть)
+        <select name="strategy">
+          <option value="merge"      <%= integration.strategy === 'merge'      ? 'selected' : '' %>>Обновить существующие, добавить новые</option>
+          <option value="overwrite"  <%= integration.strategy === 'overwrite'  ? 'selected' : '' %>>Перезаписать всё (может удалить лишнее)</option>
+          <option value="skip"       <%= integration.strategy === 'skip'       ? 'selected' : '' %>>Пропустить существующие</option>
+        </select>
+      </label>
+    </fieldset>
+
+    <fieldset class="full">
+      <legend>🔑 API-ключи <%= integration.name %></legend>
+      <p style="font-size:13px;color:#6b7280;margin:0 0 12px">
+        Получите ключи в личном кабинете продавца. Без них работает только экспорт/импорт через YML/CSV файлы.
+      </p>
+
+      <% if (integration.slug === 'ozon') { %>
+        <div class="form-row">
+          <label>Client-Id
+            <input type="text" name="config[clientId]" value="<%= config.clientId || '' %>" placeholder="123456">
+          </label>
+          <label>Api-Key
+            <input type="password" name="config[apiKey]" value="<%= config.apiKey || '' %>" placeholder="••••••••-••••-••••-••••-••••••••••••">
+          </label>
+        </div>
+        <div class="form-row">
+          <label>Warehouse ID
+            <input type="text" name="config[warehouseId]" value="<%= config.warehouseId || '' %>">
+          </label>
+        </div>
+
+      <% } else if (integration.slug === 'wildberries') { %>
+        <label>Api-Key (JWT)
+          <input type="password" name="config[apiKey]" value="<%= config.apiKey || '' %>" placeholder="eyJhbGciOiJFUzI1NiIs...">
+        </label>
+        <div class="form-row">
+          <label>Supplier ID
+            <input type="text" name="config[supplierId]" value="<%= config.supplierId || '' %>">
+          </label>
+          <label>Warehouse ID
+            <input type="text" name="config[warehouseId]" value="<%= config.warehouseId || '' %>">
+          </label>
+        </div>
+
+      <% } else if (integration.slug === 'yandex') { %>
+        <div class="form-row">
+          <label>Campaign ID
+            <input type="text" name="config[campaignId]" value="<%= config.campaignId || '' %>">
+          </label>
+          <label>OAuth Token
+            <input type="password" name="config[token]" value="<%= config.token || '' %>">
+          </label>
+        </div>
+
+      <% } else if (integration.slug === 'sbermarket') { %>
+        <p style="font-size:12.5px;color:#6b7280;margin:0 0 12px;padding:10px 14px;background:#f0fdf4;border-radius:8px;border-left:3px solid #16a34a">
+          🔑 <strong>Ключи Сбермаркета (Купер)</strong> выдаются в партнёрском кабинете <code>seller.kuiper.ru</code>
+          после подписания договора. Без ключей работает только ручной экспорт YML/CSV.
+        </p>
+        <div class="form-row">
+          <label>API-Key
+            <input type="password" name="config[apiKey]" value="<%= config.apiKey || '' %>" placeholder="••••••••-••••-••••-••••-••••••••••••">
+          </label>
+          <label>Partner ID
+            <input type="text" name="config[partnerId]" value="<%= config.partnerId || '' %>" placeholder="12345">
+          </label>
+        </div>
+        <div class="form-row">
+          <label>Warehouse ID
+            <input type="text" name="config[warehouseId]" value="<%= config.warehouseId || '' %>" placeholder="SBM-MSQ-01">
+          </label>
+          <label>Assortment ID (опционально)
+            <input type="text" name="config[assortmentId]" value="<%= config.assortmentId || '' %>">
+          </label>
+        </div>
+
+      <% } else { %>
+        <label>Config (JSON)
+          <textarea name="config" rows="4" style="font-family:monospace"><%= integration.config %></textarea>
+        </label>
+      <% } %>
+    </fieldset>
+
+    <div class="form-actions">
+      <button type="submit" class="btn">💾 Сохранить</button>
+    </div>
+  </form>
+
+  <div class="integration-side">
+    <section class="order-block">
+      <header class="order-block-head">
+        <h2>📤 Экспорт</h2>
+      </header>
+      <p style="color:#6b7280;font-size:13.5px;line-height:1.5;margin:0 0 14px">
+        Товаров опубликованных: <strong><%= counts.publishedProducts %></strong><br>
+        Из них с остатком: <strong><%= counts.withStock %></strong>
+      </p>
+      <a href="/admin/integrations/<%= integration.slug %>/export/yml" class="btn" style="width:100%;justify-content:center">
+        📤 Скачать YML (<%= counts.withStock %>)
+      </a>
+      <a href="/admin/integrations/<%= integration.slug %>/export/yml?all=1" class="btn btn-sm btn-outline" style="width:100%;justify-content:center;margin-top:8px">
+        📤 YML со всеми (<%= counts.publishedProducts %>)
+      </a>
+      <a href="/admin/integrations/<%= integration.slug %>/export/csv" class="btn btn-sm btn-muted" style="width:100%;justify-content:center;margin-top:8px">
+        📊 Скачать CSV
+      </a>
+    </section>
+
+    <section class="order-block" style="margin-top:16px">
+      <header class="order-block-head">
+        <h2>📥 Импорт</h2>
+      </header>
+      <p style="color:#6b7280;font-size:13.5px;line-height:1.5;margin:0 0 14px">
+        Загрузите YML с маркетплейса — товары добавятся, существующие обновятся по SKU.
+      </p>
+      <a href="/admin/import" class="btn" style="width:100%;justify-content:center;background:#16a34a">
+        📥 Загрузить файл
+      </a>
+    </section>
+
+    <% if (logs && logs.length) { %>
+      <section class="order-block" style="margin-top:16px">
+        <header class="order-block-head">
+          <h2>📜 История</h2>
+        </header>
+        <ul style="list-style:none;padding:0;margin:0;font-size:13px">
+          <% logs.slice(0, 8).forEach(l => { %>
+            <li style="padding:8px 0;border-bottom:1px solid #f3f4f6;display:flex;justify-content:space-between;gap:8px">
+              <div>
+                <div style="font-weight:500"><%= l.action.toUpperCase() %> · <%= l.direction %></div>
+                <div style="font-size:11.5px;color:#9ca3af"><%= l.startedAt.toLocaleString('ru-RU') %></div>
+              </div>
+              <div style="font-size:12px;color:<%= l.status === 'success' ? '#16a34a' : '#dc2626' %>;font-weight:600">
+                <%= l.status %>
+              </div>
+            </li>
+          <% }) %>
+        </ul>
+      </section>
+    <% } %>
+  </div>
+
+</div>
