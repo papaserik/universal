@@ -59,7 +59,7 @@ async function awardPendingPoints(userId, points) {
   });
   // Лог для истории
   try {
-    const loyalty = require('./loyalty');
+    const loyalty = require('../modules/loyalty/service');
     await loyalty.addPoints(userId, 0, 'referral_pending',
       `Бонус за регистрацию по приглашению (${points} б. разблокируются после первой покупки)`);
   } catch (e) {}
@@ -80,7 +80,7 @@ async function unlockPendingPoints(userId) {
   ]);
 
   // Начисляем реальные баллы
-  const loyalty = require('./loyalty');
+  const loyalty = require('../modules/loyalty/service');
   await loyalty.addPoints(userId, points, 'referral_unlock',
     'Реферальные баллы разблокированы после первой покупки');
 
@@ -95,7 +95,7 @@ async function processOrder(order, buyerId) {
   if (!order || !buyerId) return;
 
   const { getSetting } = require('./settings');
-  const loyalty = require('./loyalty');
+  const loyalty = require('../modules/loyalty/service');
 
   const link = await prisma.referral.findUnique({
     where: { invitedId: buyerId }

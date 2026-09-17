@@ -2,7 +2,7 @@ const { prisma } = require('../config/db');
 const cart = require('../services/cart');
 const delivery = require('../services/delivery');
 const payment = require('../services/payment');
-const loyalty = require('../services/loyalty');
+const loyalty = require('../modules/loyalty/service');
 
 async function enrichItems(items) {
   const ids = items.map(i => i.productId);

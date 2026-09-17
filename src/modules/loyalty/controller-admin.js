@@ -1,5 +1,5 @@
 const { prisma } = require('../../config/db');
-const loyalty = require('../../services/loyalty');
+const loyalty = require('./service');
 const { getAllSettings, setSetting } = require('../../services/settings');
 
 // ─── Настройки баллов ───

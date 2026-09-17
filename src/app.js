@@ -105,7 +105,7 @@ app.use(async (req, res, next) => {
   res.locals.userLoyalty = null;
   if (req.session.user) {
     try {
-      const loyalty = require('./services/loyalty');
+      const loyalty = require('./modules/loyalty/service');
       res.locals.userLoyalty = await loyalty.currentLevel(req.session.user.id);
     } catch (e) { /* ignore */ }
   }

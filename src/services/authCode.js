@@ -1,7 +1,7 @@
 const { prisma } = require('../config/db');
 const mail = require('./mail');
 const { getSetting } = require('./settings');
-const loyalty = require('./loyalty');
+const loyalty = require('../modules/loyalty/service');
 const referral = require('./referral');
 
 function generateCode() {

@@ -1,5 +1,5 @@
-const { prisma } = require('../config/db');
-const { getSetting } = require('./settings');
+const { prisma } = require('../../config/db');
+const { getSetting } = require('../../services/settings');
 
 function num(s, def) { const n = Number(s); return isNaN(n) ? def : n; }
 

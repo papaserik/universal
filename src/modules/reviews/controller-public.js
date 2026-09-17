@@ -1,5 +1,5 @@
 const { prisma } = require('../../config/db');
-const loyalty = require('../../services/loyalty');
+const loyalty = require('../../modules/loyalty/service');
 
 const rateMap = new Map();
 function rateLimit(ip, limit = 5, windowMs = 3600 * 1000) {

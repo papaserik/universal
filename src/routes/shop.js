@@ -51,7 +51,6 @@ router.get('/account', account.requireAuth, account.dashboard);
 router.get('/account/orders', account.requireAuth, account.orders);
 router.get('/account/orders/:number', account.requireAuth, account.order);
 router.get('/account/club', requireModule('club'), account.requireAuth, account.club);
-router.get('/account/loyalty', account.requireAuth, account.loyalty);
 router.get('/account/profile', account.requireAuth, account.profile);
 router.post('/account/profile', account.requireAuth, account.saveProfile);
 router.post('/account/avatar', account.requireAuth, imageUpload.single('avatar'), account.uploadAvatar);
@@ -69,5 +68,8 @@ router.use('/api/favorites', favModule);
 
 // ─── Модуль: Отзывы (public) ───
 router.use('/', require('../modules/reviews/routes/public'));
+
+// ─── Модуль: Лояльность (кабинет) ───
+router.use('/account/loyalty', require('../modules/loyalty/routes/account'));
 
 module.exports = router;

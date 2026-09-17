@@ -1,7 +1,7 @@
 const { prisma } = require('../config/db');
 const mail = require('../services/mail');
 const { getSetting } = require('../services/settings');
-const loyalty = require('../services/loyalty');
+const loyalty = require('../modules/loyalty/service');
 
 // ─── Подписка ───
 exports.form = async (req, res) => {

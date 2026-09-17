@@ -1,5 +1,5 @@
 const { prisma } = require('../config/db');
-const loyalty = require('../services/loyalty');
+const loyalty = require('../modules/loyalty/service');
 
 function requireAuth(req, res, next) {
   if (!req.session.user) return res.redirect('/login');

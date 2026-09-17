@@ -1,0 +1,8 @@
+{
+  "code": "loyalty",
+  "name": "Баллы и уровни",
+  "desc": "Кэшбэк баллами, оплата баллами, уровни Bronze → Platinum",
+  "icon": "🎁",
+  "group": "marketing",
+  "default": true
+}

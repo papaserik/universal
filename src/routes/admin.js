@@ -36,7 +36,6 @@ const marketplaces = require('../controllers/admin/marketplaces');
 const marketing  = require('../controllers/admin/marketing');
 const orderStatuses = require('../controllers/admin/orderStatuses');
 const emailTemplates = require('../controllers/admin/emailTemplates');
-const loyalty    = require('../controllers/admin/loyalty');
 const payment    = require('../controllers/admin/payment');
 const ordersExport = require('../controllers/admin/ordersExport');
 
@@ -211,19 +210,8 @@ router.post('/orders/:id/items/:itemId/remove', orders.removeItem);
 router.post('/orders/:id/fields', orders.updateFields);
 router.get('/orders/search-products', orders.searchProducts);
 
-router.get('/loyalty/settings', loyalty.settings);
-router.post('/loyalty/settings', loyalty.saveSettings);
 
-router.get('/loyalty/levels', loyalty.levels);
-router.get('/loyalty/levels/new', loyalty.levelForm);
-router.get('/loyalty/levels/:id', loyalty.levelForm);
-router.post('/loyalty/levels', loyalty.levelSave);
-router.post('/loyalty/levels/:id', loyalty.levelSave);
-router.post('/loyalty/levels/:id/delete', loyalty.levelRemove);
 
-router.get('/loyalty/transactions', loyalty.transactions);
-router.post('/loyalty/transactions/manual', loyalty.addManual);
-router.get('/loyalty/user-balance', loyalty.userBalance);
 
 
 router.get('/backup', backupAdmin.index);
@@ -276,5 +264,8 @@ router.use('/reviews', require('../modules/reviews/routes/admin'));
 
 // ─── Модуль: Push ───
 router.use('/push', require('../modules/push/routes/admin'));
+
+// ─── Модуль: Лояльность ───
+router.use('/loyalty', require('../modules/loyalty/routes/admin'));
 
 module.exports = router;
