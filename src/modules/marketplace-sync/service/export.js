@@ -1,5 +1,5 @@
-const { prisma } = require('../../config/db');
-const { getSetting } = require('../settings');
+const { prisma } = require('../../../config/db');
+const { getSetting } = require('../../../services/settings');
 
 function xml(str) {
   if (str == null) return '';

@@ -153,7 +153,7 @@ exports.save = async (req, res) => {
       if (updated && updated.externalIds && updated.externalIds !== '{}') {
         let ext = {};
         try { ext = JSON.parse(updated.externalIds || '{}'); } catch (e) {}
-        const syncStockPrice = require('../../services/marketplaceSync/syncStockPrice');
+        const syncStockPrice = require('../../modules/marketplace-sync/service/syncStockPrice');
         // Пуш остатков на все МП, где есть externalId
         for (const mpSlug of Object.keys(ext)) {
           if (['ozon', 'wildberries'].includes(mpSlug)) {

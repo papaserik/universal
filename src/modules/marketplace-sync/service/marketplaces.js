@@ -1,4 +1,4 @@
-const { prisma } = require('../config/db');
+const { prisma } = require('../../../config/db');
 
 let cache = null;
 let cacheTime = 0;

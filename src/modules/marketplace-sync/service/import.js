@@ -3,7 +3,7 @@ const path = require('path');
 const XLSX = require('xlsx');
 const { XMLParser } = require('fast-xml-parser');
 const slugify = require('slugify');
-const { prisma } = require('../../config/db');
+const { prisma } = require('../../../config/db');
 
 // ─── Хелпер: найти товар по SKU / External ID ───
 async function findExistingProduct(item) {

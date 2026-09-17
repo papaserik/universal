@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
-const importSvc = require('../../services/marketplaceSync/import');
-const { prisma } = require('../../config/db');
+const importSvc = require('../service/import');
+const { prisma } = require('../../../config/db');
 
 // ─── Форма ───
 exports.form = async (req, res) => {

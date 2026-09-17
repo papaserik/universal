@@ -1,6 +1,6 @@
-const { prisma } = require('../../config/db');
-const syncOrders = require('../../services/marketplaceSync/syncOrders');
-const access = require('../../services/marketplaceSync/access');
+const { prisma } = require('../../../config/db');
+const syncOrders = require('../service/syncOrders');
+const access = require('../service/access');
 
 // ─── Тест подключения к API ───
 exports.testConnection = async (req, res) => {
@@ -9,9 +9,9 @@ exports.testConnection = async (req, res) => {
   try {
     let result;
     if (slug === 'ozon') {
-      result = await require('../../services/marketplaceSync/api/ozon').testConnection();
+      result = await require('../service/api/ozon').testConnection();
     } else if (slug === 'wildberries') {
-      result = await require('../../services/marketplaceSync/api/wildberries').testConnection();
+      result = await require('../service/api/wildberries').testConnection();
     } else {
       result = { ok: false, error: 'API для этого маркетплейса не реализован' };
     }
@@ -91,7 +91,7 @@ exports.status = async (req, res) => {
 // ─── Синхронизация остатков ───
 exports.syncStocks = async (req, res) => {
   const slug = req.params.slug;
-  const syncStockPrice = require('../../services/marketplaceSync/syncStockPrice');
+  const syncStockPrice = require('../service/syncStockPrice');
 
   const log = await prisma.marketplaceSyncLog.create({
     data: {
@@ -138,7 +138,7 @@ exports.syncStocks = async (req, res) => {
 // ─── Синхронизация цен ───
 exports.syncPrices = async (req, res) => {
   const slug = req.params.slug;
-  const syncStockPrice = require('../../services/marketplaceSync/syncStockPrice');
+  const syncStockPrice = require('../service/syncStockPrice');
 
   const log = await prisma.marketplaceSyncLog.create({
     data: {

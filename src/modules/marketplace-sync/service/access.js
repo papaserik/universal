@@ -1,4 +1,4 @@
-const { prisma } = require('../../config/db');
+const { prisma } = require('../../../config/db');
 
 // Какие поля config нужны для работы с API
 const API_FIELDS = {

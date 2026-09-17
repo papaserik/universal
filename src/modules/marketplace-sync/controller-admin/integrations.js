@@ -1,5 +1,5 @@
-const { prisma } = require('../../config/db');
-const exportSvc = require('../../services/marketplaceSync/export');
+const { prisma } = require('../../../config/db');
+const exportSvc = require('../service/export');
 
 // ─── Список интеграций ───
 exports.index = async (req, res) => {

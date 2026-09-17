@@ -128,7 +128,7 @@ app.use(async (req, res, next) => {
   res.locals.marketplaces = {};
   res.locals.marketplaceMeta = {};
   try {
-    const mpService = require('./services/marketplaces');
+    const mpService = require('./modules/marketplace-sync/service/marketplaces');
     const mpList = await mpService.allActive();
     for (const m of mpList) {
       res.locals.marketplaces[m.slug] = m.name;

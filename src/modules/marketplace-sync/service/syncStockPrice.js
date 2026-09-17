@@ -1,4 +1,4 @@
-const { prisma } = require('../../config/db');
+const { prisma } = require('../../../config/db');
 const access = require('./access');
 const ozon = require('./api/ozon');
 const wb = require('./api/wildberries');

@@ -1,6 +1,6 @@
-const { prisma } = require('../../config/db');
+const { prisma } = require('../../../config/db');
 const slugify = require('slugify');
-const mpService = require('../../services/marketplaces');
+const mpService = require('../service/marketplaces');
 
 exports.list = async (req, res) => {
   const items = await prisma.marketplace.findMany({
