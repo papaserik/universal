@@ -45,3 +45,15 @@ exports.remove = async (req, res) => {
   try { require('../../modules/cache').delByPrefix('page:'); } catch (e) {}
   res.redirect('/admin/blog');
 };
+
+
+exports.uploadImage = async (req, res) => {
+  const file = (req.files && req.files[0]) || req.file;
+  if (!file) return res.json({ ok: false });
+
+  const url = file.webpUrl
+           || file.thumbUrl
+           || ('/uploads/' + (file.filename || file.path.split('/').pop()));
+
+  res.json({ ok: true, url });
+};

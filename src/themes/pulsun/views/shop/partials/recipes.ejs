@@ -17,8 +17,8 @@
       <% (typeof recipes !== 'undefined' ? recipes : []).forEach(function (r) { %>
         <article class="recipe-card">
           <a href="/blog/<%= r.slug %>" class="recipe-card__img">
-            <% if (r.image) { %>
-              <img src="<%= r.image %>" alt="<%= r.title %>" loading="lazy">
+            <% if (r.cover) { %>
+              <img src="<%= r.cover %>" alt="<%= r.title %>" loading="lazy">
             <% } else { %>
               <div class="recipe-card__placeholder">☕</div>
             <% } %>

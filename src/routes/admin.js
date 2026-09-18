@@ -85,6 +85,7 @@ router.post('/users/:id/delete', users.remove);
 
 router.get('/blog', blog.list);
 router.get('/blog/new', blog.form);
+router.post('/blog/upload', imageUpload.array('files', 1), processUploaded, blog.uploadImage);
 router.get('/blog/:id', blog.form);
 router.post('/blog', blog.save);
 router.post('/blog/:id', blog.save);

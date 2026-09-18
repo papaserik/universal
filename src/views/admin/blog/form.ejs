@@ -18,7 +18,18 @@
   </div>
   <label>Краткое описание <textarea name="excerpt" rows="2"><%= post && post.excerpt ? post.excerpt : '' %></textarea></label>
   <label>Контент <textarea name="content" rows="14" required><%= post ? post.content : '' %></textarea></label>
-  <label>Обложка (URL) <input type="text" name="cover" value="<%= post && post.cover ? post.cover : '' %>"></label>
+  <label>Обложка
+      <div style="display:flex;gap:8px;align-items:center;margin-top:6px;">
+        <input type="text" name="cover" id="f-cover" value="<%= post && post.cover ? post.cover : '' %>" placeholder="/uploads/post.jpg или https://..." style="flex:1;">
+        <label style="cursor:pointer;display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:#f0f0f0;border:1px solid #ddd;border-radius:6px;white-space:nowrap;flex:0 0 auto;">
+          📷 Загрузить
+          <input type="file" id="blog-upload" accept="image/*" hidden>
+        </label>
+      </div>
+      <div id="blog-preview" style="margin-top:10px;<%= post && post.cover ? '' : 'display:none;' %>">
+        <img id="blog-preview-img" src="<%= post && post.cover ? post.cover : '' %>" style="max-width:200px;border-radius:6px;border:1px solid #eee;">
+      </div>
+    </label>
   <label class="checkbox-label"><input type="checkbox" name="published" <%= !post || post.published ? 'checked' : '' %>> Опубликован</label>
   <label>SEO Title <input type="text" name="seoTitle" value="<%= post && post.seoTitle ? post.seoTitle : '' %>"></label>
   <label>SEO Description <input type="text" name="seoDesc" value="<%= post && post.seoDesc ? post.seoDesc : '' %>"></label>
@@ -36,4 +47,36 @@ tinymce.init({
   toolbar: 'undo redo | styles h1 h2 h3 | bold italic underline | bullist numlist | link image media table | blockquote codesample | alignleft aligncenter alignright | code fullscreen preview',
   branding: false, promotion: false, convert_urls: false
 });
+</script>
+
+<script>
+(function(){
+  var fileInput = document.getElementById('blog-upload');
+  var urlInput = document.getElementById('f-cover');
+  var preview = document.getElementById('blog-preview');
+  var previewImg = document.getElementById('blog-preview-img');
+  console.log('[blog-upload] init', fileInput, urlInput);
+  if (!fileInput || !urlInput) return;
+
+  fileInput.addEventListener('change', function(e){
+    var file = e.target.files[0];
+    if (!file) return;
+    console.log('[blog-upload] uploading:', file.name);
+    var fd = new FormData();
+    fd.append('files', file);
+    fetch('/admin/blog/upload', { method: 'POST', body: fd })
+      .then(function(r){ console.log('[blog-upload] status:', r.status); return r.json(); })
+      .then(function(d){
+        console.log('[blog-upload] response:', d);
+        if (d.ok) {
+          urlInput.value = d.url;
+          if (preview && previewImg) {
+            previewImg.src = d.url;
+            preview.style.display = 'block';
+          }
+        } else { alert('Ошибка загрузки'); }
+      })
+      .catch(function(err){ console.error(err); alert('Ошибка загрузки'); });
+  });
+})();
 </script>
