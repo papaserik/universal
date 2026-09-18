@@ -493,3 +493,95 @@
   .catalog-filter-chip__btn { padding: 7px 12px; font-size: 12px; }
   .catalog-toolbar__sort label { display: none; }
 }
+
+
+/* ═══ Финальная полировка каталога PULSUN ═══ */
+.catalog-heading {
+  display:flex; align-items:flex-end; justify-content:space-between; gap:32px;
+  padding:28px 0 22px; border-bottom:1px solid rgba(58,37,25,.08);
+}
+.catalog-heading__eyebrow {
+  font:700 11px/1.2 var(--font-body); letter-spacing:.14em; color:#B8935A; margin-bottom:10px;
+}
+.catalog-heading .catalog-title { margin:0 0 10px; }
+.catalog-heading__lead {
+  margin:0; max-width:650px; color:#6B5847; font:400 15px/1.55 var(--font-body);
+}
+.catalog-heading__link {
+  flex:0 0 auto; color:#2A1A0F; text-decoration:none; font:600 13px/1 var(--font-body);
+  padding-bottom:3px; border-bottom:1px solid rgba(42,26,15,.35);
+}
+.catalog-toolbar__filters-btn {
+  align-items:center; gap:7px; border:1px solid rgba(58,37,25,.12); background:#fff;
+  color:#2A1A0F; border-radius:999px; padding:9px 14px; font:600 13px var(--font-body); cursor:pointer;
+}
+.catalog-toolbar__filters-count {
+  min-width:18px; height:18px; padding:0 5px; display:inline-flex; align-items:center; justify-content:center;
+  border-radius:999px; background:#B8935A; color:#fff; font-size:10px;
+}
+.catalog-toolbar__sort { display:flex; align-items:center; gap:8px; color:#9A8775; font:13px var(--font-body); }
+.catalog-toolbar__sort-select {
+  appearance:none; border:0; background:transparent; color:#2A1A0F; font:600 13px var(--font-body);
+  padding:8px 24px 8px 4px; cursor:pointer;
+  background-image:linear-gradient(45deg,transparent 50%,#6B5847 50%),linear-gradient(135deg,#6B5847 50%,transparent 50%);
+  background-position:calc(100% - 8px) 50%,calc(100% - 4px) 50%; background-size:4px 4px,4px 4px; background-repeat:no-repeat;
+}
+.catalog-toolbar__sort-select:focus { outline:1px solid #B8935A; outline-offset:3px; border-radius:5px; }
+.catalog-toolbar__total { color:#9A8775; font:13px var(--font-body); white-space:nowrap; }
+.catalog-toolbar__view { display:flex; gap:4px; }
+.catalog-view-btn {
+  width:34px; height:34px; display:grid; place-items:center; border:1px solid rgba(58,37,25,.10);
+  background:#fff; color:#9A8775; border-radius:9px; cursor:pointer;
+}
+.catalog-view-btn.is-active { color:#2A1A0F; border-color:#B8935A; box-shadow:inset 0 0 0 1px #B8935A; }
+
+.product-card__media { position:relative; }
+.product-card__media .product-card__fav { position:absolute; }
+.product-card__body { flex:1; }
+.product-card__footer {
+  display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:8px; padding-top:12px;
+  border-top:1px solid rgba(58,37,25,.07);
+}
+.product-card__stock { font:500 11px var(--font-body); color:#9A8775; white-space:nowrap; }
+.product-card__stock.is-in { color:#5E7651; }
+.product-card__stock.is-out { color:#9A8775; }
+.product-card__cart {
+  border:0; border-radius:999px; padding:8px 13px; background:#2A1A0F; color:#fff;
+  font:600 12px var(--font-body); cursor:pointer; transition:transform .15s ease, background .15s ease;
+}
+.product-card__cart:hover { background:#B8935A; transform:translateY(-1px); }
+.product-card__cart:disabled { opacity:.65; cursor:default; transform:none; }
+.catalog-grid--list .product-card__media { width:180px; min-width:180px; }
+.catalog-grid--list .product-card__img { width:100%; min-width:0; }
+.catalog-grid--list .product-card__body { flex:1; }
+.catalog-grid--list .product-card__footer { max-width:360px; }
+
+@media (max-width:900px) {
+  .catalog-heading { align-items:flex-start; padding-top:20px; }
+  .catalog-heading__link { display:none; }
+  .catalog-toolbar { gap:10px; margin-bottom:12px; }
+  .catalog-toolbar__left { width:100%; justify-content:space-between; gap:10px; }
+  .catalog-filters-row {
+    overflow-x:auto; flex-wrap:nowrap; padding:2px 0 8px; scrollbar-width:none;
+    scroll-snap-type:x proximity;
+  }
+  .catalog-filters-row::-webkit-scrollbar { display:none; }
+  .catalog-filter-chip { flex:0 0 auto; scroll-snap-align:start; }
+}
+@media (max-width:600px) {
+  .catalog-page { padding-top:8px; padding-bottom:48px; }
+  .catalog-breadcrumbs { padding-top:8px; }
+  .catalog-heading { padding:16px 0 12px; }
+  .catalog-heading__eyebrow { font-size:9px; margin-bottom:7px; }
+  .catalog-heading .catalog-title { font-size:30px; margin-bottom:7px; }
+  .catalog-heading__lead { font-size:13px; line-height:1.45; }
+  .catalog-toolbar { padding:10px 0; }
+  .catalog-toolbar__sort { margin-left:auto; }
+  .product-card { border-radius:13px; }
+  .product-card__footer { align-items:stretch; flex-direction:column; }
+  .product-card__cart { width:100%; padding:9px 8px; }
+  .product-card__stock { display:none; }
+  .catalog-grid--list .product-card__media { width:120px; min-width:120px; }
+  .catalog-grid--list .product-card__body { padding:12px; }
+  .catalog-grid--list .product-card__footer { flex-direction:row; }
+}
