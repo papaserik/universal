@@ -227,6 +227,7 @@
       var data = new FormData(form);
       var names = Array.from(form.querySelectorAll('[name]')).map(function(el){ return el.name; });
       names.forEach(function(name){ url.searchParams.delete(name); });
+      if (form.classList.contains('catalog-filter-chip__price')) { url.searchParams.delete('min'); url.searchParams.delete('max'); }
       data.forEach(function(value, key){
         if (String(value).trim() !== '') url.searchParams.append(key, value);
       });
@@ -276,6 +277,23 @@
       if (first) setTimeout(function(){ first.click(); }, 250);
     });
   }
+
+  // Избранное — делегирование, без отдельного script на каждую карточку.
+  document.addEventListener('click', function(e){
+    var btn = e.target.closest('[data-fav-id]');
+    if (!btn) return;
+    e.preventDefault();
+    fetch('/favorites/toggle', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({productId:Number(btn.dataset.favId)})
+    }).then(function(r){ return r.json(); }).then(function(d){
+      if (d.ok) {
+        btn.classList.toggle('is-active');
+        btn.textContent = btn.classList.contains('is-active') ? '♥' : '♡';
+      }
+    });
+  });
 
   // Быстрое добавление в корзину из карточки.
   document.addEventListener('click', function(e){
