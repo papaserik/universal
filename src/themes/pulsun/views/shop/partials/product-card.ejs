@@ -1,37 +1,66 @@
+<%
+  var _imgs = [];
+  try { _imgs = JSON.parse(p.images || '[]'); } catch(e) { _imgs = []; }
+  var _first = _imgs[0] || null;
+  var _discount = (p.oldPrice && p.oldPrice > p.price) ? Math.round((1 - p.price / p.oldPrice) * 100) : 0;
+  var _rating = p.rating || 0;
+  var _reviewsCount = p.reviewsCount || 0;
+  var _category = p.category ? p.category.name : '';
+  var _brand = p.brand ? p.brand.name : '';
+%>
 <article class="product-card">
   <a href="/product/<%= p.slug %>" class="product-card__img">
-    <%
-      var _imgs = [];
-      try { _imgs = JSON.parse(p.images || '[]'); } catch(e) { _imgs = []; }
-      var _first = _imgs[0] || null;
-    %>
+    <% if (_discount > 0) { %>
+      <span class="product-card__badge product-card__badge--discount">−<%= _discount %>%</span>
+    <% } %>
+    <% if (p.isNew) { %>
+      <span class="product-card__badge product-card__badge--new">NEW</span>
+    <% } %>
+    <button type="button" class="product-card__fav" aria-label="В избранное" onclick="event.preventDefault();fetch('/favorites/toggle',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({productId:<%= p.id %>})}).then(r=>r.json()).then(d=>{if(d.ok)this.classList.toggle('is-active')})">♡</button>
+
     <% if (_first) { %>
       <img src="<%= _first %>" alt="<%= p.name %>" loading="lazy">
     <% } else { %>
-      <div class="product-card__placeholder">🌿</div>
-    <% } %>
-    <% if (p.oldPrice && p.oldPrice > p.price) { %>
-      <span class="product-card__badge">−<%= Math.round((1 - p.price / p.oldPrice) * 100) %>%</span>
+      <div class="product-card__placeholder">🍯</div>
     <% } %>
   </a>
 
   <div class="product-card__body">
+
+    <%# Рейтинг %>
+    <% if (_rating > 0) { %>
+      <div class="product-card__rating">
+        <span class="product-card__rating-stars">
+          <% for (var i = 1; i <= 5; i++) { %>
+            <span class="<%= i <= Math.round(_rating) ? 'is-filled' : '' %>">★</span>
+          <% } %>
+        </span>
+        <span class="product-card__rating-value"><%= _rating.toFixed(1) %></span>
+        <span class="product-card__rating-count">· <%= _reviewsCount %></span>
+      </div>
+    <% } %>
+
+    <%# Категория %>
+    <% if (_category) { %>
+      <div class="product-card__category"><%= _category %></div>
+    <% } %>
+
+    <%# Название %>
     <h3 class="product-card__title">
       <a href="/product/<%= p.slug %>"><%= p.name %></a>
     </h3>
 
+    <%# Бренд/тег %>
+    <% if (_brand) { %>
+      <div class="product-card__brand"><%= _brand %></div>
+    <% } %>
+
+    <%# Цена %>
     <div class="product-card__price">
-      <span class="product-card__price-current"><%= p.price %> ₽</span>
       <% if (p.oldPrice && p.oldPrice > p.price) { %>
         <span class="product-card__price-old"><%= p.oldPrice %> ₽</span>
       <% } %>
+      <span class="product-card__price-current"><%= p.price %> ₽</span>
     </div>
-
-    <form method="post" action="/cart/add" class="product-card__actions">
-      <input type="hidden" name="productId" value="<%= p.id %>">
-      <button type="submit" class="btn btn--primary btn--sm">
-        В корзину
-      </button>
-    </form>
   </div>
 </article>
