@@ -1,0 +1,86 @@
+/* ============================================================
+   PRELOADER — анимированный экран загрузки
+   ============================================================ */
+.preloader {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.45s ease, visibility 0.45s ease;
+}
+.preloader.is-hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.preloader__logo {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(36px, 5vw, 64px);
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  opacity: 0;
+  animation: preloader-logo-in 0.6s ease forwards;
+}
+@keyframes preloader-logo-in {
+  0%   { opacity: 0; transform: translateY(12px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* ═══ Стиль 1: Логотип + точки ═══ */
+.preloader--logo-dots .preloader__dots {
+  display: flex;
+  gap: 10px;
+}
+.preloader--logo-dots .preloader__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  animation: preloader-dot 1.2s ease-in-out infinite;
+}
+.preloader--logo-dots .preloader__dot:nth-child(2) { animation-delay: 0.15s; }
+.preloader--logo-dots .preloader__dot:nth-child(3) { animation-delay: 0.30s; }
+@keyframes preloader-dot {
+  0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+  40%           { transform: scale(1);   opacity: 1; }
+}
+
+/* ═══ Стиль 2: Логотип + кольцо ═══ */
+.preloader--logo-ring .preloader__ring {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 3px solid transparent;
+  animation: preloader-ring 1s linear infinite;
+}
+@keyframes preloader-ring {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* ═══ Стиль 3: Логотип + полоса ═══ */
+.preloader--logo-bar .preloader__bar {
+  width: 180px;
+  height: 3px;
+  border-radius: 3px;
+  overflow: hidden;
+  position: relative;
+}
+.preloader--logo-bar .preloader__bar-fill {
+  position: absolute;
+  top: 0; bottom: 0; left: 0;
+  width: 40%;
+  border-radius: 3px;
+  animation: preloader-bar 1.3s ease-in-out infinite;
+}
+@keyframes preloader-bar {
+  0%   { left: -40%; }
+  100% { left: 100%; }
+}

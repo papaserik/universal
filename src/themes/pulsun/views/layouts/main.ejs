@@ -10,16 +10,44 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700;900&family=Inter:wght@400;500;600&family=Caveat:wght@500&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="/theme/pulsun/assets/css/tokens.css?v=1789751996">
-<link rel="stylesheet" href="/theme/pulsun/assets/css/base.css?v=1789751996">
-<link rel="stylesheet" href="/theme/pulsun/assets/css/header.css?v=1789751996">
-<link rel="stylesheet" href="/theme/pulsun/assets/css/footer.css?v=1789751996">
-<link rel="stylesheet" href="/theme/pulsun/assets/css/sections.css?v=1789751996">
-<link rel="stylesheet" href="/theme/pulsun/assets/css/hero.css?v=1789751996">
-<link rel="stylesheet" href="/theme/pulsun/assets/css/catalog.css?v=1789751996">
+<link rel="stylesheet" href="/theme/pulsun/assets/css/tokens.css?v=1789753786">
+<link rel="stylesheet" href="/theme/pulsun/assets/css/base.css?v=1789753786">
+<link rel="stylesheet" href="/theme/pulsun/assets/css/header.css?v=1789753786">
+<link rel="stylesheet" href="/theme/pulsun/assets/css/footer.css?v=1789753786">
+<link rel="stylesheet" href="/theme/pulsun/assets/css/sections.css?v=1789753786">
+<link rel="stylesheet" href="/theme/pulsun/assets/css/hero.css?v=1789753786">
+<link rel="stylesheet" href="/theme/pulsun/assets/css/catalog.css?v=1789753786">
 <%- typeof extraCss !== 'undefined' ? extraCss : '' %>
+<% if (typeof preloader !== 'undefined' && preloader) { %>
+<link rel="stylesheet" href="/modules/preloader/preloader.css?v=1">
+<% } %>
 </head>
 <body class="theme-pulsun">
+<% if (typeof preloader !== 'undefined' && preloader) { %>
+<div class="preloader preloader--<%= preloader.style %>"
+     id="shopPreloader"
+     data-duration="<%= preloader.duration %>"
+     style="background: <%= preloader.bg %>;">
+  <div class="preloader__logo" style="color: <%= preloader.textColor %>;">
+    <%= preloader.text %>
+  </div>
+
+  <% if (preloader.style === 'logo-dots') { %>
+    <div class="preloader__dots">
+      <span class="preloader__dot" style="background: <%= preloader.accent %>;"></span>
+      <span class="preloader__dot" style="background: <%= preloader.accent %>;"></span>
+      <span class="preloader__dot" style="background: <%= preloader.accent %>;"></span>
+    </div>
+  <% } else if (preloader.style === 'logo-ring') { %>
+    <div class="preloader__ring" style="border-top-color: <%= preloader.accent %>; border-right-color: <%= preloader.accent %>;"></div>
+  <% } else if (preloader.style === 'logo-bar') { %>
+    <div class="preloader__bar" style="background: rgba(0,0,0,0.08);">
+      <div class="preloader__bar-fill" style="background: <%= preloader.accent %>;"></div>
+    </div>
+  <% } %>
+</div>
+<script src="/modules/preloader/preloader.js"></script>
+<% } %>
 
 <%- include('../shop/partials/header') %>
 

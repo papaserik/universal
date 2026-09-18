@@ -42,7 +42,7 @@ exports.save = async (req, res) => {
   // cache-sync: сброс HTML-кеша публичных страниц — иначе баннеры/товары
   // остаются в старом HTML до истечения TTL
   try {
-    const cache = require('../modules/cache');
+    const cache = require('../../modules/cache');
     if (cache && typeof cache.invalidate === 'function') await cache.invalidate();
     if (cache && typeof cache.clear === 'function')      await cache.clear();
     if (cache && cache.service && typeof cache.service.invalidate === 'function') await cache.service.invalidate();

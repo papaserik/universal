@@ -1,0 +1,61 @@
+<div class="admin-header">
+  <h1>⏳ Прелоадер</h1>
+  <a href="/admin/modules" class="btn btn-sm">← К модулям</a>
+</div>
+
+<% if (saved) { %><div class="admin-alert admin-alert-ok">✓ Настройки сохранены</div><% } %>
+
+<p class="admin-hint">
+  Анимированный экран, который показывается при загрузке сайта. Красиво скрывает FOUC и создаёт брендированное первое впечатление.
+</p>
+
+<form method="post" action="/admin/preloader" class="admin-form" style="max-width:640px;">
+
+  <div class="form-row">
+    <label>Текст логотипа
+      <input type="text" name="text" value="<%= settings.text %>" placeholder="PULSUN">
+    </label>
+  </div>
+
+  <div class="form-row">
+    <label>Стиль анимации
+      <select name="style">
+        <option value="logo-dots" <%= settings.style === 'logo-dots' ? 'selected' : '' %>>Логотип + точки</option>
+        <option value="logo-ring" <%= settings.style === 'logo-ring' ? 'selected' : '' %>>Логотип + кольцо</option>
+        <option value="logo-bar"  <%= settings.style === 'logo-bar'  ? 'selected' : '' %>>Логотип + полоса загрузки</option>
+      </select>
+    </label>
+  </div>
+
+  <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+    <label>Цвет фона
+      <input type="color" name="bg" value="<%= settings.bg %>" style="height:44px;width:100%;">
+    </label>
+    <label>Цвет акцента (точки/кольцо)
+      <input type="color" name="accent" value="<%= settings.accent %>" style="height:44px;width:100%;">
+    </label>
+  </div>
+
+  <div class="form-row">
+    <label>Цвет текста логотипа
+      <input type="color" name="textColor" value="<%= settings.textColor %>" style="height:44px;width:100%;">
+    </label>
+  </div>
+
+  <div class="form-row">
+    <label>Минимальное время показа, мс
+      <input type="number" name="duration" value="<%= settings.duration %>" min="200" max="3000" step="100">
+      <small style="color:#6b7280;font-size:12px;display:block;margin-top:4px;">
+        Чтобы прелоадер не мигал на быстрых соединениях. 400–800 мс — оптимально.
+      </small>
+    </label>
+  </div>
+
+  <div class="form-actions">
+    <button type="submit" class="btn">💾 Сохранить настройки</button>
+  </div>
+</form>
+
+<div class="admin-alert" style="margin-top:24px;background:#f9fafb;border:1px solid #e5e7eb;">
+  <strong>💡 Предпросмотр:</strong> сохрани настройки и обнови главную страницу сайта — прелоадер покажется при загрузке.
+</div>

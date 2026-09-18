@@ -24,6 +24,7 @@ exports.home = async (req, res) => {
     aboutBanner,
     contactBanner,
     flavors,
+    tipsPosts,
   ] = await Promise.all([
     // Баннеры с учётом расписания
     prisma.banner.findMany({
@@ -63,9 +64,9 @@ exports.home = async (req, res) => {
       take: 8,
     }),
 
-    // Рецепты (посты блога)
+    // Рецепты — посты блога категории «recipes»
     prisma.blogPost.findMany({
-      where: { published: true },
+      where: { published: true, blogCategory: { slug: 'recipes' } },
       orderBy: { createdAt: 'desc' },
       take: 4,
     }),
@@ -88,6 +89,13 @@ exports.home = async (req, res) => {
       orderBy: { id: 'asc' },
       take: 8,
     }),
+
+    // Советы — посты блога категории «tips»
+    prisma.blogPost.findMany({
+      where: { published: true, blogCategory: { slug: 'tips' } },
+      orderBy: { createdAt: 'desc' },
+      take: 3,
+    }),
   ]);
 
   res.locals.setMeta({
@@ -109,6 +117,7 @@ exports.home = async (req, res) => {
     totalProducts,
     aboutBanner,
     contactBanner,
+    tipsPosts,
   });
 };
 

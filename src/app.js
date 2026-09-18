@@ -183,6 +183,19 @@ app.use((req, res, next) => {
 // ─── Кеш публичных страниц ───
 app.use(require('./modules/cache').middleware);
 
+// ── Прелоадер ──
+app.use(async (req, res, next) => {
+  res.locals.preloader = null;
+  try {
+    const svc = require('./modules/preloader/service');
+    const _registry = require('./modules/_registry');
+    if (await _registry.isEnabled('preloader')) {
+      res.locals.preloader = await svc.getSettings();
+    }
+  } catch (e) {}
+  next();
+});
+
 app.use('/', require('./routes/shop'));
 app.use('/admin', require('./routes/admin'));
 app.use('/api', require('./routes/api'));

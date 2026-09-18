@@ -22,6 +22,7 @@ router.get('/logout', adminAuth.logout);
 router.use(requireAdmin);
 
 router.use(require('../modules/marketplace-sync/routes/admin'));
+router.use('/preloader', require('../modules/preloader/routes/admin'));
 router.use(require('../modules/newsletter/routes/admin'));
 
 const dashboard = require('../controllers/admin/dashboard');
