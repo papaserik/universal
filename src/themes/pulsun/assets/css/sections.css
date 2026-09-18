@@ -468,3 +468,99 @@
   .tips__grid { grid-template-columns: 1fr; }
   .contact__form-wrap { padding: var(--sp-5); }
 }
+
+/* ═══════════════════════════════════════════════════════
+   FLAVORS v2 — свайп + макет
+   ═══════════════════════════════════════════════════════ */
+.flavors {
+  padding: 80px 0 90px;
+  background: #FAF4EB;
+}
+
+.flavors-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 32px;
+  margin-bottom: 36px;
+}
+.flavors-head__title {
+  font-family: var(--font-heading);
+  font-size: clamp(32px, 3.4vw, 46px);
+  font-weight: 900;
+  line-height: 1;
+  color: #2A1A0F;
+  margin: 0 0 14px;
+  letter-spacing: -0.01em;
+}
+.flavors-head__desc {
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: #6B5847;
+  line-height: 1.5;
+  margin: 0;
+  max-width: 540px;
+}
+.flavors-head__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 500;
+  color: #2A1A0F;
+  text-decoration: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+  margin-top: 8px;
+  transition: gap 0.15s ease, color 0.15s ease;
+}
+.flavors-head__link:hover { gap: 14px; color: #B8935A; }
+
+/* Горизонтальный скролл */
+.flavors-scroll {
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  margin: 0 -24px;
+  padding: 0 24px;
+}
+.flavors-scroll::-webkit-scrollbar { display: none; }
+
+.flavors-track {
+  display: flex;
+  gap: 16px;
+  padding-bottom: 8px;
+  min-width: min-content;
+}
+
+/* Карточка */
+.flavors-track .flavor-card {
+  width: 152px;
+  min-width: 152px;
+  flex-shrink: 0;
+  background: #FFFFFF;
+  border-radius: 14px;
+  padding: 14px 10px 12px;
+  text-decoration: none;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  border: 1px solid rgba(58, 37, 25, 0.05);
+}
+.flavors-track .flavor-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 22px rgba(58, 37, 25, 0.08);
+}
+
+@media (max-width: 900px) {
+  .flavors { padding: 60px 0 70px; }
+  .flavors-head { flex-direction: column; gap: 16px; margin-bottom: 28px; }
+  .flavors-head__link { margin-top: 0; }
+  .flavors-track .flavor-card { width: 136px; min-width: 136px; }
+}
+@media (max-width: 600px) {
+  .flavors { padding: 48px 0 56px; }
+  .flavors-head__title { font-size: 28px; }
+  .flavors-head__desc { font-size: 14px; }
+  .flavors-track .flavor-card { width: 124px; min-width: 124px; padding: 10px 8px; }
+}
