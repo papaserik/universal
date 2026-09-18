@@ -1,19 +1,19 @@
 <section class="recipes">
   <div class="container">
 
-    <header class="section-head">
+    <header class="recipes-head">
       <div>
-        <h2 class="section-head__title">Рецепты с PULSUN</h2>
-        <p class="section-head__desc">
-          Простые и вкусные идеи для напитков. С PULSUN любые рецепты становятся особенными.
+        <h2 class="recipes-head__title">Рецепты с PULSUN</h2>
+        <p class="recipes-head__desc">
+          Простые и вкусные идеи для вашего дня. С PULSUN любые рецепты становятся особенными.
         </p>
       </div>
-      <a href="/blog?tag=recipe" class="section-head__link">
+      <a href="/blog?tag=recipe" class="recipes-head__link">
         Все рецепты <span aria-hidden="true">→</span>
       </a>
     </header>
 
-    <div class="recipes__grid">
+    <div class="recipes-grid">
       <% (typeof recipes !== 'undefined' ? recipes : []).forEach(function (r) { %>
         <article class="recipe-card">
           <a href="/blog/<%= r.slug %>" class="recipe-card__img">

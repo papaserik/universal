@@ -1,50 +1,69 @@
-<section class="about">
-  <div class="container about__inner">
+<%
+  var ab = (typeof aboutBanner !== 'undefined' && aboutBanner) ? aboutBanner : null;
+  var abImg = ab && ab.imageUrl ? ab.imageUrl : null;
+  var abTitle = ab && ab.title ? ab.title : 'О бренде PULSUN';
+  var abStyle = abImg ? "background-image: url('" + abImg + "');" : "";
+%>
+<section class="about-section" style="<%- abStyle %>">
+  <div class="about-section__overlay"></div>
 
-    <div class="about__content">
-      <h2 class="about__title">О бренде PULSUN</h2>
-      <p class="about__lead">
-        PULSUN — это больше, чем просто сироп. Это забота о себе в каждой детали,
-        вдохновение для любимых напитков и удовольствие от простых моментов.
-      </p>
-      <p class="about__text">
-        Мы создали сиропы без сахара с коллагеном, чтобы вкусные моменты легко
-        вписывались в ваш повседневный образ жизни. PULSUN — это баланс
-        пользы, качества и удовольствия в одной бутылке.
+  <div class="container about-section__inner">
+
+    <div class="about-section__left">
+      <h2 class="about-section__title"><%- abTitle %></h2>
+
+      <p class="about-section__text">
+        PULSUN — это больше, чем просто сиропы. Это забота о себе в каждой детали,
+        вдохновение на полезные привычки и удовольствие от вкуса без компромиссов.
       </p>
 
-      <ul class="about__list">
-        <li class="about__item">
-          <div class="about__item-icon">🚫</div>
-          <div>
-            <div class="about__item-title">Без сахара</div>
-            <div class="about__item-desc">Мы создали вкусный сироп без лишних калорий и компромиссов.</div>
-          </div>
-        </li>
-        <li class="about__item">
-          <div class="about__item-icon">☕</div>
-          <div>
-            <div class="about__item-title">Для любых напитков</div>
-            <div class="about__item-desc">Идеально для кофе, десертов и рецептов.</div>
-          </div>
-        </li>
-        <li class="about__item">
-          <div class="about__item-icon">🌿</div>
-          <div>
-            <div class="about__item-title">Каждый день вкуснее</div>
-            <div class="about__item-desc">Маленькие радости больших перемен.</div>
-          </div>
-        </li>
-      </ul>
+      <p class="about-section__text">
+        Мы создаем сиропы без сахара с коллагеном, чтобы вкусные моменты легко
+        вписывались в ваш повседневный образ жизни. PULSUN — для тех, кто
+        выбирает баланс, качество и заботу о себе каждый день.
+      </p>
     </div>
 
-    <div class="about__visual">
-      <div class="about__bottles">
-        <div class="about__bottle about__bottle--1"></div>
-        <div class="about__bottle about__bottle--2"></div>
-      </div>
-      <div class="about__badge handwritten">Больше<br>простых<br>радостей ♥</div>
-    </div>
+    <ul class="about-section__features">
+      <li class="about-feature">
+        <div class="about-feature__icon">
+          <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 26 C 14 18, 20 12, 27 12 C 27 19, 21 26, 14 26 Z"/>
+            <path d="M14 26 C 18 22, 22 17, 27 12" opacity="0.6"/>
+          </svg>
+        </div>
+        <div>
+          <div class="about-feature__title">Без сахара</div>
+          <div class="about-feature__desc">Наслаждайтесь вкусом без лишних калорий</div>
+        </div>
+      </li>
+
+      <li class="about-feature">
+        <div class="about-feature__icon">
+          <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 12 L14 16 L26 16 L26 12 Z"/>
+            <path d="M16 16 L18 28 L22 28 L24 16"/>
+            <path d="M20 28 L20 32"/>
+          </svg>
+        </div>
+        <div>
+          <div class="about-feature__title">Для любимых напитков</div>
+          <div class="about-feature__desc">Идеально для кофе, десертов и рецептов</div>
+        </div>
+      </li>
+
+      <li class="about-feature">
+        <div class="about-feature__icon">
+          <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 30 C 14 26, 12 20, 15 15 C 18 10, 24 12, 26 17 C 28 22, 24 28, 20 30 Z"/>
+          </svg>
+        </div>
+        <div>
+          <div class="about-feature__title">Каждый день вкуснее</div>
+          <div class="about-feature__desc">Маленькие радости больших перемен</div>
+        </div>
+      </li>
+    </ul>
 
   </div>
 </section>
