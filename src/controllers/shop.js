@@ -124,34 +124,103 @@ exports.home = async (req, res) => {
 
 exports.catalog = async (req, res) => {
   const where = { published: true };
-  if (req.query.min || req.query.max) {
+
+  // Цена: поддерживаем новые priceMin/priceMax и старые min/max.
+  const priceMin = req.query.priceMin ?? req.query.min ?? '';
+  const priceMax = req.query.priceMax ?? req.query.max ?? '';
+  if (priceMin !== '' || priceMax !== '') {
     where.price = {};
-    if (req.query.min) where.price.gte = Number(req.query.min);
-    if (req.query.max) where.price.lte = Number(req.query.max);
+    if (priceMin !== '' && Number.isFinite(Number(priceMin))) where.price.gte = Number(priceMin);
+    if (priceMax !== '' && Number.isFinite(Number(priceMax))) where.price.lte = Number(priceMax);
   }
+
+  // Бренды и теги.
+  const toArray = value => value == null ? [] : (Array.isArray(value) ? value : [value]);
+  const selectedBrands = toArray(req.query.brand).filter(Boolean);
+  const selectedTags = toArray(req.query.tag).filter(Boolean);
+
+  if (selectedBrands.length) {
+    where.brand = { slug: { in: selectedBrands } };
+  }
+  if (selectedTags.length) {
+    where.tags = { some: { tag: { slug: { in: selectedTags } } } };
+  }
+
+  // Универсальные опции товара.
   const opts = req.query.opt || {};
-  if (Object.keys(opts).length) {
-    where.AND = Object.entries(opts).map(([slug, vals]) => ({
-      options: { some: { option: { slug }, value: { slug: { in: String(vals).split(',') } } } }
-    }));
+  const optionFilters = Object.entries(opts).map(([slug, vals]) => ({
+    options: {
+      some: {
+        option: { slug },
+        value: { slug: { in: toArray(vals).flatMap(v => String(v).split(',')).filter(Boolean) } }
+      }
+    }
+  }));
+  if (optionFilters.length) {
+    where.AND = optionFilters;
   }
-  const sortMap = { 'price-asc': { price: 'asc' }, 'price-desc': { price: 'desc' }, 'new': { createdAt: 'desc' } };
-  const orderBy = sortMap[req.query.sort] || { createdAt: 'desc' };
-  const [products, options, categories] = await Promise.all([
-    prisma.product.findMany({ where, orderBy }),
+
+  const sort = req.query.sort || 'popular';
+  const sortMap = {
+    'price-asc': { price: 'asc' },
+    'price-desc': { price: 'desc' },
+    'new': { createdAt: 'desc' },
+    // Пока отдельного счётчика продаж/популярности нет — стабильный ручной sort.
+    'popular': [{ sort: 'asc' }, { createdAt: 'desc' }]
+  };
+  const orderBy = sortMap[sort] || sortMap.popular;
+
+  const [products, options, categories, brands, tags, total] = await Promise.all([
+    prisma.product.findMany({
+      where,
+      orderBy,
+      include: {
+        category: true,
+        brand: true,
+        tags: { include: { tag: true } }
+      }
+    }),
     prisma.option.findMany({ include: { values: true } }),
-    prisma.category.findMany({ orderBy: { sort: 'asc' } })
+    prisma.category.findMany({ orderBy: [{ sort: 'asc' }, { name: 'asc' }] }),
+    prisma.brand.findMany({ where: { active: true }, orderBy: [{ sort: 'asc' }, { name: 'asc' }] }),
+    prisma.tag.findMany({ orderBy: [{ sort: 'asc' }, { name: 'asc' }] }),
+    prisma.product.count({ where })
   ]);
-  res.locals.setMeta({ title: 'Каталог' });
+
+  const activeFilters =
+    (priceMin !== '' || priceMax !== '' ? 1 : 0) +
+    selectedBrands.length +
+    selectedTags.length +
+    optionFilters.length;
+
+  res.locals.setMeta({
+    title: 'Все вкусы PULSUN',
+    description: 'Каталог сиропов PULSUN: выбирайте вкус, сравнивайте и заказывайте онлайн.'
+  });
 
   const breadcrumbs = [
-    { name: 'Главная', url: '/' },
-    { name: 'Каталог', url: '/catalog' }
+    { name: 'Главная', title: 'Главная', url: '/' },
+    { name: 'Все вкусы', title: 'Все вкусы', url: '/catalog' }
   ];
   const baseUrl = process.env.SITE_URL || (req.protocol + '://' + req.get('host'));
   res.locals.addJsonLd(bc.jsonLd(breadcrumbs, baseUrl));
 
-  res.render('shop/catalog', { products, options, categories, breadcrumbs });
+  res.render('shop/catalog', {
+    products,
+    options,
+    categories,
+    brands,
+    tags,
+    total,
+    sort,
+    priceMin,
+    priceMax,
+    selectedBrands,
+    selectedTags,
+    activeFilters,
+    breadcrumbs,
+    cat: null
+  });
 };
 
 exports.category = async (req, res) => {
