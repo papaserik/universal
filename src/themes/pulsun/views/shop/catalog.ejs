@@ -31,7 +31,16 @@
       </nav>
     <% } %>
 
-    <%# ═══ Toolbar ═══ %>
+    <header class="catalog-heading">
+      <div>
+        <div class="catalog-heading__eyebrow">PULSUN · КОЛЛАГЕНОВЫЕ СИРОПЫ</div>
+        <h1 class="catalog-title">Все вкусы PULSUN</h1>
+        <p class="catalog-heading__lead">Без сахара. Восемь вкусов для кофе, десертов и любимых напитков.</p>
+      </div>
+      <a href="#catalog-products" class="catalog-heading__link">Выбрать вкус ↓</a>
+    </header>
+
+        <%# ═══ Toolbar ═══ %>
     <div class="catalog-toolbar">
       <div class="catalog-toolbar__left">
         <button type="button" class="catalog-toolbar__filters-btn">
@@ -159,7 +168,7 @@
 
     <%# ═══ Сетка товаров ═══ %>
     <% if (products.length) { %>
-      <div class="catalog-grid" data-grid>
+      <div class="catalog-grid" data-grid id="catalog-products">
         <% products.forEach(function (p) { %>
           <%- include('partials/product-card', { p: p }) %>
         <% }); %>
@@ -177,46 +186,116 @@
 
 <script>
 (function(){
-  // Дропдауны фильтров
-  document.querySelectorAll('[data-chip]').forEach(function(chip){
+  var chips = Array.from(document.querySelectorAll('[data-chip]'));
+
+  chips.forEach(function(chip){
     var btn = chip.querySelector('.catalog-filter-chip__btn');
     if (!btn) return;
+    btn.setAttribute('aria-expanded', 'false');
     btn.addEventListener('click', function(e){
       e.stopPropagation();
-      // Закрыть другие
-      document.querySelectorAll('[data-chip].is-open').forEach(function(c){
-        if (c !== chip) c.classList.remove('is-open');
+      chips.forEach(function(c){
+        if (c !== chip) {
+          c.classList.remove('is-open');
+          var other = c.querySelector('.catalog-filter-chip__btn');
+          if (other) other.setAttribute('aria-expanded', 'false');
+        }
       });
-      chip.classList.toggle('is-open');
+      var opened = chip.classList.toggle('is-open');
+      btn.setAttribute('aria-expanded', opened ? 'true' : 'false');
     });
+    var dd = chip.querySelector('.catalog-filter-chip__dropdown');
+    if (dd) dd.addEventListener('click', function(e){ e.stopPropagation(); });
   });
 
-  // Закрытие по клику вне
   document.addEventListener('click', function(){
-    document.querySelectorAll('[data-chip].is-open').forEach(function(c){
+    chips.forEach(function(c){
       c.classList.remove('is-open');
+      var b = c.querySelector('.catalog-filter-chip__btn');
+      if (b) b.setAttribute('aria-expanded', 'false');
+    });
+  });
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape') document.dispatchEvent(new Event('click'));
+  });
+
+  // Любая форма фильтра меняет только свои поля, остальные параметры сохраняются.
+  document.querySelectorAll('.catalog-filter-chip__dropdown form').forEach(function(form){
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      var url = new URL(window.location.href);
+      var data = new FormData(form);
+      var names = Array.from(form.querySelectorAll('[name]')).map(function(el){ return el.name; });
+      names.forEach(function(name){ url.searchParams.delete(name); });
+      data.forEach(function(value, key){
+        if (String(value).trim() !== '') url.searchParams.append(key, value);
+      });
+      url.searchParams.delete('page');
+      window.location.href = url.pathname + (url.searchParams.toString() ? '?' + url.searchParams.toString() : '');
     });
   });
 
-  // Сортировка
   var sort = document.querySelector('[data-sort]');
   if (sort) {
     sort.addEventListener('change', function(){
       var url = new URL(window.location.href);
-      url.searchParams.set('sort', this.value);
-      window.location.href = url.toString();
+      if (this.value === 'popular') url.searchParams.delete('sort');
+      else url.searchParams.set('sort', this.value);
+      url.searchParams.delete('page');
+      window.location.href = url.pathname + (url.searchParams.toString() ? '?' + url.searchParams.toString() : '');
     });
   }
 
-  // Переключение вида
-  document.querySelectorAll('.catalog-view-btn').forEach(function(btn){
-    btn.addEventListener('click', function(){
-      document.querySelectorAll('.catalog-view-btn').forEach(function(b){ b.classList.remove('is-active'); });
-      this.classList.add('is-active');
-      var grid = document.querySelector('[data-grid]');
-      if (grid) {
-        grid.classList.toggle('catalog-grid--list', this.getAttribute('data-view') === 'list');
-      }
+  // Вид сетка/список запоминаем локально.
+  var grid = document.querySelector('[data-grid]');
+  var viewButtons = document.querySelectorAll('.catalog-view-btn');
+  function setView(view) {
+    if (!grid) return;
+    grid.classList.toggle('catalog-grid--list', view === 'list');
+    viewButtons.forEach(function(btn){
+      var active = btn.getAttribute('data-view') === view;
+      btn.classList.toggle('is-active', active);
+      btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+    });
+    try { localStorage.setItem('pulsunCatalogView', view); } catch(e) {}
+  }
+  var savedView = 'grid';
+  try { savedView = localStorage.getItem('pulsunCatalogView') || 'grid'; } catch(e) {}
+  setView(savedView);
+  viewButtons.forEach(function(btn){
+    btn.addEventListener('click', function(){ setView(this.getAttribute('data-view')); });
+  });
+
+  // На мобильном кнопка «Фильтры» ведёт к чипам.
+  var filtersBtn = document.querySelector('.catalog-toolbar__filters-btn');
+  var filtersRow = document.querySelector('.catalog-filters-row');
+  if (filtersBtn && filtersRow) {
+    filtersBtn.addEventListener('click', function(){
+      filtersRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      var first = filtersRow.querySelector('.catalog-filter-chip__btn');
+      if (first) setTimeout(function(){ first.click(); }, 250);
+    });
+  }
+
+  // Быстрое добавление в корзину из карточки.
+  document.addEventListener('click', function(e){
+    var btn = e.target.closest('[data-quick-cart]');
+    if (!btn) return;
+    e.preventDefault();
+    if (btn.disabled) return;
+    var old = btn.textContent;
+    btn.disabled = true;
+    fetch('/cart/add', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ productId: Number(btn.dataset.quickCart), qty: 1 })
+    }).then(function(r){ return r.json(); }).then(function(d){
+      btn.textContent = d.ok ? 'Добавлено ✓' : 'Не удалось';
+      document.dispatchEvent(new CustomEvent('cart:updated', { detail: d }));
+      setTimeout(function(){ btn.textContent = old; btn.disabled = false; }, 1400);
+    }).catch(function(){
+      btn.textContent = 'Не удалось';
+      setTimeout(function(){ btn.textContent = old; btn.disabled = false; }, 1400);
     });
   });
 })();
