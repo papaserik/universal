@@ -585,3 +585,105 @@
   .catalog-grid--list .product-card__body { padding:12px; }
   .catalog-grid--list .product-card__footer { flex-direction:row; }
 }
+
+
+/* ═══ PULSUN catalog: компактный брендовый верх ═══ */
+.catalog-heading--simple {
+  padding: 18px 0 20px;
+  border-bottom: 0;
+  align-items: flex-start;
+}
+.catalog-heading--simple .catalog-title {
+  font-size: clamp(34px, 4vw, 54px);
+  margin-bottom: 8px;
+}
+.catalog-heading--simple .catalog-heading__lead {
+  font-size: 15px;
+}
+.pulsun-flavorbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 14px 0 22px;
+  margin-bottom: 22px;
+  border-bottom: 1px solid rgba(58,37,25,.09);
+}
+.pulsun-flavorbar__chips {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+.pulsun-flavor {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 7px 15px;
+  border: 1px solid rgba(58,37,25,.12);
+  border-radius: 999px;
+  background: rgba(255,255,255,.72);
+  color: #5E4939;
+  text-decoration: none;
+  font: 500 13px/1 var(--font-body);
+  transition: .15s ease;
+}
+.pulsun-flavor:hover {
+  border-color: #B8935A;
+  color: #8C6B3F;
+  background: #fff;
+}
+.pulsun-flavor.is-active {
+  background: #2A1A0F;
+  border-color: #2A1A0F;
+  color: #fff;
+}
+.pulsun-flavorbar__meta {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+.pulsun-flavorbar__count {
+  color: #9A8775;
+  font: 500 12px var(--font-body);
+  white-space: nowrap;
+}
+.pulsun-sort {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #9A8775;
+  font: 12px var(--font-body);
+  white-space: nowrap;
+}
+.pulsun-sort .catalog-toolbar__sort-select {
+  font-size: 12px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+@media (max-width: 900px) {
+  .pulsun-flavorbar {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .pulsun-flavorbar__chips {
+    width: 100%;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 3px;
+    scrollbar-width: none;
+  }
+  .pulsun-flavorbar__chips::-webkit-scrollbar { display:none; }
+  .pulsun-flavor { flex:0 0 auto; }
+  .pulsun-flavorbar__meta { width:100%; justify-content:space-between; }
+}
+@media (max-width:600px) {
+  .catalog-heading--simple { padding: 12px 0 12px; }
+  .catalog-heading--simple .catalog-title { font-size: 32px; }
+  .catalog-heading--simple .catalog-heading__lead { font-size: 13px; }
+  .pulsun-flavorbar { padding: 8px 0 14px; margin-bottom: 14px; }
+  .pulsun-sort > span { display:none; }
+  .pulsun-flavor { min-height:34px; padding:7px 13px; font-size:12px; }
+}
