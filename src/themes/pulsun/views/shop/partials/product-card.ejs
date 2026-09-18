@@ -73,26 +73,3 @@
     </div>
   </div>
 </article>
-
-<script>
-(function(){
-  document.querySelectorAll('[data-fav-id]').forEach(function(btn){
-    if (btn.dataset.bound) return;
-    btn.dataset.bound = '1';
-    btn.addEventListener('click', function(e){
-      e.preventDefault();
-      var self = this;
-      fetch('/favorites/toggle', {
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({productId:Number(self.dataset.favId)})
-      }).then(function(r){ return r.json(); }).then(function(d){
-        if (d.ok) {
-          self.classList.toggle('is-active');
-          self.textContent = self.classList.contains('is-active') ? '♥' : '♡';
-        }
-      });
-    });
-  });
-})();
-</script>
