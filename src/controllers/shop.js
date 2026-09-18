@@ -22,6 +22,7 @@ exports.home = async (req, res) => {
     recipes,
     totalProducts,
     aboutBanner,
+    contactBanner,
     flavors,
   ] = await Promise.all([
     // Баннеры с учётом расписания
@@ -76,6 +77,11 @@ exports.home = async (req, res) => {
       where: { active: true, layout: 'about' },
     }),
 
+    // Баннер секции «Контакты»
+    prisma.banner.findFirst({
+      where: { active: true, layout: 'contact' },
+    }),
+
     // Сиропы — для секции «Наши вкусы»
     prisma.product.findMany({
       where: { published: true, category: { slug: 'siropy' } },
@@ -102,6 +108,7 @@ exports.home = async (req, res) => {
     recipes,
     totalProducts,
     aboutBanner,
+    contactBanner,
   });
 };
 
