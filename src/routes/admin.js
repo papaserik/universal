@@ -66,9 +66,9 @@ router.get('/products', products.list);
 router.get('/products/new', products.form);
 router.get('/products/:id', products.form);
 router.post('/products', products.save);
+router.post('/products/upload-images', imageUpload.array('files', 10), processUploaded, products.uploadImages);
 router.post('/products/:id', products.save);
 router.post('/products/:id/delete', products.remove);
-router.post('/products/upload-images', imageUpload.array('files', 10), processUploaded, products.uploadImages);
 
 router.get('/orders', orders.list);
 router.get('/orders/export/csv', ordersExport.export);
