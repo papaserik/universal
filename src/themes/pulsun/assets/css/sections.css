@@ -725,7 +725,9 @@
 /* ═══════════════════════════════════════════════════════
    ABOUT SECTION v2 — баннер-фон
    ═══════════════════════════════════════════════════════ */
-.about-section {
+.about-section {  max-width: var(--container);
+  margin: 0 auto;
+
   position: relative;
   min-height: 620px;
   padding: 90px 0;
