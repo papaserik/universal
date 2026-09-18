@@ -773,9 +773,12 @@
   position: relative;
   z-index: 2;
   display: grid;
-  grid-template-columns: 1fr 1.1fr;
-  gap: 80px;
+  grid-template-columns: 440px 360px;
+  gap: 40px;
   align-items: center;
+  justify-content: start;
+  max-width: 840px;
+  margin: 0;
 }
 
 .about-section__left { max-width: 540px; }
