@@ -27,20 +27,8 @@
   gap: var(--sp-4);
   max-width: 680px;
 }
-.benefit {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-3);
-}
-.benefit__icon {
-  width: 46px; height: 46px;
-  border-radius: 50%;
-  background: rgba(250, 244, 235, 0.6);
-  border: 1px solid rgba(58, 37, 25, 0.35);
-  display: flex; align-items: center; justify-content: center;
-  flex: 0 0 auto;
-  color: var(--text-primary);
-}
+
+
 .benefit__icon svg {
   width: 20px; height: 20px;
   stroke: currentColor;
@@ -49,13 +37,7 @@
   stroke-linecap: round;
   stroke-linejoin: round;
 }
-.benefit__label {
-  font-family: var(--font-body);
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--text-primary);
-  line-height: 1.25;
-}
+
 
 /* ── Планшет — скрываем декор ─────────────────────── */
 @media (max-width: 1280px) {
@@ -67,9 +49,9 @@
 }
 @media (max-width: 600px) {
   .benefits__list { grid-template-columns: repeat(2, 1fr); gap: var(--sp-3); }
-  .benefit__icon { width: 40px; height: 40px; }
+  
   .benefit__icon svg { width: 17px; height: 17px; }
-  .benefit__label { font-size: 11px; }
+  
 }
 
 /* ── FLAVORS ──────────────────────────────────────── */

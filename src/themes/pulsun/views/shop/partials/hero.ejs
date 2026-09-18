@@ -12,27 +12,27 @@
   <div class="hero__overlay"></div>
 
   <div class="container hero__inner">
-    <div class="hero__content">
-      <p class="eyebrow">Больше, чем просто вкус</p>
-      <h1 class="hero__title"><%- title %></h1>
-      <p class="hero__subtitle"><%= subtitle %></p>
-      <p class="hero__desc"><%= desc %></p>
+    <div class="hero__content" style="display:block; gap:0;">
 
-      <div class="hero__actions">
-        <a href="<%= ctaUrl %>" class="btn btn--primary"><%= ctaText %> →</a>
-        <a href="/blog?tag=recipe"
-           style="display:inline-flex;align-items:center;gap:10px;padding:15px 28px;border-radius:999px;background:rgba(250,244,235,0.9);color:#2A1A0F;border:1.5px solid #2A1A0F;font-size:15px;font-weight:500;text-decoration:none;font-family:inherit;line-height:1;transition:all .15s ease;"
-           onmouseover="this.style.background='#2A1A0F';this.style.color='#FAF4EB';this.querySelector('span').style.borderColor='#FAF4EB';this.querySelector('span').style.color='#FAF4EB';"
-           onmouseout="this.style.background='rgba(250,244,235,0.9)';this.style.color='#2A1A0F';this.querySelector('span').style.borderColor='#2A1A0F';this.querySelector('span').style.color='#2A1A0F';">
-          <span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;min-width:24px;border-radius:50%;border:1.5px solid #2A1A0F;color:#2A1A0F;font-size:10px;line-height:1;padding-left:3px;box-sizing:border-box;">&#9654;</span>
-          <span>Смотреть рецепты</span>
+      <p class="eyebrow" style="margin:0 0 12px; font-family:var(--font-body); font-size:11px; font-weight:600; letter-spacing:0.24em; text-transform:uppercase; color:#A88B5C;">Больше, чем просто вкус</p>
+
+      <h1 class="hero__title" style="margin:0 0 12px; font-family:var(--font-heading); font-size:clamp(42px,4.5vw,62px); font-weight:900; line-height:1.02; letter-spacing:-0.01em; text-transform:uppercase; color:#2A1A0F;"><%- title %></h1>
+
+      <p class="hero__subtitle" style="margin:0 0 12px; font-family:var(--font-heading); font-size:clamp(21px,2.1vw,27px); font-weight:500; line-height:1.25; color:#2A1A0F; max-width:560px;"><%= subtitle %></p>
+
+      <p class="hero__desc" style="margin:0 0 24px; font-family:var(--font-body); font-size:15px; color:#6B5847; line-height:1.55; max-width:480px;"><%= desc %></p>
+
+      <div class="hero__actions" style="display:flex; gap:12px; flex-wrap:wrap; align-items:center; margin:0 0 28px;">
+        <a href="<%= ctaUrl %>" class="btn btn--primary" style="padding:16px 32px; font-size:15px;"><%= ctaText %> →</a>
+        <a href="/blog?tag=recipe" class="hero__btn-ghost" style="display:inline-flex; align-items:center; gap:10px; padding:15px 28px; font-size:15px; font-weight:500; border-radius:999px; color:#2A1A0F; background:rgba(250,244,235,0.9); border:1.5px solid #2A1A0F; text-decoration:none;">
+          <span class="hero__play" style="display:inline-flex; align-items:center; justify-content:center; width:24px; height:24px; min-width:24px; border-radius:50%; border:1.5px solid #2A1A0F; color:#2A1A0F; font-size:9px; line-height:1; padding-left:3px; box-sizing:border-box;">▶</span>
+          <span class="hero__btn-text" style="white-space:nowrap;">Смотреть рецепты</span>
         </a>
       </div>
-    </div>
-  </div>
 
-  <%# Декор — вне hero__inner, чтобы позиционировался от .hero %>
-<div class="hero__benefits-wrap container" style="margin-top:20px !important; padding-top:0 !important;">
-    <%- include('benefits') %>
+      <div class="hero__benefits-wrap" style="margin:0;">
+        <%- include('benefits') %>
+      </div>
+    </div>
   </div>
 </section>
